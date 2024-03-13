@@ -1,6 +1,7 @@
+using HospitalityPro;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HumanResourceProject.Controllers
+namespace HospitalityPro.Controllers
 {
     [ApiController]
     [Route("[controller]")]

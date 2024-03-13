@@ -1,4 +1,4 @@
-namespace HumanResourceProject
+namespace HospitalityPro
 {
     public class WeatherForecast
     {
