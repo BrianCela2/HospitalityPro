@@ -7,25 +7,27 @@ namespace Entities.Models
     {
         public User()
         {
-            Certificates = new HashSet<Certificate>();
-            Educations = new HashSet<Education>();
-            Jobs = new HashSet<Job>();
-            Projects = new HashSet<Project>();
-            Roles = new HashSet<Role>();
+            NotificationReceivers = new HashSet<Notification>();
+            NotificationSenders = new HashSet<Notification>();
+            Reservations = new HashSet<Reservation>();
+            UserRoles = new HashSet<UserRole>();
         }
 
         public Guid UserId { get; set; }
         public string FirstName { get; set; } = null!;
-        public string Username { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public DateTime Dob { get; set; }
+        public string Email { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public int Status { get; set; }
+        public DateTime? Birthday { get; set; }
+        public string Country { get; set; } = null!;
+        public string City { get; set; } = null!;
+        public bool? IsActive { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
-        public virtual ICollection<Certificate> Certificates { get; set; }
-        public virtual ICollection<Education> Educations { get; set; }
-        public virtual ICollection<Job> Jobs { get; set; }
-        public virtual ICollection<Project> Projects { get; set; }
-        public virtual ICollection<Role> Roles { get; set; }
+        public virtual ICollection<Notification> NotificationReceivers { get; set; }
+        public virtual ICollection<Notification> NotificationSenders { get; set; }
+        public virtual ICollection<Reservation> Reservations { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
     }
 }

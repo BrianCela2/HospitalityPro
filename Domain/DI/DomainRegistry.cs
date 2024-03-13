@@ -15,22 +15,22 @@ namespace Domain.DI
     {
         public DomainRegistry()
         {
-            IncludeRegistry<DomainUnitOfWorkRegistry>();
+           /* IncludeRegistry<DomainUnitOfWorkRegistry>();
 
             For<IUserDomain>().Use<UserDomain>();
 
             AddRepositoryRegistries();
-            AddHttpContextRegistries();
+            AddHttpContextRegistries();*/
         }
 
         private void AddRepositoryRegistries()
         {
-            IncludeRegistry<RepositoryRegistry>();
+            /*IncludeRegistry<RepositoryRegistry>();*/
         }
 
         private void AddHttpContextRegistries()
         {
-            For<IHttpContextAccessor>().Use<HttpContextAccessor>();
+            //For<IHttpContextAccessor>().Use<HttpContextAccessor>();
         }
     }
 }
