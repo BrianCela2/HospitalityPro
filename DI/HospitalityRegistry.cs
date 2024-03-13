@@ -9,9 +9,9 @@ using Lamar;
 
 namespace DI
 {
-    public class RecrutimentRegistry : ServiceRegistry
+    public class HospitalityRegistry : ServiceRegistry
     {
-        public RecrutimentRegistry()
+        public HospitalityRegistry()
         {
             //Register domain DI
             IncludeRegistry<DomainRegistry>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Entities.Models;
 using Lamar;
 
 namespace DAL.UoW
@@ -11,12 +12,12 @@ namespace DAL.UoW
     {
         private readonly IContainer _container;
 
-        //private readonly RecrutimentContext _context;
+        private readonly HospitalityProContext _context;
 
-        public UnitOfWork(IContainer container /*RecrutimentContext context*/)
+        public UnitOfWork(IContainer container ,HospitalityProContext context)
         {
             _container = container;
-            //_context = context;
+            _context = context;
         }
 
         public TRepository GetRepository<TRepository>() where TRepository : class
@@ -26,13 +27,12 @@ namespace DAL.UoW
 
         public int Save()
         {
-            //    return _context.SaveChanges();
-            //}
-            return 1;
+            return _context.SaveChanges();
+       
         }
             public void Dispose()
             {
-                //_context.Dispose();
+                _context.Dispose();
                 GC.SuppressFinalize(this);
             }
         }

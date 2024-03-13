@@ -1,18 +1,22 @@
 using DI;
 using Domain.Mappings;
+using Entities.Models;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-//builder.Services.AddDbContext<RecrutimentContext>(options => options.UseSqlServer(connString));
+builder.Services.AddDbContext<HospitalityProContext>(options => options.UseSqlServer(connString));
 
 
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true).AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddJsonOptions(p => p.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -30,7 +34,7 @@ builder.Services.AddCors(options =>
 builder.Host.UseLamar((context, registry) =>
 {
     // register services using Lamar
-    registry.IncludeRegistry<RecrutimentRegistry>();
+    registry.IncludeRegistry<HospitalityRegistry>();
     registry.IncludeRegistry<MapperRegistry>();
     // add the controllers
 });
