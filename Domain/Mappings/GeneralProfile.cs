@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DTO.RoomPhotoDTOs;
 using DTO.UserDTO;
 using Entities.Models;
 using System;
@@ -16,10 +17,16 @@ namespace Domain.Mappings
         {
            CreateMap<User, UserDTO>().ReverseMap();
 
+            CreateMap<RoomPhoto, CreateRoomPhotoDTO>().ReverseMap();
+            CreateMap<RoomPhoto, RoomPhotoDTO>().ReverseMap();
+           
         }
 
         #endregion
 
 
+
+
+
     }
-}
+    }

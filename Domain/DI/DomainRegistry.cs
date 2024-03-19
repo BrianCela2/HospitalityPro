@@ -3,11 +3,6 @@ using Domain.Concrete;
 using Domain.Contracts;
 using Lamar;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.DI
 {
@@ -18,6 +13,7 @@ namespace Domain.DI
             IncludeRegistry<DomainUnitOfWorkRegistry>();
 
             For<IUserDomain>().Use<UserDomain>();
+            For<IRoomPhotoDomain>().Use<RoomPhotoDomain>();
 
             AddRepositoryRegistries();
             AddHttpContextRegistries();
