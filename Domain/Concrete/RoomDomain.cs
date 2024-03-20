@@ -92,5 +92,12 @@ namespace Domain.Concrete
                 throw new NotImplementedException();
             }
         }
+        public async Task UpdateRoom(UpdateRoomDTO updateroomDTO)
+        {
+            var room = _mapper.Map<Room>(updateroomDTO);
+            roomRepository.Update(room);
+            _unitOfWork.Save();
+
+        }
     }
 }

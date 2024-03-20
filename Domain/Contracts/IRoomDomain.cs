@@ -1,4 +1,5 @@
 ﻿using DTO.RoomDTOs;
+using DTO.RoomPhotoDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Domain.Contracts
         Task<IEnumerable<RoomDTO>> GetAllRoomAsync();
         Task<RoomDTO> GetRoomByIdAsync(Guid id);
         IEnumerable<RoomDTO> GetRoomPhotos();
-        Task DeleteRoom(RoomDTO roomDTO);
+        Task DeleteRoom(RoomDTO roomDTO); 
+        Task UpdateRoom(UpdateRoomDTO updateRoomDTO);
+
     }
 }

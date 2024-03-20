@@ -1,5 +1,6 @@
 ﻿using Domain.Contracts;
 using DTO.RoomDTOs;
+using DTO.RoomPhotoDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,6 +62,13 @@ namespace HospitalityPro.Controllers
             {
                 return BadRequest();
             }
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateRoom(Guid id, [FromForm] UpdateRoomDTO updateRoomDto)
+        {
+            if (id != updateRoomDto.RoomId) { return NotFound(); }
+            await _roomDomain.UpdateRoom(updateRoomDto);
+            return NoContent();
         }
     }
 }

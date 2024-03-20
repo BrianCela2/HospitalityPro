@@ -17,9 +17,8 @@ namespace Domain.Mappings
             CreateMap<Room,CreateRoomDTO>().ReverseMap();
             CreateMap<Room,RoomDTO>().ReverseMap();
             CreateMap<RoomPhoto, UpdateRoomPhotoDTO>().ReverseMap();
-
+            CreateMap<Room,UpdateRoomDTO>().ReverseMap();
         }
-
         #endregion
     }
 }
