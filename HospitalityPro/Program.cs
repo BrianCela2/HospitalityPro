@@ -3,15 +3,14 @@ using Domain.Mappings;
 using Entities.Models;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<HospitalityProContext>(options => options.UseSqlServer(connString));
-
-
+builder.Services.AddDbContext<HospitalityProContext>(options => { options.UseSqlServer(connString); options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); });
 
 // Add services to the container.
 

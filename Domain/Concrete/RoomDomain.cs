@@ -28,22 +28,26 @@ namespace Domain.Concrete
             var room = _mapper.Map<Room>(createRoomDTO);
             roomRepository.Add(room);
             _unitOfWork.Save();
-            foreach (var file in createRoomDTO.Photos)
+            if (createRoomDTO.Photos != null)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                var roomPhoto = new RoomPhoto { 
-                };
-                using (var stream = new MemoryStream())
+                foreach (var file in createRoomDTO.Photos)
                 {
-                    await file.CopyToAsync(stream);
-                    var photoData = stream.ToArray();
-                    roomPhoto.PhotoContent = photoData;
-                    roomPhoto.PhotoPath = fileName;
-                    roomPhoto.RoomId = room.RoomId;
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    var roomPhoto = new RoomPhoto
+                    {
+                    };
+                    using (var stream = new MemoryStream())
+                    {
+                        await file.CopyToAsync(stream);
+                        var photoData = stream.ToArray();
+                        roomPhoto.PhotoContent = photoData;
+                        roomPhoto.PhotoPath = fileName;
+                        roomPhoto.RoomId = room.RoomId;
+                    }
+                    roomPhotoRepository.Add(roomPhoto);
                 }
-                roomPhotoRepository.Add(roomPhoto);
+                _unitOfWork.Save();
             }
-            _unitOfWork.Save();
 
         }
         public async Task<RoomDTO> GetRoomByIdAsync(Guid id)

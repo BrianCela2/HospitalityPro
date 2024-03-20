@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DAL.Concrete;
 using DAL.Contracts;
 using Lamar;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DAL.DI
 {
@@ -16,6 +17,8 @@ namespace DAL.DI
             IncludeRegistry<UnitOfWorkRegistry>();
 
             For<IUserRepository>().Use<UserRepository>();
+            this.AddScoped<IRoomPhotoRepository, RoomPhotoRepository>();
+
             For<IRoomPhotoRepository>().Use<RoomPhotoRepository>();
             For<IRoomRepository>().Use<RoomRepository>();
         }

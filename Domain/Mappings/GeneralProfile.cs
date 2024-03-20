@@ -12,11 +12,12 @@ namespace Domain.Mappings
         public GeneralProfile()
         {
            CreateMap<User, UserDTO>().ReverseMap();
-
             CreateMap<RoomPhoto, CreateRoomPhotoDTO>().ReverseMap();
             CreateMap<RoomPhoto, RoomPhotoDTO>().ReverseMap();
             CreateMap<Room,CreateRoomDTO>().ReverseMap();
             CreateMap<Room,RoomDTO>().ReverseMap();
+            CreateMap<RoomPhoto, UpdateRoomPhotoDTO>().ReverseMap();
+
         }
 
         #endregion

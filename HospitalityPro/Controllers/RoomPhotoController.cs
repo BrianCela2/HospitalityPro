@@ -9,12 +9,10 @@ namespace HospitalityPro.Controllers
     public class RoomPhotoController : ControllerBase
     {
         private readonly IRoomPhotoDomain _roomPhotoDomain;
-
         public RoomPhotoController(IRoomPhotoDomain roomPhotoDomain)
         {
             _roomPhotoDomain = roomPhotoDomain;
         }
-
         [HttpPost]
         public async Task<IActionResult> AddPhotoAsync([FromForm] CreateRoomPhotoDTO createRoomPhotoDTO)
         {
@@ -58,6 +56,13 @@ namespace HospitalityPro.Controllers
             {
                 return BadRequest();
             }
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateRoomPhoto(Guid id, [FromForm] UpdateRoomPhotoDTO updateRoomPhotoDto)
+        {
+            if (id != updateRoomPhotoDto.PhotoId) { return NotFound(); }
+            await _roomPhotoDomain.UpdatePhoto(updateRoomPhotoDto);
+            return NoContent();
         }
     }
 }
