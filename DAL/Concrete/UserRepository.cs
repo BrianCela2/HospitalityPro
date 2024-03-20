@@ -20,5 +20,10 @@ namespace DAL.Concrete
             var user = context.Where(a => a.UserId == id).FirstOrDefault();
             return user;
         }
-    }
+		public User GetByEmail(string email)
+		{
+			var user = context.Where(a => a.Email == email).FirstOrDefault();
+			return user;
+		}
+	}
 }

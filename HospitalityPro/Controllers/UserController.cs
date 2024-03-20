@@ -1,6 +1,12 @@
-﻿using Domain.Contracts;
+﻿using DAL.Contracts;
+using Domain.Contracts;
 using DTO.UserDTO;
+using Entities.Models;
+using LamarCodeGeneration.Frames;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace HospitalityPro.Controllers
 
@@ -16,8 +22,8 @@ namespace HospitalityPro.Controllers
             _userDomain = userDomain;
         }
 
-
-        [HttpGet]
+        [Authorize(Roles = "Admin")]
+		[HttpGet]
         [Route("getAllUsers")]
         public IActionResult GetAllUsers()
         {
@@ -46,7 +52,7 @@ namespace HospitalityPro.Controllers
         }
 
 
-        [HttpGet]
+		[HttpGet]
         [Route("{userId}")]
         public IActionResult GetUserById([FromRoute] Guid userId)
         {
@@ -67,6 +73,7 @@ namespace HospitalityPro.Controllers
                 throw ex;
             }
         }
-    }
+
+	}
 }
 
