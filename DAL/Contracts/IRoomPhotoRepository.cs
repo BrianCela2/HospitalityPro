@@ -9,5 +9,6 @@ namespace DAL.Contracts
 {
     public interface IRoomPhotoRepository : IRepository<RoomPhoto, Guid>
     {
+        IEnumerable<RoomPhoto> roomPhotos(Guid roomid);
     }
 }

@@ -73,5 +73,24 @@ namespace Domain.Concrete
             var roomsDTO = _mapper.Map<IEnumerable<RoomDTO>>(rooms);
             return roomsDTO;
         }
+        public async Task DeleteRoom(RoomDTO roomDTO)
+        {
+
+            Room room = _mapper.Map<Room>(roomDTO);
+            IEnumerable<RoomPhoto> roomPhotos = roomPhotoRepository.roomPhotos(room.RoomId);
+            if (roomPhotos.Any())
+            {
+                roomPhotoRepository.RemoveRange(roomPhotos);
+            }
+            if (room != null)
+            {
+                roomRepository.Remove(room);
+                _unitOfWork.Save();
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

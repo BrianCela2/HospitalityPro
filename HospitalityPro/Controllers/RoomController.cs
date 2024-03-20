@@ -46,5 +46,21 @@ namespace HospitalityPro.Controllers
             if (rooms == null) { return NotFound(); }
             return Ok(rooms);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRoom(Guid id)
+        {
+            if (ModelState.IsValid)
+            {
+                var room = await _roomDomain.GetRoomByIdAsync(id);
+                if (room == null) { return NotFound(); }
+
+                await _roomDomain.DeleteRoom(room);
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
     }
 }

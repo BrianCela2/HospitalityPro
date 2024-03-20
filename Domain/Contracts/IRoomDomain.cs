@@ -13,5 +13,6 @@ namespace Domain.Contracts
         Task<IEnumerable<RoomDTO>> GetAllRoomAsync();
         Task<RoomDTO> GetRoomByIdAsync(Guid id);
         IEnumerable<RoomDTO> GetRoomPhotos();
+        Task DeleteRoom(RoomDTO roomDTO);
     }
 }
