@@ -42,12 +42,40 @@ namespace Entities.Models
                 entity.HasKey(e => e.ServiceId)
                     .HasName("PK__HotelSer__C51BB0EAD7664AAD");
 
-                entity.Property(e => e.ServiceId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.ServiceId)
+                    .HasColumnName("ServiceID")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.OpenTime)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.ServiceName)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Notification>(entity =>
             {
-                entity.Property(e => e.NotificationId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.NotificationId)
+                    .HasColumnName("NotificationID")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.IsSeen).HasColumnName("isSeen");
+
+                entity.Property(e => e.MessageContent).IsUnicode(false);
+
+                entity.Property(e => e.ReceiverId).HasColumnName("ReceiverID");
+
+                entity.Property(e => e.SendDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.SenderId).HasColumnName("SenderID");
 
                 entity.HasOne(d => d.Receiver)
                     .WithMany(p => p.NotificationReceivers)
@@ -63,7 +91,15 @@ namespace Entities.Models
 
             modelBuilder.Entity<Reservation>(entity =>
             {
-                entity.Property(e => e.ReservationId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.ReservationId)
+                    .HasColumnName("ReservationID")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.ReservationDate).HasColumnType("date");
+
+                entity.Property(e => e.TotalPrice).HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Reservations)
@@ -93,7 +129,15 @@ namespace Entities.Models
                 entity.HasKey(e => new { e.ReservationId, e.RoomId })
                     .HasName("PK_ReservationRoom");
 
-                entity.Property(e => e.ReservationId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.ReservationId)
+                    .HasColumnName("ReservationID")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.RoomId).HasColumnName("RoomID");
+
+                entity.Property(e => e.CheckInDate).HasColumnType("date");
+
+                entity.Property(e => e.CheckOutDate).HasColumnType("date");
 
                 entity.HasOne(d => d.Reservation)
                     .WithMany(p => p.ReservationRooms)
@@ -110,7 +154,11 @@ namespace Entities.Models
 
             modelBuilder.Entity<Room>(entity =>
             {
-                entity.Property(e => e.RoomId).HasDefaultValueSql("(newid())");
+                entity.Property(e => e.RoomId)
+                    .HasColumnName("RoomID")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
             });
 
             modelBuilder.Entity<RoomPhoto>(entity =>
@@ -118,7 +166,15 @@ namespace Entities.Models
                 entity.HasKey(e => e.PhotoId)
                     .HasName("PK__Room_Pho__21B7B582BE3A9A0C");
 
-                entity.Property(e => e.PhotoId).HasDefaultValueSql("(newid())");
+                entity.ToTable("Room_Photos");
+
+                entity.Property(e => e.PhotoId)
+                    .HasColumnName("PhotoID")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.PhotoPath).IsUnicode(false);
+
+                entity.Property(e => e.RoomId).HasColumnName("RoomID");
 
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.RoomPhotos)
@@ -128,13 +184,69 @@ namespace Entities.Models
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.Property(e => e.UserId).HasDefaultValueSql("(newid())");
+                entity.HasIndex(e => e.Email, "UQ__Users__A9D10534A61E4554")
+                    .IsUnique();
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("UserID")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Birthday).HasColumnType("date");
+
+                entity.Property(e => e.City)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Country)
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreatedDate).HasColumnType("date");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PhoneNumber)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UserHistory>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("User_History");
+
+                entity.Property(e => e.Browser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.LoginDate).HasColumnType("date");
+
+                entity.Property(e => e.Title)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<UserRole>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.Roles })
                     .HasName("PK_EMAIL");
+
+                entity.ToTable("User_Roles");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserRoles)
