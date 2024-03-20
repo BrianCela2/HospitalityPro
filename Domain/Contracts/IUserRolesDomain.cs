@@ -12,5 +12,7 @@ namespace Domain.Contracts
 	{
 		Task<List<UserRoleDTO>> GetUserRoleById(Guid userId);
 		Task AddRoleToUser(UserRoleDTO userRoleDto);
+		Task RemoveUserRole(Guid userId, int roleId);
+
 	}
 }

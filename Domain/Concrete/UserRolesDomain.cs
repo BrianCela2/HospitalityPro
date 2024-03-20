@@ -41,5 +41,17 @@ namespace Domain.Concrete
 			var roles = _mapper.Map<List<UserRoleDTO>>(userRoles);
 			return roles;
 		}
+
+		public async Task RemoveUserRole(Guid userId, int roleId)
+		{
+			UserRole userRoleToRemove = userRolesRepository.GetUserRole(userId, roleId);
+			if (userRoleToRemove == null)
+			{
+				throw new Exception($"User {userId} with role {roleId} not found");
+			}
+
+			userRolesRepository.Remove(userRoleToRemove);
+			_unitOfWork.Save();
+		}
 	}
 }

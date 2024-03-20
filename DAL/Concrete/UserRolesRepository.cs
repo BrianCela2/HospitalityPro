@@ -15,6 +15,12 @@ namespace DAL.Concrete
 		{
 		}
 
+		public UserRole GetUserRole(Guid userId, int role)
+		{ 
+			UserRole userRole = context.Where(ur => ur.UserId == userId && ur.Roles == role).FirstOrDefault();
+			return userRole;
+		}
+
 		public List<UserRole> GetUserRolesById(Guid userId)
 		{
 			var userRoles = context.Where(a => a.UserId == userId).ToList();

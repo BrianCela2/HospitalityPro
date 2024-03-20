@@ -10,5 +10,7 @@ namespace DAL.Contracts
 	public interface IUserRolesRepository : IRepository<UserRole, Guid>
 	{
 		List<UserRole> GetUserRolesById(Guid userId);
+		UserRole GetUserRole(Guid userId, int role);
+
 	}
 }

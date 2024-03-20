@@ -43,5 +43,20 @@ namespace HospitalityPro.Controllers
 				return BadRequest();
 			}
 		}
+
+		[Authorize(Roles = "Admin")]
+		[HttpDelete]
+		public async Task<IActionResult> DeleteUserRole(Guid userId, int role)
+		{
+			if (ModelState.IsValid)
+			{
+				await _userRolesDomain.RemoveUserRole(userId,role);
+				return NoContent();
+			}
+			else
+			{
+				return BadRequest();
+			}
+		}
 	}
 }
