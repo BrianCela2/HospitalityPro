@@ -11,5 +11,5 @@ namespace DAL.Contracts
     {
         User GetById(Guid id);
         User GetByEmail(string email);
-    }
+	}
 }

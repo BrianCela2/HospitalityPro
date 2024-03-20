@@ -1,5 +1,6 @@
 ﻿using DAL.Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace DAL.Concrete
 		public UserRolesRepository(HospitalityProContext dbContext) : base(dbContext)
 		{
 		}
+
 		public List<UserRole> GetUserRolesById(Guid userId)
 		{
 			var userRoles = context.Where(a => a.UserId == userId).ToList();

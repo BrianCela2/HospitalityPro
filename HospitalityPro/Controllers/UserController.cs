@@ -22,7 +22,6 @@ namespace HospitalityPro.Controllers
             _userDomain = userDomain;
         }
 
-        [Authorize(Roles = "Admin")]
 		[HttpGet]
         [Route("getAllUsers")]
         public IActionResult GetAllUsers()

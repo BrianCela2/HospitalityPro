@@ -11,48 +11,28 @@ namespace HospitalityPro.Controllers
 	[ApiController]
 	public class AuthController : ControllerBase
 	{
-		private readonly IUserDomain _userDomain;
-		private readonly IUserRolesRepository _rolesRepository;
+		private readonly  IAuthDomain _authDomain;
 
-		public AuthController(IUserDomain userDomain, IUserRolesRepository rolesRepository)
+		public AuthController(IAuthDomain authDomain)
 		{
-			_userDomain = userDomain;
-			_rolesRepository = rolesRepository;
+			_authDomain = authDomain;
 		}
 		[AllowAnonymous]
 		[HttpPost("register")]
 		public async Task<IActionResult> Register([FromBody] RegisterDTO request)
 		{
-			if (String.IsNullOrEmpty(request.FirstName))
+			if (String.IsNullOrEmpty(request.FirstName)
+				|| String.IsNullOrEmpty(request.LastName)
+				|| String.IsNullOrEmpty(request.Password)
+				|| String.IsNullOrEmpty(request.Email)
+				|| String.IsNullOrEmpty(request.PhoneNumber)
+				|| String.IsNullOrEmpty(request.City)
+				|| String.IsNullOrEmpty(request.Country))
 			{
-				return BadRequest(new { message = "First name needs to be entered" });
-			}
-			else if (String.IsNullOrEmpty(request.LastName))
-			{
-				return BadRequest(new { message = "Last name needs to be entered" });
-			}
-			else if (String.IsNullOrEmpty(request.Password))
-			{
-				return BadRequest(new { message = "Password needs to be entered" });
-			}
-			else if (String.IsNullOrEmpty(request.Email))
-			{
-				return BadRequest(new { message = "Email needs to be entered" });
-			}
-			else if (String.IsNullOrEmpty(request.PhoneNumber))
-			{
-				return BadRequest(new { message = "Phone Number needs to be entered" });
-			}
-			else if (String.IsNullOrEmpty(request.City))
-			{
-				return BadRequest(new { message = "City needs to be entered" });
-			}
-			else if (String.IsNullOrEmpty(request.Country))
-			{
-				return BadRequest(new { message = "Country needs to entered" });
+				return BadRequest(new { message = "All fields are required" });
 			}
 
-			var response = await _userDomain.Register(request);
+			var response = await _authDomain.Register(request);
 
 			if (response != null)
 			{
@@ -61,6 +41,7 @@ namespace HospitalityPro.Controllers
 
 			return BadRequest(new { message = "User registration unsuccessful" });
 		}
+
 
 		[AllowAnonymous]
 		[HttpPost("login")]
@@ -74,7 +55,7 @@ namespace HospitalityPro.Controllers
 			{
 				return BadRequest(new { message = "Password needs to be entered" });
 			}
-			var response = await _userDomain.Login(request);
+			var response = await _authDomain.Login(request);
 
 			if (response != null)
 			{

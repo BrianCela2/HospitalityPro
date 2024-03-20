@@ -1,4 +1,5 @@
-﻿using DAL.DI;
+﻿using DAL.Contracts;
+using DAL.DI;
 using Domain.Concrete;
 using Domain.Contracts;
 using Lamar;
@@ -15,9 +16,10 @@ namespace Domain.DI
             For<IUserDomain>().Use<UserDomain>();
             For<IRoomPhotoDomain>().Use<RoomPhotoDomain>();
             For<IRoomDomain>().Use<RoomDomain>();
+			For<IUserRolesDomain>().Use<UserRolesDomain>();
 
 
-            AddRepositoryRegistries();
+			AddRepositoryRegistries();
             AddHttpContextRegistries();
         }
         private void AddRepositoryRegistries()
