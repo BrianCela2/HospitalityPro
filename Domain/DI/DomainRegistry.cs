@@ -14,16 +14,16 @@ namespace Domain.DI
 
             For<IUserDomain>().Use<UserDomain>();
             For<IRoomPhotoDomain>().Use<RoomPhotoDomain>();
+            For<IRoomDomain>().Use<RoomDomain>();
+
 
             AddRepositoryRegistries();
             AddHttpContextRegistries();
         }
-
         private void AddRepositoryRegistries()
         {
             IncludeRegistry<RepositoryRegistry>();
         }
-
         private void AddHttpContextRegistries()
         {
             For<IHttpContextAccessor>().Use<HttpContextAccessor>();

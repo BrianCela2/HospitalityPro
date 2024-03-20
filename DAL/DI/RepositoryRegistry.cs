@@ -17,8 +17,7 @@ namespace DAL.DI
 
             For<IUserRepository>().Use<UserRepository>();
             For<IRoomPhotoRepository>().Use<RoomPhotoRepository>();
+            For<IRoomRepository>().Use<RoomRepository>();
         }
-
-
     }
 }
