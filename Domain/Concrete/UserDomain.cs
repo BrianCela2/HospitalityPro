@@ -29,7 +29,6 @@ namespace Domain.Concrete
         {
             User user = userRepository.GetById(id);
 			return _mapper.Map<UserDTO>(user);
-
 		}
 
 		public UserDTO GetUserByEmail(string email)
@@ -37,5 +36,26 @@ namespace Domain.Concrete
 			User user = userRepository.GetByEmail(email);
 			return _mapper.Map<UserDTO>(user);
 		}
+
+		public async Task UpdateUserAsync(Guid userId, UserDTO userDTO)
+		{
+			User user = userRepository.GetById(userId);
+
+			if (user == null)
+			{
+				throw new Exception($"User with UserId {userId} not found");
+			}
+
+			userRepository.Detach(user);
+
+			var updatedUser = _mapper.Map<User>(userDTO);
+
+			updatedUser.UserId = user.UserId;
+
+			userRepository.Update(updatedUser);
+
+			_unitOfWork.Save();
+		}
+
 	}
 }

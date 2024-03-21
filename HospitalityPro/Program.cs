@@ -16,8 +16,6 @@ var builder = WebApplication.CreateBuilder(args);
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<HospitalityProContext>(options => options.UseSqlServer(connString));
 
-
-
 // Add services to the container.
 
 builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true).AddJsonOptions(x =>
@@ -42,23 +40,22 @@ builder.Services.AddAuthentication(opt =>
 })
 .AddJwtBearer(opt =>
 {
-	opt.RequireHttpsMetadata = false; // for development only
+	opt.RequireHttpsMetadata = false; 
 	opt.SaveToken = true;
 	opt.TokenValidationParameters = new TokenValidationParameters
 	{
 		ValidateIssuerSigningKey = true,
 		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
 				builder.Configuration.GetSection("AppSettings:Token").Value!)),
-		//ValidateIssuer = true,
-		//ValidIssuer = builder.Configuration["JWT:Issuer"],
-		//ValidateAudience = true,
-		//ValidAudience = builder.Configuration["JWT:Audience"],
+		ValidateIssuer = true,
+		ValidIssuer = builder.Configuration["JWT:Issuer"],
+		ValidateAudience = true,
+		ValidAudience = builder.Configuration["JWT:Audience"],
 	};
 });
 
 builder.Services.AddEndpointsApiExplorer();
 
-// Define Swagger generation options and add Bearer token authentication
 builder.Services.AddSwaggerGen(c => {
 	c.SwaggerDoc("v1", new OpenApiInfo
 	{
@@ -108,6 +105,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

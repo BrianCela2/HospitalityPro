@@ -73,6 +73,21 @@ namespace HospitalityPro.Controllers
             }
         }
 
+		[HttpPut("{userId}")]
+		public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UserDTO userDTO)
+		{
+			try
+			{
+				await _userDomain.UpdateUserAsync(userId, userDTO);
+				return Ok("User updated successfully");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal server error: " + ex.Message);
+			}
+		}
+
+
 	}
 }
 

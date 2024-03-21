@@ -17,6 +17,7 @@ namespace Domain.DI
             For<IRoomPhotoDomain>().Use<RoomPhotoDomain>();
             For<IRoomDomain>().Use<RoomDomain>();
 			For<IUserRolesDomain>().Use<UserRolesDomain>();
+			For<IAuthDomain>().Use<AuthDomain>();
 
 
 			AddRepositoryRegistries();

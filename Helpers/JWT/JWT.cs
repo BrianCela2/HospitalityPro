@@ -30,8 +30,8 @@ namespace Helpers.JWT
 			{
 				Subject = new ClaimsIdentity(authClaims),
 				IssuedAt = DateTime.UtcNow,
-				//Issuer = _configuration["JWT:Issuer"],
-				//Audience = _configuration["JWT:Audience"],
+				Issuer = _configuration["JWT:Issuer"],
+				Audience = _configuration["JWT:Audience"],
 				Expires = DateTime.UtcNow.AddMinutes(30),
 				SigningCredentials = creds
 			};

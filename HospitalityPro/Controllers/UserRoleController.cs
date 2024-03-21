@@ -45,7 +45,7 @@ namespace HospitalityPro.Controllers
 		}
 
 		[Authorize(Roles = "Admin")]
-		[HttpDelete]
+		[HttpDelete("{userId}/{role}")]
 		public async Task<IActionResult> DeleteUserRole(Guid userId, int role)
 		{
 			if (ModelState.IsValid)
