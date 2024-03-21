@@ -87,7 +87,6 @@ namespace HospitalityPro.Controllers
 			}
 		}
 
-
 	}
 }
 

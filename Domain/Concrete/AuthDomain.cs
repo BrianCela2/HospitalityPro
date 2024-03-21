@@ -6,6 +6,7 @@ using DTO.UserDTO;
 using Entities.Models;
 using Helpers.JWT;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +20,11 @@ namespace Domain.Concrete
 	{
 
 		private readonly JWT _jwt;
-		public AuthDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, JWT jwt) : base(unitOfWork, mapper, httpContextAccessor)
+
+		public AuthDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+			: base(unitOfWork, mapper, httpContextAccessor)
 		{
-			_jwt = jwt;
+			_jwt = new JWT(configuration);
 		}
 
 		private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
@@ -51,7 +54,7 @@ namespace Domain.Concrete
 			return token;
 		}
 
-		public async Task<User> Register(RegisterDTO request)
+		public async Task Register(RegisterDTO request)
 		{
 			var userByEmail = userRepository.Find(u => u.Email == request.Email);
 
@@ -67,9 +70,7 @@ namespace Domain.Concrete
 
 			var result = userRepository.Add(userMap);
 
-			_unitOfWork.Save();
-
-			return result;
+			 _unitOfWork.Save();
 
 		}
 	}

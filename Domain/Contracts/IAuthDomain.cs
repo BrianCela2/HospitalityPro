@@ -10,7 +10,7 @@ namespace Domain.Contracts
 {
 	public interface IAuthDomain
 	{
-		Task<User> Register(RegisterDTO request);
+		Task Register(RegisterDTO request);
 		Task<string> Login(LoginDTO request);
 	}
 }

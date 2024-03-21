@@ -10,7 +10,6 @@ namespace DTO.UserDTO
     {
 		public string FirstName { get; set; } = null!;
 		public string LastName { get; set; } = null!;
-		public string Email { get; set; } = null!;
 		public string PhoneNumber { get; set; } = null!;
 		public DateTime? Birthday { get; set; }
 		public string Country { get; set; } = null!;

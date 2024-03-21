@@ -17,6 +17,8 @@ namespace HospitalityPro.Controllers
 		{
 			_authDomain = authDomain;
 		}
+
+
 		[AllowAnonymous]
 		[HttpPost("register")]
 		public async Task<IActionResult> Register([FromBody] RegisterDTO request)
@@ -32,15 +34,17 @@ namespace HospitalityPro.Controllers
 				return BadRequest(new { message = "All fields are required" });
 			}
 
-			var response = await _authDomain.Register(request);
-
-			if (response != null)
+			try
 			{
-				return Ok(response);
+				await _authDomain.Register(request);
+				return Ok(new { message = "User registration successful" });
 			}
-
-			return BadRequest(new { message = "User registration unsuccessful" });
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
 		}
+
 
 
 		[AllowAnonymous]

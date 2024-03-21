@@ -7,6 +7,7 @@ using Entities.Models;
 using Helpers.Enumerations;
 using Helpers.JWT;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Domain.Concrete
@@ -39,23 +40,27 @@ namespace Domain.Concrete
 
 		public async Task UpdateUserAsync(Guid userId, UserDTO userDTO)
 		{
-			User user = userRepository.GetById(userId);
+			var userToUpdate =  userRepository.GetById(userId);
 
-			if (user == null)
+			if (userToUpdate != null)
 			{
-				throw new Exception($"User with UserId {userId} not found");
+				var user = _mapper.Map<User>(userDTO);
+
+				userRepository.Detach(userToUpdate);
+
+				user.UserId = userId;
+
+				user.Password = userToUpdate.Password;
+				user.Email = userToUpdate.Email;
+
+				userRepository.Update(user);
+
+			    _unitOfWork.Save();
 			}
-
-			userRepository.Detach(user);
-
-			var updatedUser = _mapper.Map<User>(userDTO);
-
-			updatedUser.UserId = user.UserId;
-
-			userRepository.Update(updatedUser);
-
-			_unitOfWork.Save();
+			else
+			{
+				throw new InvalidOperationException("User not found.");
+			}
 		}
-
 	}
 }
