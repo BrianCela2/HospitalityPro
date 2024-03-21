@@ -21,6 +21,8 @@ namespace DAL.DI
 
             For<IRoomPhotoRepository>().Use<RoomPhotoRepository>();
             For<IRoomRepository>().Use<RoomRepository>();
+            For<INotificationRepository>().Use<NotificationRepository>();
+
         }
     }
 }
