@@ -1,4 +1,5 @@
 ﻿using DTO.UserDTO;
+using Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace Domain.Contracts
     {
         IList<UserDTO> GetAllUsers();
         UserDTO GetUserById(Guid id);
-    }
+        UserDTO GetUserByEmail(string email);
+        Task UpdateUserAsync(Guid userId,UserDTO userDTO);
+	}
 }

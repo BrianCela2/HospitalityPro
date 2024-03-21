@@ -1,4 +1,5 @@
-﻿using DAL.DI;
+﻿using DAL.Contracts;
+using DAL.DI;
 using Domain.Concrete;
 using Domain.Contracts;
 using Domain.Notifications;
@@ -18,6 +19,8 @@ namespace Domain.DI
             this.AddScoped<IRoomPhotoDomain, RoomPhotoDomain>();
             For<IRoomPhotoDomain>().Use<RoomPhotoDomain>();
             For<IRoomDomain>().Use<RoomDomain>();
+			For<IUserRolesDomain>().Use<UserRolesDomain>();
+			For<IAuthDomain>().Use<AuthDomain>();
             For<INotificationDomain>().Use<NotificationDomain>();
             For<NotificationHub>();
             AddRepositoryRegistries();

@@ -1,6 +1,12 @@
-﻿using Domain.Contracts;
+﻿using DAL.Contracts;
+using Domain.Contracts;
 using DTO.UserDTO;
+using Entities.Models;
+using LamarCodeGeneration.Frames;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace HospitalityPro.Controllers
 
@@ -16,8 +22,7 @@ namespace HospitalityPro.Controllers
             _userDomain = userDomain;
         }
 
-
-        [HttpGet]
+		[HttpGet]
         [Route("getAllUsers")]
         public IActionResult GetAllUsers()
         {
@@ -46,7 +51,7 @@ namespace HospitalityPro.Controllers
         }
 
 
-        [HttpGet]
+		[HttpGet]
         [Route("{userId}")]
         public IActionResult GetUserById([FromRoute] Guid userId)
         {
@@ -67,6 +72,21 @@ namespace HospitalityPro.Controllers
                 throw ex;
             }
         }
-    }
+
+		[HttpPut("{userId}")]
+		public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UserDTO userDTO)
+		{
+			try
+			{
+				await _userDomain.UpdateUserAsync(userId, userDTO);
+				return Ok("User updated successfully");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal server error: " + ex.Message);
+			}
+		}
+
+	}
 }
 
