@@ -13,7 +13,7 @@ namespace Domain.Contracts
     {
         Task AddPhotoAsync(CreateRoomPhotoDTO createRoomDTO);
         Task<RoomPhotoDTO> GetPhotoByIdAsync(Guid id);
-
         Task DeletePhotoAsync(Guid id);
+        Task UpdatePhoto(UpdateRoomPhotoDTO updateRoomPhotoDTO);
     }
 }

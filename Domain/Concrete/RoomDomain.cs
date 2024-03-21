@@ -28,22 +28,26 @@ namespace Domain.Concrete
             var room = _mapper.Map<Room>(createRoomDTO);
             roomRepository.Add(room);
             _unitOfWork.Save();
-            foreach (var file in createRoomDTO.Photos)
+            if (createRoomDTO.Photos != null)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                var roomPhoto = new RoomPhoto { 
-                };
-                using (var stream = new MemoryStream())
+                foreach (var file in createRoomDTO.Photos)
                 {
-                    await file.CopyToAsync(stream);
-                    var photoData = stream.ToArray();
-                    roomPhoto.PhotoContent = photoData;
-                    roomPhoto.PhotoPath = fileName;
-                    roomPhoto.RoomId = room.RoomId;
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    var roomPhoto = new RoomPhoto
+                    {
+                    };
+                    using (var stream = new MemoryStream())
+                    {
+                        await file.CopyToAsync(stream);
+                        var photoData = stream.ToArray();
+                        roomPhoto.PhotoContent = photoData;
+                        roomPhoto.PhotoPath = fileName;
+                        roomPhoto.RoomId = room.RoomId;
+                    }
+                    roomPhotoRepository.Add(roomPhoto);
                 }
-                roomPhotoRepository.Add(roomPhoto);
+                _unitOfWork.Save();
             }
-            _unitOfWork.Save();
 
         }
         public async Task<RoomDTO> GetRoomByIdAsync(Guid id)
@@ -68,6 +72,32 @@ namespace Domain.Concrete
             var rooms = roomRepository.GetAllRoomsPhoto();
             var roomsDTO = _mapper.Map<IEnumerable<RoomDTO>>(rooms);
             return roomsDTO;
+        }
+        public async Task DeleteRoom(RoomDTO roomDTO)
+        {
+
+            Room room = _mapper.Map<Room>(roomDTO);
+            IEnumerable<RoomPhoto> roomPhotos = roomPhotoRepository.roomPhotos(room.RoomId);
+            if (roomPhotos.Any())
+            {
+                roomPhotoRepository.RemoveRange(roomPhotos);
+            }
+            if (room != null)
+            {
+                roomRepository.Remove(room);
+                _unitOfWork.Save();
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public async Task UpdateRoom(UpdateRoomDTO updateroomDTO)
+        {
+            var room = _mapper.Map<Room>(updateroomDTO);
+            roomRepository.Update(room);
+            _unitOfWork.Save();
+
         }
     }
 }

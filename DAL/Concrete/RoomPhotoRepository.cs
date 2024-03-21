@@ -14,6 +14,10 @@ namespace DAL.Concrete
         public RoomPhotoRepository(HospitalityProContext dbContext) : base(dbContext)
         {
         }
-    
+        public IEnumerable<RoomPhoto> roomPhotos(Guid roomid)
+        {
+            var roomPhotos = context.Where(x=>x.RoomId==roomid).ToList();
+            return roomPhotos;
+        }
     }
 }

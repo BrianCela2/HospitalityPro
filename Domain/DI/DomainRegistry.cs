@@ -4,6 +4,7 @@ using Domain.Concrete;
 using Domain.Contracts;
 using Lamar;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Domain.DI
 {
@@ -14,6 +15,7 @@ namespace Domain.DI
             IncludeRegistry<DomainUnitOfWorkRegistry>();
 
             For<IUserDomain>().Use<UserDomain>();
+            this.AddScoped<IRoomPhotoDomain, RoomPhotoDomain>();
             For<IRoomPhotoDomain>().Use<RoomPhotoDomain>();
             For<IRoomDomain>().Use<RoomDomain>();
 			For<IUserRolesDomain>().Use<UserRolesDomain>();

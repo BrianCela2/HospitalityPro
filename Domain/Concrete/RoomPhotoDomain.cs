@@ -64,5 +64,33 @@ namespace Domain.Concrete
                 throw new NotImplementedException();
             }
         }
+        public async Task UpdatePhoto(UpdateRoomPhotoDTO updateroomPhotoDTO)
+        {
+            var photo = _mapper.Map<RoomPhoto>(updateroomPhotoDTO);
+            var existingphoto = roomPhotoRepository.GetById(photo.PhotoId);
+            if (updateroomPhotoDTO.ImageFile != null)
+            {
+                var file = updateroomPhotoDTO.ImageFile;
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+                using (var stream = new MemoryStream())
+                {
+                    await file.CopyToAsync(stream);
+                    var photoData = stream.ToArray();
+                    photo.PhotoContent = photoData;
+                    photo.PhotoPath = fileName;
+
+                }
+            }
+            else
+            {
+                photo.PhotoPath = existingphoto.PhotoPath;
+                photo.PhotoContent = existingphoto.PhotoContent;
+            }
+            
+            roomPhotoRepository.Update(photo);
+            _unitOfWork.Save();
+
+        }
     }
 }
