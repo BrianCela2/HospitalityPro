@@ -43,6 +43,7 @@ namespace Domain.Concrete
 			var authClaims = new List<Claim>
 			{
 				new(ClaimTypes.Email, user.Email),
+				new(ClaimTypes.NameIdentifier, user.UserId.ToString())
 			};
 			foreach (var role in userRoles)
 			{
