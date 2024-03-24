@@ -20,7 +20,7 @@ namespace Domain.DI
             For<IRoomDomain>().Use<RoomDomain>();
 			For<IUserRolesDomain>().Use<UserRolesDomain>();
 			For<IAuthDomain>().Use<AuthDomain>();
-
+			For<IReservationDomain>().Use<ReservationDomain>();
 
 			AddRepositoryRegistries();
             AddHttpContextRegistries();
