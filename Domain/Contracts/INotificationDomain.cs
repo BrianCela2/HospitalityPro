@@ -1,15 +1,15 @@
-﻿using DTO.RoomDTOs;
+﻿using DTO.NotificationDTOs;
+using DTO.RoomDTOs;
 using Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Contracts
 {
     public interface INotificationDomain
     {
-        Task AddNotificationAsync(Notification notification);
+        Task AddNotificationAsync(CreateNotificationDTO notification);
+        Task DeleteNotificationAsync(NotificationDTO notification);
+        Task UpdateNotificationAsync(UpdateNotificationDTO notification);
+        Task<NotificationDTO> GetNotificationByIdAsync(Guid id);
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DTO.NotificationDTOs;
 using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
 using DTO.UserDTO;
@@ -19,10 +20,15 @@ namespace Domain.Mappings
 
 			CreateMap<RoomPhoto, CreateRoomPhotoDTO>().ReverseMap();
             CreateMap<RoomPhoto, RoomPhotoDTO>().ReverseMap();
+            CreateMap<RoomPhoto, UpdateRoomPhotoDTO>().ReverseMap();
+
             CreateMap<Room,CreateRoomDTO>().ReverseMap();
             CreateMap<Room,RoomDTO>().ReverseMap();
-            CreateMap<RoomPhoto, UpdateRoomPhotoDTO>().ReverseMap();
             CreateMap<Room,UpdateRoomDTO>().ReverseMap();
+
+            CreateMap<Notification, NotificationDTO>().ReverseMap();
+            CreateMap<Notification, UpdateNotificationDTO>().ReverseMap();
+            CreateMap<Notification, CreateNotificationDTO>().ReverseMap();
         }
         #endregion
     }
