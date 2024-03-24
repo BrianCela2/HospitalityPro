@@ -54,5 +54,15 @@ namespace Domain.Concrete
             }
             return _mapper.Map<NotificationDTO>(notification);
         }
+        public async Task<IEnumerable<NotificationDTO>> GetNotificationsForUser(Guid receiverId)
+        {
+            var notifications = notificationRepository.GetNotificationsUser(receiverId);
+
+            if (notifications == null)
+            {
+                throw new Exception($"Notifications for this User {receiverId} not found");
+            }
+            return  _mapper.Map<IEnumerable<NotificationDTO>>(notifications);
+        }
     }  
 }

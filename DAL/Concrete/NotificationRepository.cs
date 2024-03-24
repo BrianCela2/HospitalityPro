@@ -13,5 +13,11 @@ namespace DAL.Concrete
         public NotificationRepository(HospitalityProContext dbContext) : base(dbContext)
         {
         }
+
+        public  IEnumerable<Notification> GetNotificationsUser(Guid receiverId)
+        {
+            var notifications =  context.Where(x => x.ReceiverId == receiverId).ToList();
+            return notifications;
+        }
     }
 }

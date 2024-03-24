@@ -63,5 +63,20 @@ namespace HospitalityPro.Controllers
                 throw new Exception();
             }
         }
+        [HttpGet("{receiverId}")]
+
+        public async Task<IActionResult> GetNotificationsReceiver(Guid receiverId)
+        {
+            if (ModelState.IsValid)
+            {
+                var notifications = await _notificationDomain.GetNotificationsForUser(receiverId);
+                if (notifications == null)
+                {
+                    return NotFound();
+                }
+                return Ok(notifications);
+            }
+            return BadRequest();
+        }
     }
 }
