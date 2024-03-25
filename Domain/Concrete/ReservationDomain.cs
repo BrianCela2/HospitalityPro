@@ -22,7 +22,7 @@ namespace Domain.Concrete
 
 		private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
 
-		public async Task AddReservationAsync(ReservationDTO reservationDto)
+		public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
 			var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservationRepository.Add(reservation);

@@ -10,10 +10,9 @@ namespace DTO.ReservationRoomDTOs
 {
 	public class ReservationRoomDTO
 	{
+		public Guid RoomId { get; set; }
 		public DateTime CheckInDate { get; set; }
 		public DateTime CheckOutDate { get; set; }
 
-		public virtual ReservationDTO Reservation { get; set; } = null!;
-		public virtual RoomDTO Room { get; set; } = null!;
 	}
 }

@@ -10,7 +10,7 @@ namespace Domain.Contracts
 {
 	public interface IReservationDomain
 	{
-		Task AddReservationAsync(ReservationDTO reservationDto);
+		Task AddReservationAsync(CreateReservationDTO reservationDto);
 		Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync();
 		Task<ReservationDTO> GetReservationByIdAsync(Guid id);
 	}
