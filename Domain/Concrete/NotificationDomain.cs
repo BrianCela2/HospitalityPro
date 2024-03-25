@@ -4,11 +4,11 @@ using DAL.UoW;
 using Domain.Contracts;
 using Domain.Notifications;
 using DTO.NotificationDTOs;
-using DTO.UserDTO;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
+using Helpers.StaticFunc;
 namespace Domain.Concrete
 {
     internal class NotificationDomain : DomainBase, INotificationDomain
@@ -34,10 +34,15 @@ namespace Domain.Concrete
             IEnumerable<User> users = userRepository.GetAll();
             List<Notification> notifications = new List<Notification>();
 
+            var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+
+            Guid receiverId = StaticFunc.ConvertGuid(receiverIdClaim);
             foreach (var user in users)
             {
+               
                 var notification = _mapper.Map<Notification>(Createnotification);
-                notification.ReceiverId = user.UserId; 
+                notification.ReceiverId = user.UserId;
+                notification.SenderId = receiverId;
                 notifications.Add(notification);
             }
 
@@ -80,14 +85,9 @@ namespace Domain.Concrete
         }
         public IEnumerable<UpdateNotificationDTO> NotificationsUnSeen()
         {
-            Guid receiverId = Guid.Empty; 
-
             var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
 
-            if (receiverIdClaim != null && Guid.TryParse(receiverIdClaim.Value, out var parsedGuid))
-            {
-                receiverId = parsedGuid; 
-            }
+            Guid receiverId = StaticFunc.ConvertGuid(receiverIdClaim);
 
             var notifications = notificationRepository.GetNotificationsUnSeen(receiverId);
 
