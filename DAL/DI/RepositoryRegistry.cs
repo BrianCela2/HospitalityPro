@@ -23,7 +23,10 @@ namespace DAL.DI
             For<IRoomRepository>().Use<RoomRepository>();
         
 			For<IUserRolesRepository>().Use<UserRolesRepository>();
-		}
+
+            //
+            For<IHotelServiceRepository>().Use<HotelServiceRepository>();
+        }
 
 
     }

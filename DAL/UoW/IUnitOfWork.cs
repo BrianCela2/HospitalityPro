@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL.UoW
+namespace DAL.Contracts
 {
     public interface IUnitOfWork : IDisposable
     {
-        TRepository GetRepository<TRepository>() where TRepository : class;
-        int Save();
+        Task<int> SaveAsync();
+        IRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : class;
+        void Save();
+        IUserRolesRepository GetUserRolesRepository();
+        T GetRepository<T>();
     }
 }

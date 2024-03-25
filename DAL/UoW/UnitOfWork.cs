@@ -1,41 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DAL.Concrete;
+using DAL.Contracts;
 using Entities.Models;
-using Lamar;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace DAL.UoW
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly IContainer _container;
-
         private readonly HospitalityProContext _context;
 
-        public UnitOfWork(IContainer container ,HospitalityProContext context)
+        public UnitOfWork(HospitalityProContext context)
         {
-            _container = container;
             _context = context;
         }
 
-        public TRepository GetRepository<TRepository>() where TRepository : class
+        public async Task<int> SaveAsync()
         {
-            return _container.GetInstance<TRepository>();
+            return await _context.SaveChangesAsync();
         }
 
-        public int Save()
+        public IRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : class
         {
-            return _context.SaveChanges();
-       
-        }
-            public void Dispose()
-            {
-                _context.Dispose();
-                GC.SuppressFinalize(this);
-            }
+            return new BaseRepository<TEntity, TKey>(_context);
         }
 
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
+
+        public void Save()
+        {
+            _context.SaveChanges();
+        }
+
+        public IUserRolesRepository GetUserRolesRepository()
+        {
+            return new UserRolesRepository(_context);
+        }
+
+        T IUnitOfWork.GetRepository<T>()
+        {
+            throw new NotImplementedException();
+        }
     }
-
+}
