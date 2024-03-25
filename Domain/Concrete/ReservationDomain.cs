@@ -21,9 +21,15 @@ namespace Domain.Concrete
 		}
 
 		private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
+		private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
 
 		public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
+			var user = userRepository.GetById(reservationDto.UserId);
+			if (user == null) throw new Exception("User not found");
+
+
+
 			var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservationRepository.Add(reservation);
 			_unitOfWork.Save();

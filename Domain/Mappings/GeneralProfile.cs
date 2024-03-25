@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DTO.ReservationRoomDTOs;
 using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
@@ -27,6 +28,7 @@ namespace Domain.Mappings
 
 			CreateMap<Reservation, ReservationDTO>().ReverseMap();
 			CreateMap<Reservation, CreateReservationDTO>().ReverseMap();
+			CreateMap<ReservationRoom, ReservationRoomDTO>().ReverseMap();
 		}
         #endregion
     }

@@ -10,7 +10,7 @@ namespace DTO.ReservationsDTOS
 	public class CreateReservationDTO
 	{
 		public decimal TotalPrice { get; set; }
-		public Guid? UserId { get; set; }
+		public Guid UserId { get; set; }
 		public DateTime? ReservationDate { get; set; }
 		public int? ReservationStatus { get; set; }
 		public List<ReservationRoomDTO> Rooms { get; set; }
