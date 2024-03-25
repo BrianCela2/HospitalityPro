@@ -2,7 +2,7 @@
 {
     public enum ServiceCategory
     {
-        RoomService,
+        RoomService=1,
         Dining,
         Spa,
         Transportation,

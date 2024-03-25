@@ -53,8 +53,7 @@ namespace Controllers
         [HttpPost]
         public async Task<ActionResult> AddHotelServiceAsync([FromBody] CreateHotelServiceDTO hotelServiceDTO)
         {
-            try
-            {
+           
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
@@ -62,11 +61,7 @@ namespace Controllers
 
                 await _hotelServiceDomain.AddHotelServiceAsync(hotelServiceDTO);
                 return StatusCode(201); // Created
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            
         }
 
         [HttpPut("{id}")]

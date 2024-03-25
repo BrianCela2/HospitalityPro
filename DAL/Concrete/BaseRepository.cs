@@ -143,32 +143,7 @@ namespace DAL.Concrete
         }
 
         //
-        public async Task<TEntity> AddAsync(TEntity entity)
-        {
-            await context.AddAsync(entity);
-            await db.SaveChangesAsync();
-            return entity;
-        }
-
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
-        {
-            return await context.ToListAsync();
-        }
-
-        public async Task<TEntity> GetByIdAsync(TKey id)
-        {
-            return await context.FindAsync(id);
-        }
-
-        public async Task DeleteAsync(TKey id)
-        {
-            var entity = await context.FindAsync(id);
-            if (entity != null)
-            {
-                context.Remove(entity);
-                await db.SaveChangesAsync();
-            }
-        }
+     
 
     }
 }

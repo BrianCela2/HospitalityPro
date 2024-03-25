@@ -6,47 +6,50 @@ using DAL.Contracts;
 using Domain.Contracts;
 using DTO.HotelServiceDTOs;
 using Entities.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Concrete
 {
-    public class HotelServiceDomain : IHotelServiceDomain
+    internal class HotelServiceDomain : DomainBase,IHotelServiceDomain
     {
-        private readonly IHotelServiceRepository _hotelServiceRepository;
-        private readonly IMapper _mapper;
 
-        public HotelServiceDomain(IHotelServiceRepository hotelServiceRepository, IMapper mapper)
+        public HotelServiceDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
         {
-            _hotelServiceRepository = hotelServiceRepository;
-            _mapper = mapper;
         }
+        private IHotelServiceRepository hotelServiceRepository => _unitOfWork.GetRepository<IHotelServiceRepository>();
 
         public async Task<IEnumerable<HotelServiceDTO>> GetAllHotelServicesAsync()
         {
-            var hotelServices = await _hotelServiceRepository.GetAllHotelServicesAsync();
+            var hotelServices =  hotelServiceRepository.GetAll();
             return _mapper.Map<IEnumerable<HotelServiceDTO>>(hotelServices);
         }
 
         public async Task<HotelServiceDTO> GetHotelServiceByIdAsync(Guid id)
         {
-            var hotelService = await _hotelServiceRepository.GetHotelServiceByIdAsync(id);
+            var hotelService =  hotelServiceRepository.GetById(id);
             return _mapper.Map<HotelServiceDTO>(hotelService);
         }
 
         public async Task AddHotelServiceAsync(CreateHotelServiceDTO hotelServiceDTO)
         {
             var hotelService = _mapper.Map<HotelService>(hotelServiceDTO);
-            await _hotelServiceRepository.AddHotelServiceAsync(hotelService);
+            hotelServiceRepository.Add(hotelService);
+            _unitOfWork.Save();
         }
 
         public async Task UpdateHotelServiceAsync(UpdateHotelServiceDTO hotelServiceDTO)
         {
             var hotelService = _mapper.Map<HotelService>(hotelServiceDTO);
-            await _hotelServiceRepository.UpdateHotelServiceAsync(hotelService);
+            hotelServiceRepository.Update(hotelService);
+            _unitOfWork.Save();
+
         }
 
         public async Task DeleteHotelServiceAsync(Guid id)
         {
-            await _hotelServiceRepository.DeleteHotelServiceAsync(id);
+            hotelServiceRepository.Remove(id);
+            _unitOfWork.Save();
+
         }
     }
 }

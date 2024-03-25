@@ -28,10 +28,6 @@ namespace DAL.Contracts
 
         //  IEnumerable<TEntity> GetPaginatedData(int page, int pageSize, string sortField, string sortOrder, string searchString, string searchStringUpon);
 
-        //
-        Task<TEntity> AddAsync(TEntity entity);
-        Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<TEntity> GetByIdAsync(TKey id);
-        Task DeleteAsync(TKey id);
+        
     }
 }

@@ -4,26 +4,25 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using Lamar;
 
 namespace DAL.UoW
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly HospitalityProContext _context;
+        private readonly IContainer _container;
 
-        public UnitOfWork(HospitalityProContext context)
+        public UnitOfWork(IContainer container, HospitalityProContext context)
         {
             _context = context;
+            _container = container;
         }
 
-        public async Task<int> SaveAsync()
-        {
-            return await _context.SaveChangesAsync();
-        }
 
-        public IRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : class
+        public TRepository GetRepository<TRepository>() where TRepository : class
         {
-            return new BaseRepository<TEntity, TKey>(_context);
+            return _container.GetInstance<TRepository>();
         }
 
         public void Dispose()
@@ -31,19 +30,10 @@ namespace DAL.UoW
             _context.Dispose();
         }
 
-        public void Save()
+        public int Save()
         {
-            _context.SaveChanges();
-        }
-
-        public IUserRolesRepository GetUserRolesRepository()
-        {
-            return new UserRolesRepository(_context);
-        }
-
-        T IUnitOfWork.GetRepository<T>()
-        {
-            throw new NotImplementedException();
+            return _context.SaveChanges();
         }
     }
+      
 }
