@@ -18,7 +18,7 @@ namespace HospitalityPro.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNotification(CreateNotificationDTO Createnotification)
+        public async Task<IActionResult> AddNotifications(CreateNotificationDTO Createnotification)
         {
             if (ModelState.IsValid)
             {
@@ -65,11 +65,12 @@ namespace HospitalityPro.Controllers
         }
         [HttpGet("{receiverId}")]
 
-        public async Task<IActionResult> GetNotificationsReceiver(Guid receiverId)
+        public IActionResult GetNotificationsReceiver(Guid receiverId)
         {
             if (ModelState.IsValid)
             {
-                var notifications = await _notificationDomain.GetNotificationsForUser(receiverId);
+                var userid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+                var notifications =  _notificationDomain.GetNotificationsForUser(receiverId);
                 if (notifications == null)
                 {
                     return NotFound();

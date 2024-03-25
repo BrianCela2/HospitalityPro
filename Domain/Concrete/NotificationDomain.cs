@@ -4,16 +4,10 @@ using DAL.UoW;
 using Domain.Contracts;
 using Domain.Notifications;
 using DTO.NotificationDTOs;
-using DTO.RoomDTOs;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System.Security.Claims;
 namespace Domain.Concrete
 {
     internal class NotificationDomain : DomainBase, INotificationDomain
@@ -25,6 +19,7 @@ namespace Domain.Concrete
             _notificationHubContext = notificationHubContext;
         }
         private INotificationRepository notificationRepository => _unitOfWork.GetRepository<INotificationRepository>();
+        private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
         public async Task AddNotificationAsync(CreateNotificationDTO Createnotification)
         {
             await _notificationHubContext.Clients.User(Createnotification.ReceiverId.ToString()).SendAsync("ReceiveNotification", Createnotification);
@@ -54,7 +49,7 @@ namespace Domain.Concrete
             }
             return _mapper.Map<NotificationDTO>(notification);
         }
-        public async Task<IEnumerable<NotificationDTO>> GetNotificationsForUser(Guid receiverId)
+        public IEnumerable<NotificationDTO> GetNotificationsForUser(Guid receiverId)
         {
             var notifications = notificationRepository.GetNotificationsUser(receiverId);
 
@@ -62,7 +57,8 @@ namespace Domain.Concrete
             {
                 throw new Exception($"Notifications for this User {receiverId} not found");
             }
-            return  _mapper.Map<IEnumerable<NotificationDTO>>(notifications);
+            return _mapper.Map<IEnumerable<NotificationDTO>>(notifications);
+         
         }
     }  
 }

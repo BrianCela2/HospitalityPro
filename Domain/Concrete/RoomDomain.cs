@@ -4,15 +4,9 @@ using DAL.UoW;
 using Domain.Contracts;
 using Domain.Notifications;
 using DTO.RoomDTOs;
-using DTO.RoomPhotoDTOs;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Concrete
 {
@@ -26,7 +20,6 @@ namespace Domain.Concrete
 
         private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
         private IRoomPhotoRepository roomPhotoRepository => _unitOfWork.GetRepository<IRoomPhotoRepository>();
-        private INotificationRepository notificationRepository => _unitOfWork.GetRepository<INotificationRepository>();
 
         public async Task AddRoomAsync(CreateRoomDTO createRoomDTO)
         {
@@ -51,12 +44,7 @@ namespace Domain.Concrete
                     }
                     roomPhotoRepository.Add(roomPhoto);
                 }
-                var notification = new Notification { };
-                notification.ReceiverId = new Guid("0bd99a5b-83c2-4ca3-9b20-c1a5ee42f099");
-                notification.SenderId = new Guid("ccb7d4e4-5fa5-4616-a1cd-ecf7c9a730a2");
-                notification.MessageContent = " U shtua nje dhome e Re ";
-                await _notificationHubContext.Clients.User(notification.ReceiverId.ToString()).SendAsync("ReceiveNotification", notification);
-                notificationRepository.Add(notification);
+               
                 _unitOfWork.Save();
             }
 

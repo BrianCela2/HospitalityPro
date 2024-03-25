@@ -10,7 +10,7 @@ namespace Domain.Contracts
         Task DeleteNotificationAsync(NotificationDTO notification);
         Task UpdateNotificationAsync(UpdateNotificationDTO notification);
         Task<NotificationDTO> GetNotificationByIdAsync(Guid id);
-        Task<IEnumerable<NotificationDTO>> GetNotificationsForUser(Guid receiverId);
+        IEnumerable<NotificationDTO> GetNotificationsForUser(Guid receiverId);
 
     }
 }
