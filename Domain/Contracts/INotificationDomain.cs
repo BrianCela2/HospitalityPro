@@ -11,6 +11,9 @@ namespace Domain.Contracts
         Task UpdateNotificationAsync(UpdateNotificationDTO notification);
         Task<NotificationDTO> GetNotificationByIdAsync(Guid id);
         IEnumerable<NotificationDTO> GetNotificationsForUser(Guid receiverId);
+        Task AddNotificationsAllUserAsync(CreateNotificationDTO Createnotification);
+
+        IEnumerable<UpdateNotificationDTO> NotificationsUnSeen();
 
     }
 }

@@ -14,5 +14,9 @@ namespace Domain.Notifications
         {
             await Clients.User(notification.ReceiverId.ToString()).SendAsync("ReceiveNotification", notification);
         }
+        public async Task SendNotificationAllUsers(string message)
+        {
+            await Clients.All.SendAsync("ReceiveNotificationAllUsers", message);
+        }
     }
 }

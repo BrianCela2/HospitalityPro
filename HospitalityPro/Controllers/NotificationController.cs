@@ -1,12 +1,15 @@
-﻿using Domain.Contracts;
+﻿using DAL.Contracts;
+using Domain.Contracts;
 using DTO.NotificationDTOs;
 using DTO.RoomDTOs;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace HospitalityPro.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class NotificationController : ControllerBase
     {
@@ -18,12 +21,28 @@ namespace HospitalityPro.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNotifications(CreateNotificationDTO Createnotification)
+        public async Task<IActionResult> AddNotification(CreateNotificationDTO Createnotification)
         {
             if (ModelState.IsValid)
             {
                 if (Createnotification == null) { return NotFound(); }
                 await _notificationDomain.AddNotificationAsync(Createnotification);
+
+                return NoContent();
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+        [HttpPost]
+        [Route("AddNotificationAllUsers")]
+        public async Task<IActionResult> AddNotifications(CreateNotificationDTO Createnotification)
+        {
+            if (ModelState.IsValid)
+            {
+                if (Createnotification == null) { return NotFound(); }
+                await _notificationDomain.AddNotificationsAllUserAsync(Createnotification);
 
                 return NoContent();
             }
@@ -69,7 +88,6 @@ namespace HospitalityPro.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userid = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
                 var notifications =  _notificationDomain.GetNotificationsForUser(receiverId);
                 if (notifications == null)
                 {
@@ -78,6 +96,17 @@ namespace HospitalityPro.Controllers
                 return Ok(notifications);
             }
             return BadRequest();
+        }
+        [HttpPut("NotificationsSeen")]
+        public ActionResult NotificationSeen()
+        {
+            var unseenNotifications = _notificationDomain.NotificationsUnSeen();
+            foreach (var notification in unseenNotifications)
+            {
+                notification.IsSeen = true;
+                _notificationDomain.UpdateNotificationAsync(notification);
+            }
+            return Ok();
         }
     }
 }

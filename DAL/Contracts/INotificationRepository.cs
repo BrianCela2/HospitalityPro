@@ -10,6 +10,7 @@ namespace DAL.Contracts
     public interface INotificationRepository : IRepository<Notification, Guid>
     {
         IEnumerable<Notification> GetNotificationsUser(Guid receiverId);
+        IEnumerable<Notification> GetNotificationsUnSeen(Guid receiverId);
     }
 
 }
