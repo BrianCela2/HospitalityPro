@@ -1,6 +1,5 @@
 ﻿using Domain.Contracts;
 using Domain.ShoppingCart;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Helpers.StaticFunc;
 using DTO.RoomDTOs;
@@ -30,8 +29,8 @@ namespace HospitalityPro.Controllers
 
             return Ok(cartVM);
         }
-        [HttpPost("id/checkin/checkout/")]
-        public async Task<IActionResult> Add([FromQuery]Guid id, [FromQuery] DateTime checkin, [FromQuery] DateTime checkout)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> Add(Guid id )
         {
             RoomDTO room = await _roomDomain.GetRoomByIdAsync(id);
 
