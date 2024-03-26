@@ -20,7 +20,8 @@ namespace HospitalityPro.Controllers
 		public async Task<IActionResult> GetAllReservations()
 		{
 			var reservations =  await _reservationDomain.GetAllReservationsAsync();
-			if (reservations == null) { return NotFound(); }
+			if (reservations == null)
+			{ return NotFound(); }
 			return Ok(reservations);
 		}
 
@@ -34,7 +35,7 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddReservation([FromForm] CreateReservationDTO reservationDTO)
+		public async Task<IActionResult> AddReservation([FromBody] CreateReservationDTO reservationDTO)
 		{
 			if (reservationDTO == null) { return NotFound(); }
 			await _reservationDomain.AddReservationAsync(reservationDTO);

@@ -5,6 +5,7 @@ using Domain.Contracts;
 using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
 using Entities.Models;
+using Entities.SearchParametersList;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -99,5 +100,22 @@ namespace Domain.Concrete
             _unitOfWork.Save();
 
         }
-    }
+
+		public Task<object> Search(List<SearchParameters> searchParameters)
+		{
+			List<List<Room>> availableRoomsList = new List<List<Room>>();
+			availableRoomsList = roomRepository.GetRoomsAvailable(searchParameters);
+			int numberOfRoomsSearched = searchParameters.Count;
+
+			var result = new
+			{
+				NumberOfRoomsSearched = numberOfRoomsSearched,
+				AvailableRoomsList = availableRoomsList
+			};
+
+			return Task.FromResult((object)result);
+		}
+
+
+	}
 }

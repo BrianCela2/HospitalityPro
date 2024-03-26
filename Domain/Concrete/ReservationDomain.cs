@@ -22,18 +22,34 @@ namespace Domain.Concrete
 
 		private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
 		private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
+		private IReservationRoomRepository reservationRoomRepository => _unitOfWork.GetRepository<IReservationRoomRepository>();
 
 		public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
 			var user = userRepository.GetById(reservationDto.UserId);
 			if (user == null) throw new Exception("User not found");
-
-
-
 			var reservation = _mapper.Map<Reservation>(reservationDto);
+
 			reservationRepository.Add(reservation);
 			_unitOfWork.Save();
+			foreach (var roomDto in reservationDto.Rooms)
+			{
+				var roomReservations = reservationRoomRepository.GetReservationRoomsById(roomDto.RoomId);
+				foreach (var roomReservation in roomReservations)
+				{
+					if (roomReservation.CheckInDate < roomDto.CheckOutDate && roomReservation.CheckOutDate > roomDto.CheckInDate)
+					{
+						throw new Exception($"Room with ID {roomDto.RoomId} is not available for the specified dates.");
+					}
+				}
+				var reservationRoom = _mapper.Map<ReservationRoom>(roomDto);
+				reservationRoom.ReservationId = reservation.ReservationId;
+				reservationRoomRepository.Add(reservationRoom);
+				_unitOfWork.Save();
+			}
+
 		}
+
 
 		public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
 		{
