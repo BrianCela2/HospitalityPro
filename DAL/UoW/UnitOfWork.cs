@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Entities.Models;
+﻿using Entities.Models;
 using Lamar;
 
 namespace DAL.UoW
@@ -34,6 +29,7 @@ namespace DAL.UoW
         public void Dispose()
         {
             _context.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
       
