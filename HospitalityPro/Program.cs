@@ -94,6 +94,13 @@ builder.Host.UseLamar((context, registry) =>
     // add the controllers
 });
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -104,7 +111,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.MapHub<NotificationHub>("/Notify");
-
+app.UseSession();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

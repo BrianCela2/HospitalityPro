@@ -23,8 +23,11 @@ namespace DTO.RoomDTOs
         [Display(Name = "Upload Image")]
         public List<IFormFile>? Photos { get; set; }
         public virtual ICollection<RoomPhotoDTO>? RoomPhotos { get; set; }
+
+        public virtual ICollection<ReservationRoom>? Reservation { get; set; }
+
     }
-   
+
 }
 
 

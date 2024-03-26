@@ -25,6 +25,13 @@ namespace Domain.Concrete
         {
             var room = _mapper.Map<Room>(createRoomDTO);
             roomRepository.Add(room);
+            //room.ReservationRooms.Add(new ReservationRoom
+            //{
+            //    ReservationId=r
+            //    RoomId = roomId,
+            //    CheckInDate = checkInDate,
+            //    CheckOutDate = checkOutDate
+            //});
             _unitOfWork.Save();
             if (createRoomDTO.Photos != null)
             {
