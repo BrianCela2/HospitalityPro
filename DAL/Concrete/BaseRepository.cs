@@ -142,5 +142,8 @@ namespace DAL.Concrete
             db.Entry(entity).State = EntityState.Detached;
         }
 
+        //
+     
+
     }
 }
