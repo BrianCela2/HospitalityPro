@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DTO.HotelServiceDTOs;
 using DTO.NotificationDTOs;
 using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
@@ -13,18 +14,22 @@ namespace Domain.Mappings
         #region User
         public GeneralProfile()
         {
-           CreateMap<User, UserDTO>().ReverseMap();
-			CreateMap<User, RegisterDTO>().ReverseMap();
-			CreateMap<User, LoginDTO>().ReverseMap();
-			CreateMap<UserRole, UserRoleDTO>().ReverseMap();
+            CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<User, RegisterDTO>().ReverseMap();
+            CreateMap<User, LoginDTO>().ReverseMap();
+            CreateMap<UserRole, UserRoleDTO>().ReverseMap();
 
-			CreateMap<RoomPhoto, CreateRoomPhotoDTO>().ReverseMap();
+            CreateMap<RoomPhoto, CreateRoomPhotoDTO>().ReverseMap();
             CreateMap<RoomPhoto, RoomPhotoDTO>().ReverseMap();
             CreateMap<RoomPhoto, UpdateRoomPhotoDTO>().ReverseMap();
 
             CreateMap<Room,CreateRoomDTO>().ReverseMap();
             CreateMap<Room,RoomDTO>().ReverseMap();
             CreateMap<Room,UpdateRoomDTO>().ReverseMap();
+
+            CreateMap<HotelService, HotelServiceDTO>().ReverseMap();
+            CreateMap<CreateHotelServiceDTO, HotelService>();
+            CreateMap<UpdateHotelServiceDTO, HotelService>();
 
             CreateMap<Notification, NotificationDTO>().ReverseMap();
             CreateMap<Notification, UpdateNotificationDTO>().ReverseMap();

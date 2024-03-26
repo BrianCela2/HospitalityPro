@@ -19,8 +19,9 @@ namespace Domain.DI
             this.AddScoped<IRoomPhotoDomain, RoomPhotoDomain>();
             For<IRoomPhotoDomain>().Use<RoomPhotoDomain>();
             For<IRoomDomain>().Use<RoomDomain>();
-			For<IUserRolesDomain>().Use<UserRolesDomain>();
-			For<IAuthDomain>().Use<AuthDomain>();
+            For<IUserRolesDomain>().Use<UserRolesDomain>();
+            For<IAuthDomain>().Use<AuthDomain>();
+            For<IHotelServiceDomain>().Use<HotelServiceDomain>();		
             For<INotificationDomain>().Use<NotificationDomain>();
             For<NotificationHub>();
             AddRepositoryRegistries();

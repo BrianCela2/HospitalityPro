@@ -15,43 +15,43 @@ using System.Threading.Tasks;
 
 namespace Domain.Concrete
 {
-	internal class UserRolesDomain :DomainBase, IUserRolesDomain
-	{
-		public UserRolesDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
-		{
-		}
+    internal class UserRolesDomain : DomainBase, IUserRolesDomain
+    {
+        public UserRolesDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
+        {
+        }
 
-		private IUserRolesRepository userRolesRepository  => _unitOfWork.GetRepository<IUserRolesRepository>();
+        private IUserRolesRepository userRolesRepository => _unitOfWork.GetRepository<IUserRolesRepository>();
 
-		public async Task AddRoleToUser(UserRoleDTO userRoleDto)
-		{
-			UserRole userRole = _mapper.Map<UserRole>(userRoleDto);
-			userRolesRepository.Add(userRole);
-			_unitOfWork.Save();
-		}
+        public async Task AddRoleToUser(UserRoleDTO userRoleDto)
+        {
+            UserRole userRole = _mapper.Map<UserRole>(userRoleDto);
+            userRolesRepository.Add(userRole);
+            _unitOfWork.Save();
+        }
 
 
-		public async Task<List<UserRoleDTO>> GetUserRoleById(Guid userId)
-		{
-			List<UserRole> userRoles = userRolesRepository.GetUserRolesById(userId);
-			if (userRoles == null)
-			{
-				throw new Exception($"Roles with ID {userId} not found");
-			}
-			var roles = _mapper.Map<List<UserRoleDTO>>(userRoles);
-			return roles;
-		}
+        public async Task<List<UserRoleDTO>> GetUserRoleById(Guid userId)
+        {
+            List<UserRole> userRoles = userRolesRepository.GetUserRolesById(userId);
+            if (userRoles == null)
+            {
+                throw new Exception($"Roles with ID {userId} not found");
+            }
+            var roles = _mapper.Map<List<UserRoleDTO>>(userRoles);
+            return roles;
+        }
 
-		public async Task RemoveUserRole(Guid userId, int roleId)
-		{
-			UserRole userRoleToRemove = userRolesRepository.GetUserRole(userId, roleId);
-			if (userRoleToRemove == null)
-			{
-				throw new Exception($"User {userId} with role {roleId} not found");
-			}
+        public async Task RemoveUserRole(Guid userId, int roleId)
+        {
+            UserRole userRoleToRemove = userRolesRepository.GetUserRole(userId, roleId);
+            if (userRoleToRemove == null)
+            {
+                throw new Exception($"User {userId} with role {roleId} not found");
+            }
 
-			userRolesRepository.Remove(userRoleToRemove);
-			_unitOfWork.Save();
-		}
-	}
+            userRolesRepository.Remove(userRoleToRemove);
+            _unitOfWork.Save();
+        }
+    }
 }

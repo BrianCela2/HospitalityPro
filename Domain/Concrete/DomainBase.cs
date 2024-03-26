@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using DAL.Contracts;
 using DAL.UoW;
 using Microsoft.AspNetCore.Http;
 
