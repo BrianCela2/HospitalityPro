@@ -1,6 +1,7 @@
 ﻿using Domain.Contracts;
 using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
+using Entities.SearchParametersList;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -70,5 +71,12 @@ namespace HospitalityPro.Controllers
             await _roomDomain.UpdateRoom(updateRoomDto);
             return NoContent();
         }
-    }
+
+        [HttpPost("SearchRooms")]
+        public IActionResult SearchRooms(List<SearchParameters> searchCriteria)
+        {
+            var roomLists = _roomDomain.Search(searchCriteria);
+            return Ok(roomLists);
+        }
+	}
 }
