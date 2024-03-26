@@ -1,5 +1,6 @@
 ﻿using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
+using Entities.SearchParametersList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Domain.Contracts
         IEnumerable<RoomDTO> GetRoomPhotos();
         Task DeleteRoom(RoomDTO roomDTO); 
         Task UpdateRoom(UpdateRoomDTO updateRoomDTO);
+		Task<object> Search(List<SearchParameters> searchParameters);
 
     }
 }
