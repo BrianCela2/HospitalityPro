@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using DAL.Contracts;
+using DAL.UoW;
 using Domain.Contracts;
 using DTO.HotelServiceDTOs;
 using Entities.Models;

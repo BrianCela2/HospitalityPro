@@ -1,5 +1,4 @@
-﻿using DAL.Contracts;
-using DAL.UoW;
+﻿using DAL.UoW;
 using Lamar;
 using System;
 using System.Collections.Generic;

@@ -6,7 +6,7 @@ namespace Entities.Models
     public class HotelService
     {
         public HotelService() { 
-        Reservations = new HashSet<Reservation>();
+            Reservations = new HashSet<Reservation>();
         }
         public Guid ServiceId { get; set; }
         public string ServiceName { get; set; } = null!;

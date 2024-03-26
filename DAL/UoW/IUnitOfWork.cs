@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace DAL.Contracts
+namespace DAL.UoW
 {
     public interface IUnitOfWork : IDisposable
     {

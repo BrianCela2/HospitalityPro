@@ -1,17 +1,18 @@
-﻿using DAL.Concrete;
-using DAL.Contracts;
-using Entities.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Entities.Models;
 using Lamar;
 
 namespace DAL.UoW
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly HospitalityProContext _context;
         private readonly IContainer _container;
+
+        private readonly HospitalityProContext _context;
 
         public UnitOfWork(IContainer container, HospitalityProContext context)
         {
@@ -25,14 +26,14 @@ namespace DAL.UoW
             return _container.GetInstance<TRepository>();
         }
 
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
-
         public int Save()
         {
             return _context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
         }
     }
       
