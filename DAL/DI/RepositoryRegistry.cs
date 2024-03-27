@@ -24,10 +24,8 @@ namespace DAL.DI
 			For<IReservationRepository>().Use<ReservationRepository>();
 			For<IUserRolesRepository>().Use<UserRolesRepository>();
 			For<IReservationRoomRepository>().Use<ReservationRoomRepository>();
-		
-      
+            For<IReservationServiceRepository>().Use<ReservationServiceRepository>();
             For<IHotelServiceRepository>().Use<HotelServiceRepository>();
-
             For<INotificationRepository>().Use<NotificationRepository>();
 
         }

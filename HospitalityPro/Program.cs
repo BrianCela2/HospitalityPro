@@ -59,7 +59,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
 	c.SwaggerDoc("v1", new OpenApiInfo
 	{
-		Title = "JWT Auth Sample",
+		Title = "HospitalityPro",
 		Version = "v1"
 	});
 	c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
