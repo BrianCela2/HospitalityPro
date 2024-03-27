@@ -1,5 +1,7 @@
 ﻿using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
+using Entities.Models;
+using DTO.SearchParametersList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +15,6 @@ namespace Domain.Contracts
 		Task AddReservationAsync(CreateReservationDTO reservationDto);
 		Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync();
 		Task<ReservationDTO> GetReservationByIdAsync(Guid id);
-	}
+
+    }
 }

@@ -3,12 +3,16 @@ using AutoMapper;
 using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
+using DTO.HotelServiceDTOs;
+using DTO.ReservationRoomDTOs;
 using DTO.ReservationsDTOS;
 using Entities.Models;
+using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,27 +30,16 @@ namespace Domain.Concrete
 
 		public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
-			var user = userRepository.GetById(reservationDto.UserId);
-			if (user == null) throw new Exception("User not found");
-			var reservation = _mapper.Map<Reservation>(reservationDto);
 
+            var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+
+            Guid userId = StaticFunc.ConvertGuid(receiverIdClaim);
+            if (userId == null) throw new Exception("User not found");
+			var reservation = _mapper.Map<Reservation>(reservationDto);
+			reservation.UserId = userId;
+			reservation.TotalPrice = 600;
 			reservationRepository.Add(reservation);
-			_unitOfWork.Save();
-			foreach (var roomDto in reservationDto.Rooms)
-			{
-				var roomReservations = reservationRoomRepository.GetReservationRoomsById(roomDto.RoomId);
-				foreach (var roomReservation in roomReservations)
-				{
-					if (roomReservation.CheckInDate < roomDto.CheckOutDate && roomReservation.CheckOutDate > roomDto.CheckInDate)
-					{
-						throw new Exception($"Room with ID {roomDto.RoomId} is not available for the specified dates.");
-					}
-				}
-				var reservationRoom = _mapper.Map<ReservationRoom>(roomDto);
-				reservationRoom.ReservationId = reservation.ReservationId;
-				reservationRoomRepository.Add(reservationRoom);
 				_unitOfWork.Save();
-			}
 
 		}
 

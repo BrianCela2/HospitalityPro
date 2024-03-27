@@ -24,7 +24,7 @@ namespace DTO.RoomDTOs
         public List<IFormFile>? Photos { get; set; }
         public virtual ICollection<RoomPhotoDTO>? RoomPhotos { get; set; }
     }
-   
+
 }
 
 

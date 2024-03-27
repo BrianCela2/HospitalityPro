@@ -94,6 +94,8 @@ builder.Host.UseLamar((context, registry) =>
     // add the controllers
 });
 
+builder.Services.AddDistributedMemoryCache();
+
 
 var app = builder.Build();
 
@@ -104,7 +106,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.MapHub<NotificationHub>("/Notify");
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
