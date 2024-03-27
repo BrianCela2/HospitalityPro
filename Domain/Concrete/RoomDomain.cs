@@ -123,7 +123,22 @@ namespace Domain.Concrete
             }
             return availableRoomsList;
         }
+        public async Task UpdateRoomStatus(int status ,RoomDTO roomDTO)
+        {
+            var room = _mapper.Map<Room>(roomDTO);
+            room.RoomStatus = status;
+            if (status >= 1 && status <= 4)
+            {
+                roomRepository.Update(room);
+                _unitOfWork.Save();
 
-       
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+        }
+
     }
 }

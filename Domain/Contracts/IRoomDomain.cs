@@ -17,6 +17,7 @@ namespace Domain.Contracts
         IEnumerable<RoomDTO> GetRoomPhotos();
         Task DeleteRoom(RoomDTO roomDTO); 
         Task UpdateRoom(UpdateRoomDTO updateRoomDTO);
+        Task UpdateRoomStatus(int status ,RoomDTO roomDTO);
         List<List<RoomDTO>> GetRoomsAvailable(List<SearchParameters> searchParameters);
     }
 }
