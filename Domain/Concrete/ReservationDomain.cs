@@ -63,5 +63,28 @@ namespace Domain.Concrete
 
 			return mapped;
 		}
+
+		public async Task UpdateReservation(UpdateReservationDTO updateReservationDTO)
+		{
+			Reservation reservation =  reservationRepository.GetById(updateReservationDTO.ReservationId);
+
+			if (reservation == null)
+			{
+				throw new Exception("Reservation not found");
+			}
+			var mappedReservationRooms = _mapper.Map<ICollection<ReservationRoom>>(updateReservationDTO.ReservationRooms);
+			foreach(var reservationRoom in mappedReservationRooms)
+			{
+				reservationRoom.ReservationId = updateReservationDTO.ReservationId;
+				reservationRoomRepository.Update(reservationRoom);
+				_unitOfWork.Save();
+			}
+
+			var mappedReservation = _mapper.Map<Reservation>(updateReservationDTO);
+			reservationRepository.Update(mappedReservation);
+
+			_unitOfWork.Save();
+		}
+
 	}
 }
