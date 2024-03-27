@@ -23,9 +23,8 @@ namespace Domain.Concrete
 		public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
 		{
 		}
-
-		private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
-		private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
+        private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
+        private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
 		private IReservationRoomRepository reservationRoomRepository => _unitOfWork.GetRepository<IReservationRoomRepository>();
 
 		public async Task AddReservationAsync(CreateReservationDTO reservationDto)
@@ -37,14 +36,16 @@ namespace Domain.Concrete
 			if (userId == null) throw new Exception("User not found");
 			var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservation.UserId = userId;
-			reservation.TotalPrice = 600;
+			decimal Price = 0;
+			foreach(var roomReser in reservationDto.ReservationRooms)
+			{
+				var room = roomRepository.GetById(roomReser.RoomId);
+				Price = room.Price;
+			}
+			reservation.TotalPrice = Price;
             reservationRepository.Add(reservation);
 			_unitOfWork.Save();
-			
-
 		}
-
-
 		public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
 		{
 			IEnumerable<Reservation> reservations = reservationRepository.GetAll();
