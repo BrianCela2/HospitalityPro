@@ -26,8 +26,9 @@ namespace Domain.Concrete
         private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
         private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
 		private IReservationRoomRepository reservationRoomRepository => _unitOfWork.GetRepository<IReservationRoomRepository>();
+        private IReservationServiceRepository reservationServiceRepository => _unitOfWork.GetRepository<IReservationServiceRepository>();
 
-		public async Task AddReservationAsync(CreateReservationDTO reservationDto)
+        public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
 
 			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
@@ -54,8 +55,18 @@ namespace Domain.Concrete
 
 			return mapped;
 		}
-
-		public async Task<ReservationDTO> GetReservationByIdAsync(Guid id)
+        public async Task DeleteReservation(Guid reservationId)
+        {
+            Reservation reservations = reservationRepository.GetReservation(reservationId);
+			reservationRoomRepository.RemoveRange(reservations.ReservationRooms);
+			_unitOfWork.Save();
+			reservationServiceRepository.RemoveRange(reservations.ReservationServices);
+            _unitOfWork.Save();
+            if (reservations == null) throw new Exception();
+			reservationRepository.Remove(reservations);
+			_unitOfWork.Save();
+        }
+        public async Task<ReservationDTO> GetReservationByIdAsync(Guid id)
 		{
 			Reservation reservation = reservationRepository.GetById(id);
 

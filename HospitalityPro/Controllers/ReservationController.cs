@@ -41,6 +41,23 @@ namespace HospitalityPro.Controllers
 			await _reservationDomain.AddReservationAsync(reservationDTO);
 			return NoContent();
 		}
+        [HttpDelete("{reservationId}")]
+        public async Task<IActionResult> DeleteReservation(Guid reservationId)
+        {
+            if (ModelState.IsValid)
+            {
+                var reservation = await _reservationDomain.GetReservationByIdAsync(reservationId);
+                if (reservation == null) { return NotFound(); }
+
+                await _reservationDomain.DeleteReservation(reservationId);
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+    }
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateReservation(Guid id,UpdateReservationDTO updateReservationDto)

@@ -1,5 +1,6 @@
 ﻿using DAL.Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,10 @@ namespace DAL.Concrete
         public ReservationRepository(HospitalityProContext dbContext) : base(dbContext)
 		{
             
+        }
+        public Reservation GetReservation(Guid reservationId)
+        {
+            return context.Include(x => x.ReservationServices).Include(x => x.ReservationRooms).Where(x => x.ReservationId == reservationId).FirstOrDefault();
         }
     }
 }

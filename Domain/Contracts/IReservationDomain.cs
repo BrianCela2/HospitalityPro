@@ -15,6 +15,8 @@ namespace Domain.Contracts
 		Task AddReservationAsync(CreateReservationDTO reservationDto);
 		Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync();
 		Task<ReservationDTO> GetReservationByIdAsync(Guid id);
+		Task DeleteReservation(Guid reservationId);
+    }
 		Task UpdateReservation(UpdateReservationDTO updateReservationDTO);
 
 	}
