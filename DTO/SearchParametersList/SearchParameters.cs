@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.SearchParametersList
+namespace DTO.SearchParametersList
 {
 	public class SearchParameters
 	{

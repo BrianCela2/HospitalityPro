@@ -1,7 +1,7 @@
 ﻿using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
 using Entities.Models;
-using Entities.SearchParametersList;
+using DTO.SearchParametersList;
 using System;
 using System.Collections.Generic;
 using System.Linq;

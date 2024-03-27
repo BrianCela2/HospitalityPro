@@ -1,7 +1,8 @@
-﻿using Domain.Contracts;
+﻿using AutoMapper.Configuration.Conventions;
+using Domain.Contracts;
 using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
-using Entities.SearchParametersList;
+using DTO.SearchParametersList;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -72,10 +73,10 @@ namespace HospitalityPro.Controllers
             return NoContent();
         }
 
-        [HttpPost("SearchRooms")]
-        public IActionResult SearchRooms([FromQuery] List<SearchParameters> searchCriteria)
+        [HttpPost]
+        public IActionResult SearchRooms(List<SearchParameters> searchParameters)
         {
-            var roomLists = _roomDomain.GetRoomsAvailable(searchCriteria);
+            var roomLists = _roomDomain.GetRoomsAvailable(searchParameters);
             return Ok(roomLists);
         }
 	}

@@ -1,6 +1,6 @@
 ﻿using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
-using Entities.SearchParametersList;
+using DTO.SearchParametersList;
 using System;
 using System.Collections.Generic;
 using System.Linq;

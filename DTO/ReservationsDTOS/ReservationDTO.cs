@@ -13,7 +13,7 @@ namespace DTO.ReservationsDTOS
 	{
 		public decimal TotalPrice { get; set; }
 		public DateTime? ReservationDate { get; set; }
-		public virtual UserDTO.UserDTO? User { get; set; }
+		public virtual Guid UserId { get; set; }
 		public virtual ICollection<ReservationRoomDTO> ReservationRooms { get; set; }
 
 		public virtual ICollection<HotelServiceDTO> Services { get; set; }

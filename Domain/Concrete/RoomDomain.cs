@@ -5,7 +5,7 @@ using Domain.Contracts;
 using Domain.Notifications;
 using DTO.RoomDTOs;
 using Entities.Models;
-using Entities.SearchParametersList;
+using DTO.SearchParametersList;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 

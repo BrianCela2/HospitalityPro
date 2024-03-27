@@ -1,6 +1,5 @@
 ﻿using DAL.Contracts;
 using Entities.Models;
-using Entities.SearchParametersList;
 using Microsoft.EntityFrameworkCore;
 using StructureMap;
 using System;
@@ -22,7 +21,6 @@ namespace DAL.Concrete
             var rooms = context.Include(x => x.RoomPhotos).ToList();
             return rooms;
         }
-
 		
 	}
 }
