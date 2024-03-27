@@ -9,6 +9,8 @@ namespace DAL.Contracts
 {
 	public interface IReservationRoomRepository : IRepository<ReservationRoom, Guid>
 	{
-		IEnumerable<ReservationRoom> GetReservationRoomsById(Guid roomId);	
-	}
+		IEnumerable<ReservationRoom> GetReservationRoomsById(Guid roomId);
+		IEnumerable<ReservationRoom> GetRoomsByReservationId(Guid reservationId);
+
+    }
 }
