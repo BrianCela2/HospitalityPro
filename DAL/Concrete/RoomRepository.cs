@@ -23,22 +23,6 @@ namespace DAL.Concrete
             return rooms;
         }
 
-		public List<List<Room>> GetRoomsAvailable(List<SearchParameters> searchParameters)
-		{
-			List<List<Room>> availableRoomsList = new List<List<Room>>();
-
-			foreach (var criteria in searchParameters)
-			{
-				var availableRooms = context
-					.Where(room => room.Capacity >= criteria.Capacity &&
-								   !room.ReservationRooms.Any(reservation =>
-										!(criteria.CheckOutDate <= reservation.CheckInDate ||
-										  criteria.CheckInDate >= reservation.CheckOutDate)))
-					.Include(x=>x.RoomPhotos)
-					.ToList();
-				availableRoomsList.Add(availableRooms);
-			}
-			return availableRoomsList;
-		}
+		
 	}
 }

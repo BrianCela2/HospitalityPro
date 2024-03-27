@@ -106,22 +106,24 @@ namespace Domain.Concrete
             _unitOfWork.Save();
 
         }
+        public List<List<RoomDTO>> GetRoomsAvailable(List<SearchParameters> searchParameters)
+        {
+            List<List<RoomDTO>> availableRoomsList = new List<List<RoomDTO>>();
 
-		public Task<object> Search(List<SearchParameters> searchParameters)
-		{
-			List<List<Room>> availableRoomsList = new List<List<Room>>();
-			availableRoomsList = roomRepository.GetRoomsAvailable(searchParameters);
-			int numberOfRoomsSearched = searchParameters.Count;
+            foreach (var criteria in searchParameters)
+            {
+                List<Room> availableRooms = roomRepository.GetAllRoomsPhoto()
+                    .Where(room => room.Capacity >= criteria.Capacity &&
+                                   !room.ReservationRooms.Any(reservation =>
+                                        !(criteria.CheckOutDate <= reservation.CheckInDate ||
+                                          criteria.CheckInDate >= reservation.CheckOutDate)))
+                    .ToList();
+                var availableRoomsDTO = _mapper.Map<List<RoomDTO>>(availableRooms);
+                availableRoomsList.Add(availableRoomsDTO);
+            }
+            return availableRoomsList;
+        }
 
-			var result = new
-			{
-				NumberOfRoomsSearched = numberOfRoomsSearched,
-				AvailableRoomsList = availableRoomsList
-			};
-
-			return Task.FromResult((object)result);
-		}
-
-
-	}
+       
+    }
 }

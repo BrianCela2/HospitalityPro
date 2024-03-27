@@ -73,9 +73,9 @@ namespace HospitalityPro.Controllers
         }
 
         [HttpPost("SearchRooms")]
-        public IActionResult SearchRooms(List<SearchParameters> searchCriteria)
+        public IActionResult SearchRooms([FromQuery] List<SearchParameters> searchCriteria)
         {
-            var roomLists = _roomDomain.Search(searchCriteria);
+            var roomLists = _roomDomain.GetRoomsAvailable(searchCriteria);
             return Ok(roomLists);
         }
 	}

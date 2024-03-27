@@ -1,4 +1,4 @@
-﻿using DTO.HotelServiceDTO;
+﻿using DTO.HotelServiceDTOs;
 using DTO.ReservationRoomDTOs;
 using DTO.UserDTO;
 using System;
@@ -16,6 +16,6 @@ namespace DTO.ReservationsDTOS
 		public virtual UserDTO.UserDTO? User { get; set; }
 		public virtual ICollection<ReservationRoomDTO> ReservationRooms { get; set; }
 
-		public virtual ICollection<HotelServiceDTO.HotelServiceDTO> Services { get; set; }
+		public virtual ICollection<HotelServiceDTO> Services { get; set; }
 	}
 }
