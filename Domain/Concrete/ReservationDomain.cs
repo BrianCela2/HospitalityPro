@@ -31,15 +31,16 @@ namespace Domain.Concrete
 		public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
 
-            var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
 
-            Guid userId = StaticFunc.ConvertGuid(receiverIdClaim);
-            if (userId == null) throw new Exception("User not found");
+			Guid userId = StaticFunc.ConvertGuid(receiverIdClaim);
+			if (userId == null) throw new Exception("User not found");
 			var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservation.UserId = userId;
 			reservation.TotalPrice = 600;
-			reservationRepository.Add(reservation);
-				_unitOfWork.Save();
+            reservationRepository.Add(reservation);
+			_unitOfWork.Save();
+			
 
 		}
 
