@@ -20,6 +20,7 @@ namespace Entities.Models
         public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<ReservationRoom> ReservationRooms { get; set; } = null!;
+        public virtual DbSet<ReservationService> ReservationServices { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
         public virtual DbSet<RoomPhoto> RoomPhotos { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -30,7 +31,8 @@ namespace Entities.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HospitalityPro;Trusted_Connection=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HospitalityPro;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
         }
 
@@ -104,23 +106,6 @@ namespace Entities.Models
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__Reservati__UserI__440B1D61");
-
-                entity.HasMany(d => d.Services)
-                    .WithMany(p => p.Reservations)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "ReservationService",
-                        l => l.HasOne<HotelService>().WithMany().HasForeignKey("ServiceId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_S"),
-                        r => r.HasOne<Reservation>().WithMany().HasForeignKey("ReservationId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Reserv"),
-                        j =>
-                        {
-                            j.HasKey("ReservationId", "ServiceId");
-
-                            j.ToTable("ReservationService");
-
-                            j.IndexerProperty<Guid>("ReservationId").HasColumnName("ReservationID").HasDefaultValueSql("(newid())");
-
-                            j.IndexerProperty<Guid>("ServiceId").HasColumnName("ServiceID");
-                        });
             });
 
             modelBuilder.Entity<ReservationRoom>(entity =>
@@ -149,6 +134,33 @@ namespace Entities.Models
                     .HasForeignKey(d => d.RoomId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_R");
+            });
+
+            modelBuilder.Entity<ReservationService>(entity =>
+            {
+                entity.HasKey(e => new { e.ReservationId, e.ServiceId });
+
+                entity.ToTable("ReservationService");
+
+                entity.Property(e => e.ReservationId)
+                    .HasColumnName("ReservationID")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
+
+                entity.Property(e => e.DateOfPurchase).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Reservation)
+                    .WithMany(p => p.ReservationServices)
+                    .HasForeignKey(d => d.ReservationId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Reserv");
+
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.ReservationServices)
+                    .HasForeignKey(d => d.ServiceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_S");
             });
 
             modelBuilder.Entity<Room>(entity =>

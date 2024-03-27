@@ -1,5 +1,6 @@
 ﻿using DTO.HotelServiceDTOs;
 using DTO.ReservationRoomDTOs;
+using DTO.ReservationServiceDTOs;
 using DTO.UserDTO;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,6 @@ namespace DTO.ReservationsDTOS
 		public virtual Guid UserId { get; set; }
 		public virtual ICollection<ReservationRoomDTO> ReservationRooms { get; set; }
 
-		public virtual ICollection<HotelServiceDTO> Services { get; set; }
+		public virtual ICollection<CreateReservationServiceDTO> Services { get; set; }
 	}
 }
