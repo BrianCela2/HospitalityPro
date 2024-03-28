@@ -151,7 +151,6 @@ namespace Domain.Concrete
 
 		}
 
-	}
 
         public IEnumerable<ReservationDTO> GetReservationsOfUser()
         {
