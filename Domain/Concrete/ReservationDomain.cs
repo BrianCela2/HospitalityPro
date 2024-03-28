@@ -89,11 +89,10 @@ namespace Domain.Concrete
 			ReservationService createReservationService = new ReservationService { ReservationId=reservationID,ServiceId = serviceID, DateOfPurchase = DateTime.Now };
 			Reservation reservation = reservationRepository.GetReservation(reservationID);
 			reservation.ReservationServices.Add(createReservationService);
-
 			 HotelService service = hotelServiceRepository.GetById(createReservationService.ServiceId);
 			 reservation.TotalPrice += service.Price;
-
-             reservationRepository.Update(reservation);
+            reservationServiceRepository.Add(createReservationService);
+            reservationRepository.Update(reservation);
 			_unitOfWork.Save();
 		}
         public async Task<ReservationDTO> GetReservationByIdAsync(Guid id)
