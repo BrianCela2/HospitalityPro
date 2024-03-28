@@ -10,16 +10,16 @@ namespace HospitalityPro.Controllers
 	[ApiController]
 	public class ReservationController : ControllerBase
 	{
-        private readonly IReservationDomain _reservationDomain;
-        public ReservationController(IReservationDomain reservationDomain)
-        {
+		private readonly IReservationDomain _reservationDomain;
+		public ReservationController(IReservationDomain reservationDomain)
+		{
 			_reservationDomain = reservationDomain;
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> GetAllReservations()
 		{
-			var reservations =  await _reservationDomain.GetAllReservationsAsync();
+			var reservations = await _reservationDomain.GetAllReservationsAsync();
 			if (reservations == null)
 			{ return NotFound(); }
 			return Ok(reservations);
@@ -41,6 +41,14 @@ namespace HospitalityPro.Controllers
 			await _reservationDomain.AddReservationAsync(reservationDTO);
 			return NoContent();
 		}
+		[HttpPut("{reservationID}/{serviceID}")]
+        public async Task<IActionResult> ExtraService(Guid reservationID,Guid serviceID)
+        {
+			ReservationDTO reservationDTO = await _reservationDomain.GetReservationByIdAsync(reservationID);
+            if (reservationDTO == null) { return NotFound(); }
+			await _reservationDomain.AddExtraService(reservationID, serviceID);
+            return NoContent();
+        }
         [HttpDelete("{reservationId}")]
         public async Task<IActionResult> DeleteReservation(Guid reservationId)
         {
@@ -56,6 +64,15 @@ namespace HospitalityPro.Controllers
             {
                 return BadRequest();
             }
+        }
+		[HttpGet]
+		[Route("GetReservationForUser")]
+		public IActionResult GetReservationForUser()
+		{
+            var reservations =  _reservationDomain.GetReservationsOfUser();
+            if (reservations == null)
+            { return NotFound(); }
+            return Ok(reservations);
         }
 
 		[HttpPut("{id}")]

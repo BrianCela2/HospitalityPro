@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Helpers.Enumerations
 {
-    public enum RoomStatus
+    public enum ReservationStatusEnum
     {
-        Available = 1,
-        Busy = 2,
-        Working = 3,
-        Cleaning = 4
+        Confirmed =1,
+        Canceled
     }
 }

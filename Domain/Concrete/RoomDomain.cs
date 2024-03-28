@@ -25,49 +25,35 @@ namespace Domain.Concrete
         public async Task AddRoomAsync(CreateRoomDTO createRoomDTO)
         {
             var room = _mapper.Map<Room>(createRoomDTO);
-            roomRepository.Add(room);
-            //room.ReservationRooms.Add(new ReservationRoom
-            //{
-            //    ReservationId=r
-            //    RoomId = roomId,
-            //    CheckInDate = checkInDate,
-            //    CheckOutDate = checkOutDate
-            //});
-            _unitOfWork.Save();
             if (createRoomDTO.Photos != null)
             {
+                var roomPhotoList = new List<RoomPhoto>();
                 foreach (var file in createRoomDTO.Photos)
                 {
-                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    var roomPhoto = new RoomPhoto
-                    {
-                    };
+                    var roomPhoto = new RoomPhoto();
                     using (var stream = new MemoryStream())
                     {
                         await file.CopyToAsync(stream);
                         var photoData = stream.ToArray();
                         roomPhoto.PhotoContent = photoData;
-                        roomPhoto.PhotoPath = fileName;
+                        roomPhoto.PhotoPath = file.FileName;
                         roomPhoto.RoomId = room.RoomId;
+                        roomPhotoList.Add(roomPhoto);   
                     }
-                    roomPhotoRepository.Add(roomPhoto);
                 }
-               
+                room.RoomPhotos = roomPhotoList;
+                roomRepository.Add(room);
                 _unitOfWork.Save();
             }
-
         }
         public async Task<RoomDTO> GetRoomByIdAsync(Guid id)
         {
             var room = roomRepository.GetById(id);
-
-            if (room == null)
-            {
+            if (room == null){
                 throw new Exception($"Room with ID {id} not found");
             }
             return  _mapper.Map<RoomDTO>(room);
         }
-
         public async Task<IEnumerable<RoomDTO>> GetAllRoomAsync()
         {
             IEnumerable<Room> rooms = roomRepository.GetAll();
@@ -82,7 +68,6 @@ namespace Domain.Concrete
         }
         public async Task DeleteRoom(RoomDTO roomDTO)
         {
-
             Room room = _mapper.Map<Room>(roomDTO);
             IEnumerable<RoomPhoto> roomPhotos = roomPhotoRepository.roomPhotos(room.RoomId);
             if (roomPhotos.Any())
@@ -104,12 +89,10 @@ namespace Domain.Concrete
             var room = _mapper.Map<Room>(updateroomDTO);
             roomRepository.Update(room);
             _unitOfWork.Save();
-
         }
         public List<List<RoomDTO>> GetRoomsAvailable(List<SearchParameters> searchParameters)
         {
             List<List<RoomDTO>> availableRoomsList = new List<List<RoomDTO>>();
-
             foreach (var criteria in searchParameters)
             {
                 List<Room> availableRooms = roomRepository.GetAllRoomsPhoto()
@@ -123,7 +106,20 @@ namespace Domain.Concrete
             }
             return availableRoomsList;
         }
-
-       
+        public async Task UpdateRoomStatus(int status ,RoomDTO roomDTO)
+        {
+            var room = _mapper.Map<Room>(roomDTO);
+            room.RoomStatus = status;
+            if (status == room.RoomStatus){
+                throw new Exception("Room is in that status already");
+            }
+            else if (status >= 1 && status <= 4){
+                roomRepository.Update(room);
+                _unitOfWork.Save();
+            }
+            else{
+                throw new Exception();
+            }
+        }
     }
 }

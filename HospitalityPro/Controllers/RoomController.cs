@@ -72,6 +72,14 @@ namespace HospitalityPro.Controllers
             await _roomDomain.UpdateRoom(updateRoomDto);
             return NoContent();
         }
+        [HttpPut("{id}/{status}")]
+        public async Task<IActionResult> UpdateRoom(Guid id,int status)
+        {
+            var room = await _roomDomain.GetRoomByIdAsync(id);
+            if (id != room.RoomId) { return NotFound(); }
+            await _roomDomain.UpdateRoomStatus(status, room);
+            return NoContent();
+        }
 
         [HttpPost]
         public IActionResult SearchRooms(List<SearchParameters> searchParameters)

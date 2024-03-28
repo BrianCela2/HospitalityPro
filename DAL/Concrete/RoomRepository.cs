@@ -21,6 +21,10 @@ namespace DAL.Concrete
             var rooms = context.Include(x => x.RoomPhotos).ToList();
             return rooms;
         }
-		
-	}
+        public Room GetRoomReservations(Guid roomId)
+        {
+           var room = context.Where(x => x.RoomId == roomId).Include(x => x.ReservationRooms).FirstOrDefault();
+            return room;
+        }
+    }
 }
