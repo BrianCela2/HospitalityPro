@@ -27,6 +27,7 @@ namespace Domain.Concrete
         private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
 		private IReservationRoomRepository reservationRoomRepository => _unitOfWork.GetRepository<IReservationRoomRepository>();
         private IReservationServiceRepository reservationServiceRepository => _unitOfWork.GetRepository<IReservationServiceRepository>();
+		private IHotelServiceRepository hotelServiceRepository => _unitOfWork.GetRepository<IHotelServiceRepository>();
 
         public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
@@ -38,12 +39,27 @@ namespace Domain.Concrete
 			var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservation.UserId = userId;
 			decimal Price = 0;
-			foreach(var roomReser in reservationDto.ReservationRooms)
+
+			foreach(var roomReservation in reservationDto.ReservationRooms)
 			{
-				var room = roomRepository.GetById(roomReser.RoomId);
-				Price = room.Price;
+				var room = roomRepository.GetById(roomReservation.RoomId);
+				Price += room.Price;
+                var roomAvailable = reservationRoomRepository.GetReservationRoomsById(roomReservation.RoomId);
+				foreach(var roomDates in roomAvailable)
+				{
+					if((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate <=roomDates.CheckOutDate)||(roomReservation.CheckOutDate>roomDates.CheckInDate && roomReservation.CheckOutDate<=roomDates.CheckOutDate))
+					{
+						throw new Exception("You Reservation can be done because Room is not available");
+					}
+				}
+            }
+			foreach(var reservationService in reservationDto.ReservationServices)
+			{
+				var service = hotelServiceRepository.GetById(reservationService.ServiceId);
+				Price += service.Price;
 			}
 			reservation.TotalPrice = Price;
+                 
             reservationRepository.Add(reservation);
 			_unitOfWork.Save();
 		}

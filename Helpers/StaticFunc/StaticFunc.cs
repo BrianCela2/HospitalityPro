@@ -15,7 +15,6 @@ namespace Helpers.StaticFunc
             {
                 receiverId = parsedGuid;
             }
-
             return receiverId;
         }
     }
