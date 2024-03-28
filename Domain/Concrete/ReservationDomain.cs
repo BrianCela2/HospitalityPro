@@ -3,22 +3,15 @@ using AutoMapper;
 using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
-using DTO.HotelServiceDTOs;
-using DTO.ReservationRoomDTOs;
 using DTO.ReservationsDTOS;
 using Entities.Models;
 using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Concrete
 {
-	internal class ReservationDomain :DomainBase, IReservationDomain
+    internal class ReservationDomain :DomainBase, IReservationDomain
 	{
 		public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
 		{
@@ -35,31 +28,38 @@ namespace Domain.Concrete
 			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
 
 			Guid userId = StaticFunc.ConvertGuid(receiverIdClaim);
+
 			if (userId == null) throw new Exception("User not found");
+
 			var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservation.UserId = userId;
 			decimal Price = 0;
+			int Datedifferences = 0;
 
-			foreach(var roomReservation in reservationDto.ReservationRooms)
-			{
+			foreach(var roomReservation in reservationDto.ReservationRooms){
 				var room = roomRepository.GetById(roomReservation.RoomId);
 				Price += room.Price;
                 var roomAvailable = reservationRoomRepository.GetReservationRoomsById(roomReservation.RoomId);
-				foreach(var roomDates in roomAvailable)
-				{
-					if((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate <=roomDates.CheckOutDate)||(roomReservation.CheckOutDate>roomDates.CheckInDate && roomReservation.CheckOutDate<=roomDates.CheckOutDate))
-					{
+
+				foreach(var roomDates in roomAvailable){
+					if((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate <=roomDates.CheckOutDate)||(roomReservation.CheckOutDate>roomDates.CheckInDate && roomReservation.CheckOutDate<=roomDates.CheckOutDate)){
 						throw new Exception("You Reservation can be done because Room is not available");
 					}
-				}
+                    int differenceOfDays = StaticFunc.GetDayDiff(Datedifferences,roomReservation.CheckInDate,roomReservation.CheckOutDate);
+					Datedifferences = differenceOfDays;
+                }
             }
-			foreach(var reservationService in reservationDto.ReservationServices)
-			{
+			foreach(var reservationService in reservationDto.ReservationServices){
 				var service = hotelServiceRepository.GetById(reservationService.ServiceId);
 				Price += service.Price;
 			}
-			reservation.TotalPrice = Price;
-                 
+			if (Datedifferences > 30){
+				reservation.TotalPrice = Price * 0.80m; ;
+			}else if (Datedifferences > 5){
+				reservation.TotalPrice = Price * 0.75m; ;
+			}else{
+				reservation.TotalPrice = Price;
+			}
             reservationRepository.Add(reservation);
 			_unitOfWork.Save();
 		}

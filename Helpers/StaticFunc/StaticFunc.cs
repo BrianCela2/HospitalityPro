@@ -17,5 +17,14 @@ namespace Helpers.StaticFunc
             }
             return receiverId;
         }
+        public static int GetDayDiff(int Datedifference,DateTime checkin, DateTime checkout)
+        {
+           int diffOfDates = (checkout - checkin).Days;
+            if (diffOfDates > Datedifference)
+            {
+                Datedifference = diffOfDates;
+            }
+            return Datedifference;
+        }
     }
 }
