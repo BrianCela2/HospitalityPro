@@ -6,6 +6,7 @@ using Domain.Contracts;
 using DTO.HotelServiceDTOs;
 using DTO.ReservationRoomDTOs;
 using DTO.ReservationsDTOS;
+using DTO.ReservationServiceDTOs;
 using Entities.Models;
 using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Http;
@@ -77,24 +78,48 @@ namespace Domain.Concrete
 
 		public async Task UpdateReservation(UpdateReservationDTO updateReservationDTO)
 		{
+			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+
+			Guid userId = StaticFunc.ConvertGuid(receiverIdClaim);
+			if (userId == null) throw new Exception("User not found");
+			
 			Reservation reservation =  reservationRepository.GetById(updateReservationDTO.ReservationId);
 
 			if (reservation == null)
 			{
 				throw new Exception("Reservation not found");
 			}
-			var mappedReservationRooms = _mapper.Map<ICollection<ReservationRoom>>(updateReservationDTO.ReservationRooms);
-			foreach(var reservationRoom in mappedReservationRooms)
+
+			foreach(var room in updateReservationDTO.ReservationRooms)
 			{
-				reservationRoom.ReservationId = updateReservationDTO.ReservationId;
-				reservationRoomRepository.Update(reservationRoom);
+				var roomReservations = reservationRoomRepository.GetReservationRoomsById(room.RoomId);
+				foreach(var roomReservation in roomReservations)
+				{
+					if ((room.CheckInDate < roomReservation.CheckOutDate && room.CheckInDate >= roomReservation.CheckInDate) ||
+						(room.CheckOutDate > roomReservation.CheckInDate && room.CheckOutDate <= roomReservation.CheckOutDate))
+					{
+						throw new Exception($"Room {room.RoomId} is already reserved for the specified dates.");
+					}
+				}
+				var mappedReservationRoom = _mapper.Map<ReservationRoom>(room);
+				mappedReservationRoom.ReservationId = updateReservationDTO.ReservationId;
+				reservationRoomRepository.Update(mappedReservationRoom);
+				_unitOfWork.Save();
+			}
+
+			foreach (var service in updateReservationDTO.Services)
+			{
+				var mappedReservationService = _mapper.Map<ReservationService>(service);
+				mappedReservationService.ReservationId = updateReservationDTO.ReservationId;
+				reservationServiceRepository.Update(mappedReservationService);
 				_unitOfWork.Save();
 			}
 
 			var mappedReservation = _mapper.Map<Reservation>(updateReservationDTO);
+			mappedReservation.UserId = userId;
 			reservationRepository.Update(mappedReservation);
-
 			_unitOfWork.Save();
+
 		}
 
 	}
