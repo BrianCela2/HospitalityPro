@@ -59,12 +59,12 @@ namespace HospitalityPro.Controllers
         }
     }
 
-		[HttpPut("{id}")]
+		/*[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateReservation(Guid id,UpdateReservationDTO updateReservationDto)
 		{
 			if (id != updateReservationDto.ReservationId) { return NotFound(); }
 			await _reservationDomain.UpdateReservation(updateReservationDto);
 			return NoContent();
-		}
-	}
+		}*/
+	
 }
