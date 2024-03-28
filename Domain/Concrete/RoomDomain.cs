@@ -2,22 +2,21 @@
 using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
+using Domain.Notifications;
 using DTO.RoomDTOs;
-using DTO.RoomPhotoDTOs;
 using Entities.Models;
+using DTO.SearchParametersList;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Domain.Concrete
 {
     internal class RoomDomain : DomainBase, IRoomDomain
     {
-        public RoomDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
+        private readonly IHubContext<NotificationHub> _notificationHubContext;
+        public RoomDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub> notificationHubContext) : base(unitOfWork, mapper, httpContextAccessor)
         {
+            _notificationHubContext = notificationHubContext;
         }
 
         private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
@@ -27,6 +26,13 @@ namespace Domain.Concrete
         {
             var room = _mapper.Map<Room>(createRoomDTO);
             roomRepository.Add(room);
+            //room.ReservationRooms.Add(new ReservationRoom
+            //{
+            //    ReservationId=r
+            //    RoomId = roomId,
+            //    CheckInDate = checkInDate,
+            //    CheckOutDate = checkOutDate
+            //});
             _unitOfWork.Save();
             if (createRoomDTO.Photos != null)
             {
@@ -46,6 +52,7 @@ namespace Domain.Concrete
                     }
                     roomPhotoRepository.Add(roomPhoto);
                 }
+               
                 _unitOfWork.Save();
             }
 
@@ -99,5 +106,24 @@ namespace Domain.Concrete
             _unitOfWork.Save();
 
         }
+        public List<List<RoomDTO>> GetRoomsAvailable(List<SearchParameters> searchParameters)
+        {
+            List<List<RoomDTO>> availableRoomsList = new List<List<RoomDTO>>();
+
+            foreach (var criteria in searchParameters)
+            {
+                List<Room> availableRooms = roomRepository.GetAllRoomsPhoto()
+                    .Where(room => room.Capacity >= criteria.Capacity &&
+                                   !room.ReservationRooms.Any(reservation =>
+                                        !(criteria.CheckOutDate <= reservation.CheckInDate ||
+                                          criteria.CheckInDate >= reservation.CheckOutDate)))
+                    .ToList();
+                var availableRoomsDTO = _mapper.Map<List<RoomDTO>>(availableRooms);
+                availableRoomsList.Add(availableRoomsDTO);
+            }
+            return availableRoomsList;
+        }
+
+       
     }
 }

@@ -1,10 +1,10 @@
 using DI;
 using Domain.Mappings;
+using Domain.Notifications;
 using Entities.Models;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -20,7 +20,7 @@ builder.Services.AddDbContext<HospitalityProContext>(options => { options.UseSql
 
 builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true).AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddJsonOptions(p => p.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
+builder.Services.AddSignalR();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -94,6 +94,8 @@ builder.Host.UseLamar((context, registry) =>
     // add the controllers
 });
 
+builder.Services.AddDistributedMemoryCache();
+
 
 var app = builder.Build();
 
@@ -103,7 +105,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.MapHub<NotificationHub>("/Notify");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
