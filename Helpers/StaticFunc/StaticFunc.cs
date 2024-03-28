@@ -26,5 +26,20 @@ namespace Helpers.StaticFunc
             }
             return Datedifference;
         }
+        public static decimal GetTotalPrice(int Datedifferences,decimal price)
+        {
+            if (Datedifferences > 30)
+            {
+                return price * 0.80m; ;
+            }
+            else if (Datedifferences > 5)
+            {
+                return price * 0.75m; ;
+            }
+            else
+            {
+                return price;
+            }
+        }
     }
 }

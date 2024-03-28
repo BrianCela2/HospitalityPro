@@ -1,5 +1,4 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
@@ -26,13 +25,16 @@ namespace Domain.Concrete
 		{
 
 			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-
-			Guid userId = StaticFunc.ConvertGuid(receiverIdClaim);
-
-			if (userId == null) throw new Exception("User not found");
-
+			Guid userId;
+			if (receiverIdClaim != null){
+				 userId = StaticFunc.ConvertGuid(receiverIdClaim);
+			}else{
+				throw new Exception("User doesn't not exist");
+			}
+			
 			var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservation.UserId = userId;
+
 			decimal Price = 0;
 			int Datedifferences = 0;
 
@@ -49,17 +51,15 @@ namespace Domain.Concrete
 					Datedifferences = differenceOfDays;
                 }
             }
-			foreach(var reservationService in reservationDto.ReservationServices){
-				var service = hotelServiceRepository.GetById(reservationService.ServiceId);
-				Price += service.Price;
+			if (reservationDto.ReservationRooms != null)
+			{
+				foreach (var reservationService in reservationDto.ReservationServices)
+				{
+					var service = hotelServiceRepository.GetById(reservationService.ServiceId);
+					Price += service.Price;
+				}
 			}
-			if (Datedifferences > 30){
-				reservation.TotalPrice = Price * 0.80m; ;
-			}else if (Datedifferences > 5){
-				reservation.TotalPrice = Price * 0.75m; ;
-			}else{
-				reservation.TotalPrice = Price;
-			}
+			reservation.TotalPrice = StaticFunc.GetTotalPrice(Datedifferences, Price);
             reservationRepository.Add(reservation);
 			_unitOfWork.Save();
 		}
@@ -76,19 +76,49 @@ namespace Domain.Concrete
             Reservation reservations = reservationRepository.GetReservation(reservationId);
 			reservationRoomRepository.RemoveRange(reservations.ReservationRooms);
 			_unitOfWork.Save();
+
 			reservationServiceRepository.RemoveRange(reservations.ReservationServices);
             _unitOfWork.Save();
+
             if (reservations == null) throw new Exception();
 			reservationRepository.Remove(reservations);
 			_unitOfWork.Save();
         }
+		public async Task AddExtraService(Guid reservationID,Guid serviceID){
+
+			ReservationService createReservationService = new ReservationService { ReservationId=reservationID,ServiceId = serviceID, DateOfPurchase = DateTime.Now };
+			Reservation reservation = reservationRepository.GetReservation(reservationID);
+			reservation.ReservationServices.Add(createReservationService);
+
+			 HotelService service = hotelServiceRepository.GetById(createReservationService.ServiceId);
+			 reservation.TotalPrice += service.Price;
+
+             reservationRepository.Update(reservation);
+			_unitOfWork.Save();
+		}
         public async Task<ReservationDTO> GetReservationByIdAsync(Guid id)
 		{
 			Reservation reservation = reservationRepository.GetById(id);
-
 			ReservationDTO mapped = _mapper.Map<ReservationDTO>(reservation);
 
 			return mapped;
 		}
-	}
+
+        public IEnumerable<ReservationDTO> GetReservationsOfUser()
+        {
+
+            var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            Guid userId;
+            if (receiverIdClaim != null)
+            {
+                userId = StaticFunc.ConvertGuid(receiverIdClaim);
+            }
+            else
+            {
+                throw new Exception("User doesn't not exist");
+            }
+            IEnumerable<Reservation> reservation = reservationRepository.GetReservationsOfUser(userId);
+            return _mapper.Map<IEnumerable<ReservationDTO>>(reservation);
+        }
+    }
 }

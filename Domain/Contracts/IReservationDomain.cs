@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DTO.ReservationServiceDTOs;
 
 namespace Domain.Contracts
 {
@@ -16,5 +17,7 @@ namespace Domain.Contracts
 		Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync();
 		Task<ReservationDTO> GetReservationByIdAsync(Guid id);
 		Task DeleteReservation(Guid reservationId);
+		Task AddExtraService(Guid ReservationID,Guid serviceId);
+        IEnumerable<ReservationDTO> GetReservationsOfUser();
     }
 }

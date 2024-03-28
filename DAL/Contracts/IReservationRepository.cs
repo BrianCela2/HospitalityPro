@@ -10,6 +10,6 @@ namespace DAL.Contracts
 	public interface IReservationRepository :IRepository<Reservation, Guid>
 	{
         Reservation GetReservation(Guid reservationId);
-
+        IEnumerable<Reservation> GetReservationsOfUser(Guid userID);
     }
 }

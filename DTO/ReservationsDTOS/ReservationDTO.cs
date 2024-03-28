@@ -19,6 +19,6 @@ namespace DTO.ReservationsDTOS
 		public ReservationStatusEnum ReservationStatus { get; set; }
 		public virtual Guid UserId { get; set; }
 		public virtual ICollection<ReservationRoomDTO> ReservationRooms { get; set; } = null!;
-		public virtual ICollection<CreateReservationServiceDTO>? Services { get; set; }
+		public virtual ICollection<CreateReservationServiceDTO>? ReservationServices { get; set; }
 	}
 }
