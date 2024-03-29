@@ -47,6 +47,7 @@ namespace Domain.Mappings
             CreateMap<ReservationService,CreateReservationServiceDTO>().ReverseMap();
             CreateMap<ReservationService,ReservationServiceDTO>().ReverseMap();
             CreateMap<ReservationDTO, UpdateReservationDTO>().ReverseMap();
+            CreateMap<Reservation, UpdateReservationStatusDTO>().ReverseMap();
         }
         #endregion
     }

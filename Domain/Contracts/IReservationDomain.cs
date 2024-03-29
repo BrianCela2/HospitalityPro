@@ -21,6 +21,6 @@ namespace Domain.Contracts
         IEnumerable<ReservationDTO> GetReservationsOfUser();
 		IEnumerable<ReservationDTO> ReservationsWithRoomService();
 		Task UpdateReservation(UpdateReservationDTO updateReservationDTO);
-
+		Task UpdateReservationStatus(UpdateReservationStatusDTO updateReservationDTO);
 	}
 }

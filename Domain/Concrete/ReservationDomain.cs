@@ -119,7 +119,7 @@ namespace Domain.Concrete
 			{
 				throw new Exception("User doesn't not exist");
 			}
-			if(userId == reservationRepository.GetUserIdByReservation(updateReservationDTO.ReservationId))
+			if(userId != reservationRepository.GetUserIdByReservation(updateReservationDTO.ReservationId))
 			{
 				throw new Exception("Wrong user");
 			}
@@ -131,7 +131,7 @@ namespace Domain.Concrete
 
 			foreach(var room in updateReservationDTO.ReservationRooms)
 			{
-				var roomReservations = reservationRoomRepository.GetReservationRoomsById(room.RoomId);
+				var roomReservations = reservationRoomRepository.GetReservationRoomsByIdExcludingCurrentReservation(room.RoomId,updateReservationDTO.ReservationId);
 				foreach(var roomReservation in roomReservations)
 				{
 					if ((room.CheckInDate < roomReservation.CheckOutDate && room.CheckInDate >= roomReservation.CheckInDate) ||
@@ -181,5 +181,13 @@ namespace Domain.Concrete
             var reservationDTO = _mapper.Map<IEnumerable<ReservationDTO>>(reservations);
 			return reservationDTO;
         }
-    }
+
+		public async Task UpdateReservationStatus(UpdateReservationStatusDTO updateReservationDTO)
+		{
+			Reservation reservations = reservationRepository.GetReservation(updateReservationDTO.ReservationId);
+			reservations = _mapper.Map<UpdateReservationStatusDTO,Reservation>(updateReservationDTO,reservations);
+			reservationRepository.Update(reservations);
+			_unitOfWork.Save();
+		}
+	}
 }

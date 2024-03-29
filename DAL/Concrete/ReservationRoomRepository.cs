@@ -1,6 +1,7 @@
 ﻿using DAL.Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using StructureMap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,12 @@ namespace DAL.Concrete
             var reservationRoom = context.Include(x => x.Room).Where(x => x.ReservationId == reservationId).ToList();
             return reservationRoom;
         }
-    }
+		public IEnumerable<ReservationRoom> GetReservationRoomsByIdExcludingCurrentReservation(Guid roomId, Guid reservationIdToExclude)
+		{
+			return context
+				.Where(rr => rr.RoomId == roomId && rr.ReservationId != reservationIdToExclude)
+				.ToList();
+		}
+
+	}
 }

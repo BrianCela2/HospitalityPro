@@ -11,6 +11,7 @@ namespace DAL.Contracts
 	{
 		IEnumerable<ReservationRoom> GetReservationRoomsById(Guid roomId);
 		IEnumerable<ReservationRoom> GetRoomsByReservationId(Guid reservationId);
+		IEnumerable<ReservationRoom> GetReservationRoomsByIdExcludingCurrentReservation(Guid roomId, Guid reservationIdToExclude);
 
-    }
+	}
 }

@@ -97,6 +97,7 @@ namespace Domain.Concrete
             {
                 List<Room> availableRooms = roomRepository.GetAllRoomsPhoto()
                     .Where(room => room.Capacity >= criteria.Capacity &&
+                    room.RoomStatus== 1 &&
                                    !room.ReservationRooms.Any(reservation =>
                                         !(criteria.CheckOutDate <= reservation.CheckInDate ||
                                           criteria.CheckInDate >= reservation.CheckOutDate)))
