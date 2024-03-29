@@ -106,12 +106,23 @@ namespace Domain.Concrete
 
 		public async Task UpdateReservation(UpdateReservationDTO updateReservationDTO)
 		{
-			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-
-			Guid userId = StaticFunc.ConvertGuid(receiverIdClaim);
-			if (userId == null) throw new Exception("User not found");
 			
 			Reservation reservation =  reservationRepository.GetById(updateReservationDTO.ReservationId);
+
+			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+			Guid userId;
+			if (receiverIdClaim != null)
+			{
+				userId = StaticFunc.ConvertGuid(receiverIdClaim);
+			}
+			else
+			{
+				throw new Exception("User doesn't not exist");
+			}
+			if(userId == reservationRepository.GetUserIdByReservation(updateReservationDTO.ReservationId))
+			{
+				throw new Exception("Wrong user");
+			}
 
 			if (reservation == null)
 			{
@@ -128,24 +139,19 @@ namespace Domain.Concrete
 					{
 						throw new Exception($"Room {room.RoomId} is already reserved for the specified dates.");
 					}
-				}
-				var mappedReservationRoom = _mapper.Map<ReservationRoom>(room);
-				mappedReservationRoom.ReservationId = updateReservationDTO.ReservationId;
-				reservationRoomRepository.Update(mappedReservationRoom);
-				_unitOfWork.Save();
+				}				
 			}
-
-			foreach (var service in updateReservationDTO.Services)
+			reservation = _mapper.Map<Reservation>(updateReservationDTO);
+			foreach(var reservationRoom in reservation.ReservationRooms)
 			{
-				var mappedReservationService = _mapper.Map<ReservationService>(service);
-				mappedReservationService.ReservationId = updateReservationDTO.ReservationId;
-				reservationServiceRepository.Update(mappedReservationService);
-				_unitOfWork.Save();
+				reservationRoom.ReservationId = reservation.ReservationId;
+				var room = roomRepository.GetById(reservationRoom.RoomId);
+				reservation.TotalPrice += room.Price;
+				reservationRoomRepository.Update(reservationRoom);
 			}
-
-			var mappedReservation = _mapper.Map<Reservation>(updateReservationDTO);
-			mappedReservation.UserId = userId;
-			reservationRepository.Update(mappedReservation);
+			reservation.UserId= userId;
+			reservation.ReservationStatus = 1;
+			reservationRepository.Update(reservation);
 			_unitOfWork.Save();
 
 		}

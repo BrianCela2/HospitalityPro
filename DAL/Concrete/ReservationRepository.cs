@@ -23,5 +23,10 @@ namespace DAL.Concrete
         {
             return context.Include(x => x.ReservationServices).Include(x => x.ReservationRooms).Where(x => x.UserId == userID).ToList();
         }
-    }
+
+		public Guid GetUserIdByReservation(Guid reservationId)
+		{
+            return (Guid)context.Where(x => x.ReservationId == reservationId).Select(x => x.UserId).FirstOrDefault();
+		}
+	}
 }
