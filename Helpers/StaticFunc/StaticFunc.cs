@@ -30,11 +30,11 @@ namespace Helpers.StaticFunc
         {
             if (Datedifferences > 30)
             {
-                return price * 0.80m; ;
+                return price * 0.75m; ;
             }
             else if (Datedifferences > 5)
             {
-                return price * 0.75m; ;
+                return price * 0.80m; ;
             }
             else
             {

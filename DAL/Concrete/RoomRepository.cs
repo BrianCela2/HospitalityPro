@@ -26,5 +26,10 @@ namespace DAL.Concrete
            var room = context.Where(x => x.RoomId == roomId).Include(x => x.ReservationRooms).FirstOrDefault();
             return room;
         }
+        public decimal GetPriceOfRoom(Guid roomId)
+        {
+            var price = context.Where(x=>x.RoomId ==roomId).Select(x=> x.Price).FirstOrDefault();
+            return price;
+        }
     }
 }
