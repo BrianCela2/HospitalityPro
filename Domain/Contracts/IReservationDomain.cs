@@ -19,5 +19,6 @@ namespace Domain.Contracts
 		Task DeleteReservation(Guid reservationId);
 		Task AddExtraService(Guid ReservationID,Guid serviceId);
         IEnumerable<ReservationDTO> GetReservationsOfUser();
+		IEnumerable<ReservationDTO> ReservationsWithRoomService();
     }
 }

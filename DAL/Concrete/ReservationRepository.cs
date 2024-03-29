@@ -23,5 +23,10 @@ namespace DAL.Concrete
         {
             return context.Include(x => x.ReservationServices).Include(x => x.ReservationRooms).Where(x => x.UserId == userID).ToList();
         }
+
+        public IEnumerable<Reservation> ReservationsWithRoomServices()
+        {
+            return context.Include(x => x.ReservationServices).Include(x => x.ReservationRooms).ToList();
+        }
     }
 }

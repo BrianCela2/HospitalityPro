@@ -74,5 +74,14 @@ namespace HospitalityPro.Controllers
             { return NotFound(); }
             return Ok(reservations);
         }
+        [HttpGet]
+        [Route("GetReservationsWithRooms")]
+        public IActionResult GetReservationWithRooms()
+        {
+            var reservations = _reservationDomain.ReservationsWithRoomService();
+            if (reservations == null)
+            { return NotFound(); }
+            return Ok(reservations);
+        }
     }
 }

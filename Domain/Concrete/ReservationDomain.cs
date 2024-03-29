@@ -90,7 +90,7 @@ namespace Domain.Concrete
 			Reservation reservation = reservationRepository.GetReservation(reservationID);
 			reservation.ReservationServices.Add(createReservationService);
 			 HotelService service = hotelServiceRepository.GetById(createReservationService.ServiceId);
-			 reservation.TotalPrice += service.Price;
+			 reservation.TotalPrice +=  service.Price;
             reservationServiceRepository.Add(createReservationService);
             reservationRepository.Update(reservation);
 			_unitOfWork.Save();
@@ -118,6 +118,14 @@ namespace Domain.Concrete
             }
             IEnumerable<Reservation> reservation = reservationRepository.GetReservationsOfUser(userId);
             return _mapper.Map<IEnumerable<ReservationDTO>>(reservation);
+        }
+
+		public IEnumerable<ReservationDTO> ReservationsWithRoomService()
+		{
+            IEnumerable<Reservation> reservations = reservationRepository.ReservationsWithRoomServices();
+
+            var reservationDTO = _mapper.Map<IEnumerable<ReservationDTO>>(reservations);
+			return reservationDTO;
         }
     }
 }
