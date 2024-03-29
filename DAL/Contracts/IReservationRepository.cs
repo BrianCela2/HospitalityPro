@@ -11,6 +11,7 @@ namespace DAL.Contracts
 	{
         Reservation GetReservation(Guid reservationId);
         IEnumerable<Reservation> GetReservationsOfUser(Guid userID);
+        IEnumerable<Reservation> ReservationsWithRoomServices();
         Guid GetUserIdByReservation(Guid reservationId);
     }
 }

@@ -19,6 +19,9 @@ namespace DAL.Concrete
         {
             return context.Where(x=>x.ReservationId==reservationId).ToList();
         }
-
+        public IEnumerable<ReservationService> GetReservationServicesByServiceId(Guid serviceId)
+        {
+            return context.Where(x => x.ServiceId == serviceId).ToList();
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace DAL.Contracts
     public interface IReservationServiceRepository : IRepository<ReservationService, Guid>
     {
         IEnumerable<ReservationService> GetReservationServicesByReservationId(Guid reservationId);
+        IEnumerable<ReservationService> GetReservationServicesByServiceId(Guid serviceId);
     }
 }
