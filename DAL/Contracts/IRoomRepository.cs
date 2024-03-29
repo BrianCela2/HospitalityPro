@@ -11,5 +11,6 @@ namespace DAL.Contracts
     {
         IEnumerable<Room> GetAllRoomsPhoto();
         Room GetRoomReservations(Guid roomId);
+        decimal GetPriceOfRoom(Guid roomId);
     }
 }

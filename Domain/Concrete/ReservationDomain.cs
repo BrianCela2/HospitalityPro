@@ -3,7 +3,6 @@ using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
 using DTO.ReservationsDTOS;
-using DTO.ReservationServiceDTOs;
 using Entities.Models;
 using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Http;
@@ -37,22 +36,24 @@ namespace Domain.Concrete
 			reservation.UserId = userId;
 
 			decimal Price = 0;
-			int Datedifferences = 0;
+			int DatedifferencesMax = 0;
+			int differenceOfDaysRoom = 0;
 
-			foreach(var roomReservation in reservationDto.ReservationRooms){
+
+            foreach (var roomReservation in reservationDto.ReservationRooms){
 				var room = roomRepository.GetById(roomReservation.RoomId);
-				Price += room.Price;
                 var roomAvailable = reservationRoomRepository.GetReservationRoomsById(roomReservation.RoomId);
 
 				foreach(var roomDates in roomAvailable){
 					if((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate <=roomDates.CheckOutDate)||(roomReservation.CheckOutDate>roomDates.CheckInDate && roomReservation.CheckOutDate<=roomDates.CheckOutDate)){
 						throw new Exception("You Reservation can be done because Room is not available");
 					}
-                    int differenceOfDays = StaticFunc.GetDayDiff(Datedifferences,roomReservation.CheckInDate,roomReservation.CheckOutDate);
-					Datedifferences = differenceOfDays;
+                     differenceOfDaysRoom = StaticFunc.GetDayDiff(DatedifferencesMax,roomReservation.CheckInDate,roomReservation.CheckOutDate);
+					DatedifferencesMax = differenceOfDaysRoom;
                 }
+                Price += room.Price *differenceOfDaysRoom;
             }
-			if (reservationDto.ReservationRooms != null)
+            if (reservationDto.ReservationServices != null)
 			{
 				foreach (var reservationService in reservationDto.ReservationServices)
 				{
@@ -60,7 +61,7 @@ namespace Domain.Concrete
 					Price += service.Price;
 				}
 			}
-			reservation.TotalPrice = StaticFunc.GetTotalPrice(Datedifferences, Price);
+			reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Add(reservation);
 			_unitOfWork.Save();
 		}
@@ -106,7 +107,6 @@ namespace Domain.Concrete
 
 		public async Task UpdateReservation(UpdateReservationDTO updateReservationDTO)
 		{
-			
 			Reservation reservation =  reservationRepository.GetById(updateReservationDTO.ReservationId);
 
 			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
@@ -128,8 +128,10 @@ namespace Domain.Concrete
 			{
 				throw new Exception("Reservation not found");
 			}
-
-			foreach(var room in updateReservationDTO.ReservationRooms)
+            int DatedifferencesMax = 0;
+            int differenceOfDaysRoom = 0;
+			decimal Price = 0;
+            foreach (var room in updateReservationDTO.ReservationRooms)
 			{
 				var roomReservations = reservationRoomRepository.GetReservationRoomsByIdExcludingCurrentReservation(room.RoomId,updateReservationDTO.ReservationId);
 				foreach(var roomReservation in roomReservations)
@@ -139,19 +141,31 @@ namespace Domain.Concrete
 					{
 						throw new Exception($"Room {room.RoomId} is already reserved for the specified dates.");
 					}
-				}				
-			}
-			reservation = _mapper.Map<Reservation>(updateReservationDTO);
+                    differenceOfDaysRoom = StaticFunc.GetDayDiff(DatedifferencesMax, room.CheckInDate, room.CheckOutDate);
+                    DatedifferencesMax = differenceOfDaysRoom;
+                }
+               Price += roomRepository.GetPriceOfRoom(room.RoomId) * differenceOfDaysRoom;
+
+            }
+            reservation = _mapper.Map<Reservation>(updateReservationDTO);
 			foreach(var reservationRoom in reservation.ReservationRooms)
 			{
 				reservationRoom.ReservationId = reservation.ReservationId;
 				var room = roomRepository.GetById(reservationRoom.RoomId);
-				reservation.TotalPrice += room.Price;
+				reservation.TotalPrice += Price;
 				reservationRoomRepository.Update(reservationRoom);
+			}
+			var Reservationservices = reservationServiceRepository.GetReservationServicesByReservationId(reservation.ReservationId);
+
+            foreach (var Reservationservice in Reservationservices )
+			{
+				var service = hotelServiceRepository.GetById(Reservationservice.ServiceId);
+				Price += service.Price;
 			}
 			reservation.UserId= userId;
 			reservation.ReservationStatus = 1;
-			reservationRepository.Update(reservation);
+            reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
+            reservationRepository.Update(reservation);
 			_unitOfWork.Save();
 
 		}

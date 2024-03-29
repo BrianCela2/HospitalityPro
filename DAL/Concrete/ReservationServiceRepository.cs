@@ -1,5 +1,6 @@
 ﻿using DAL.Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace DAL.Concrete
 
         public IEnumerable<ReservationService> GetReservationServicesByReservationId(Guid reservationId)
         {
-            return context.Where(x=>x.ReservationId==reservationId).ToList();
+            return context.Include(x=>x.Service).Where(x=>x.ReservationId==reservationId).ToList();
+            
         }
         public IEnumerable<ReservationService> GetReservationServicesByServiceId(Guid serviceId)
         {

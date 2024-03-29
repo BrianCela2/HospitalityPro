@@ -42,9 +42,10 @@ namespace Domain.Concrete
                     }
                 }
                 room.RoomPhotos = roomPhotoList;
-                roomRepository.Add(room);
-                _unitOfWork.Save();
+               
             }
+            roomRepository.Add(room);
+            _unitOfWork.Save();
         }
         public async Task<RoomDTO> GetRoomByIdAsync(Guid id)
         {
