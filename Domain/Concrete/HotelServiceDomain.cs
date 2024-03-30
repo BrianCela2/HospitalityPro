@@ -52,5 +52,11 @@ namespace Domain.Concrete
             _unitOfWork.Save();
 
         }
+
+        //
+        public int GetServiceUsageCount(Guid serviceId)
+        {
+            return hotelServiceRepository.GetServiceUsageCount(serviceId);
+        }
     }
 }

@@ -16,5 +16,9 @@ namespace Domain.Contracts
 		Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync();
 		Task<ReservationDTO> GetReservationByIdAsync(Guid id);
 
+		//
+		public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate);
+		public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate);
+
     }
 }

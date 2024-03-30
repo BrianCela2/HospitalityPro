@@ -35,5 +35,20 @@ namespace Domain.Concrete
 			var reservationRooms = _mapper.Map<IEnumerable<ReservationRoomDTO>>(rooms);
 			return reservationRooms;
 		}
-	}
+
+        //
+        public int GetRoomOccupancyWithinDateRange(Guid roomId, DateTime startDate, DateTime endDate)
+        {
+            return reservationRoomRepository.GetRoomOccupancyWithinDateRange(roomId, startDate, endDate);
+        }
+
+        ////
+        public IEnumerable<ReservationRoomDTO> GetRoomReservationsWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            var reservations = reservationRoomRepository.GetRoomReservationsWithinDateRange(startDate, endDate);
+            return _mapper.Map<IEnumerable<ReservationRoomDTO>>(reservations);
+        }
+
+
+    }
 }

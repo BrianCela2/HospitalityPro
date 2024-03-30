@@ -11,5 +11,10 @@ namespace Domain.Contracts
 	{
 		Task <IEnumerable<ReservationRoomDTO>> GetAllReservationRoomsAsync();
 		Task<IEnumerable<ReservationRoomDTO>> GetReservationsRoomByRoomId(Guid roomId);
-	}
+
+		//
+		public int GetRoomOccupancyWithinDateRange(Guid roomId, DateTime startDate, DateTime endDate);
+		public IEnumerable<ReservationRoomDTO> GetRoomReservationsWithinDateRange(DateTime startDate, DateTime endDate);
+
+    }
 }

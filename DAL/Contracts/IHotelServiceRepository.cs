@@ -7,6 +7,8 @@ namespace DAL.Contracts
 {
     public interface IHotelServiceRepository:IRepository<HotelService, Guid>
     {
-      
+        //
+        public int GetServiceUsageCount(Guid serviceId);
+
     }
 }

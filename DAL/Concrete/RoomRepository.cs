@@ -21,6 +21,12 @@ namespace DAL.Concrete
             var rooms = context.Include(x => x.RoomPhotos).ToList();
             return rooms;
         }
-		
-	}
+
+        // 
+        public int GetAvailableRoomsCount()
+        {
+            return context.Count();
+        }
+
+    }
 }

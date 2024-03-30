@@ -10,5 +10,8 @@ namespace DAL.Contracts
     public interface IRoomRepository : IRepository<Room, Guid>
     {
         IEnumerable<Room> GetAllRoomsPhoto();
+
+        //
+        public int GetAvailableRoomsCount();
     }
 }

@@ -10,5 +10,9 @@ namespace DAL.Contracts
 	public interface IReservationRepository :IRepository<Reservation, Guid>
 	{
 
-	}
+        //
+        public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate);
+        public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate);
+
+    }
 }

@@ -62,5 +62,11 @@ namespace Domain.Concrete
 				throw new InvalidOperationException("User not found.");
 			}
 		}
-	}
+
+        //
+        public int GetActiveUsersCount()
+        {
+            return userRepository.GetActiveUsersCount();
+        }
+    }
 }

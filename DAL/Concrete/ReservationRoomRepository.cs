@@ -19,5 +19,17 @@ namespace DAL.Concrete
 		{
 			return context.Where(r=> r.RoomId == roomId).ToList();
 		}
-	}
+
+        // 
+        public int GetRoomOccupancyWithinDateRange(Guid roomId, DateTime startDate, DateTime endDate)
+        {
+            return context.Count(r => r.RoomId == roomId && r.CheckInDate >= startDate && r.CheckOutDate <= endDate);
+        }
+
+        public IEnumerable<ReservationRoom> GetRoomReservationsWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return context.Where(r => r.CheckInDate >= startDate && r.CheckOutDate <= endDate).ToList();
+        }
+
+    }
 }

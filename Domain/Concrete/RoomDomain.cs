@@ -124,6 +124,12 @@ namespace Domain.Concrete
             return availableRoomsList;
         }
 
-       
+        //
+        public int GetAvailableRoomsCount()
+        {
+            return roomRepository.GetAvailableRoomsCount();
+        }
+
+
     }
 }

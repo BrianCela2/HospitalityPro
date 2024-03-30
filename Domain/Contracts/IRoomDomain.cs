@@ -18,5 +18,8 @@ namespace Domain.Contracts
         Task DeleteRoom(RoomDTO roomDTO); 
         Task UpdateRoom(UpdateRoomDTO updateRoomDTO);
         List<List<RoomDTO>> GetRoomsAvailable(List<SearchParameters> searchParameters);
+
+        //
+        public int GetAvailableRoomsCount();
     }
 }

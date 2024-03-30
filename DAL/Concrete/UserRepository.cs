@@ -25,5 +25,11 @@ namespace DAL.Concrete
 			var user = context.Where(a => a.Email == email).FirstOrDefault();
 			return user;
 		}
-	}
+
+        // 
+        public int GetActiveUsersCount()
+        {
+            return context.Count(u => (bool)u.IsActive);
+        }
+    }
 }

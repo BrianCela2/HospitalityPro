@@ -14,5 +14,19 @@ namespace DAL.Concrete
 		{
             
         }
+
+        // 
+        public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return context.Count(r => r.ReservationDate >= startDate && r.ReservationDate <= endDate);
+        }
+
+        public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return context.Where(r => r.ReservationDate >= startDate && r.ReservationDate <= endDate)
+                          .Sum(r => r.TotalPrice);
+        }
+
+
     }
 }

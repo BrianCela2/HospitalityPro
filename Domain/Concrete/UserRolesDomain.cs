@@ -53,5 +53,11 @@ namespace Domain.Concrete
             userRolesRepository.Remove(userRoleToRemove);
             _unitOfWork.Save();
         }
+
+        //
+        public int GetRoleUsersCount(int role)
+        {
+            return userRolesRepository.GetRoleUsersCount(role);
+        }
     }
 }

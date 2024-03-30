@@ -61,5 +61,16 @@ namespace Domain.Concrete
 
 			return mapped;
 		}
-	}
+
+        //
+        public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return reservationRepository.GetStaysCountWithinDateRange(startDate, endDate);
+        }
+
+        public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return reservationRepository.GetTotalRevenueWithinDateRange(startDate, endDate);
+        }
+    }
 }
