@@ -2,10 +2,12 @@
 using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
+using DTO.ReservationsDTOS;
 using DTO.UserDTO;
 using Entities.Models;
 using Helpers.Enumerations;
 using Helpers.JWT;
+using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -38,29 +40,22 @@ namespace Domain.Concrete
 			return _mapper.Map<UserDTO>(user);
 		}
 
-		public async Task UpdateUserAsync(Guid userId, UserDTO userDTO)
+		public async Task UpdateUserAsync(UserDTO userDTO)
 		{
-			var userToUpdate =  userRepository.GetById(userId);
-
-			if (userToUpdate != null)
+			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+			Guid userId;
+			if (receiverIdClaim != null)
 			{
-				var user = _mapper.Map<User>(userDTO);
-
-				userRepository.Detach(userToUpdate);
-
-				user.UserId = userId;
-
-				user.Password = userToUpdate.Password;
-				user.Email = userToUpdate.Email;
-
-				userRepository.Update(user);
-
-			    _unitOfWork.Save();
+				userId = StaticFunc.ConvertGuid(receiverIdClaim);
 			}
 			else
 			{
-				throw new InvalidOperationException("User not found.");
+				throw new Exception("User doesn't not exist");
 			}
+			User user = userRepository.GetById(userId);
+			user = _mapper.Map<UserDTO, User>(userDTO, user);
+			userRepository.Update(user);
+			_unitOfWork.Save();
 		}
 	}
 }

@@ -73,12 +73,12 @@ namespace HospitalityPro.Controllers
             }
         }
 
-		[HttpPut("{userId}")]
-		public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UserDTO userDTO)
+		[HttpPut]
+		public async Task<IActionResult> UpdateUser([FromBody] UserDTO userDTO)
 		{
 			try
 			{
-				await _userDomain.UpdateUserAsync(userId, userDTO);
+				await _userDomain.UpdateUserAsync(userDTO);
 				return Ok("User updated successfully");
 			}
 			catch (Exception ex)

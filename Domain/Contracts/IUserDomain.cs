@@ -13,6 +13,6 @@ namespace Domain.Contracts
         IList<UserDTO> GetAllUsers();
         UserDTO GetUserById(Guid id);
         UserDTO GetUserByEmail(string email);
-        Task UpdateUserAsync(Guid userId,UserDTO userDTO);
+        Task UpdateUserAsync(UserDTO userDTO);
 	}
 }
