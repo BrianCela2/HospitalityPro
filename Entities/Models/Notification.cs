@@ -11,6 +11,7 @@ namespace Entities.Models
         public DateTime? SendDateTime { get; set; }
         public string? MessageContent { get; set; }
         public bool? IsSeen { get; set; }
+
         public virtual User Receiver { get; set; } = null!;
         public virtual User? Sender { get; set; }
     }

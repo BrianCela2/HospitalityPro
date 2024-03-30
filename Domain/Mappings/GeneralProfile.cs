@@ -8,6 +8,7 @@ using DTO.RoomPhotoDTOs;
 using DTO.UserDTO;
 using DTO.UserRoles;
 using Entities.Models;
+using DTO.ReservationServiceDTOs;
 
 namespace Domain.Mappings
 {
@@ -31,6 +32,8 @@ namespace Domain.Mappings
 
 			CreateMap<Reservation, ReservationDTO>().ReverseMap();
 			CreateMap<Reservation, CreateReservationDTO>().ReverseMap();
+			CreateMap<Reservation, UpdateReservationDTO>().ReverseMap();
+
 			CreateMap<ReservationRoom, ReservationRoomDTO>().ReverseMap();
 
             CreateMap<HotelService, HotelServiceDTO>().ReverseMap();
@@ -40,6 +43,11 @@ namespace Domain.Mappings
             CreateMap<Notification, NotificationDTO>().ReverseMap();
             CreateMap<Notification, UpdateNotificationDTO>().ReverseMap();
             CreateMap<Notification, CreateNotificationDTO>().ReverseMap();
+
+            CreateMap<ReservationService,CreateReservationServiceDTO>().ReverseMap();
+            CreateMap<ReservationService,ReservationServiceDTO>().ReverseMap();
+            CreateMap<ReservationDTO, UpdateReservationDTO>().ReverseMap();
+            CreateMap<Reservation, UpdateReservationStatusDTO>().ReverseMap();
         }
         #endregion
     }

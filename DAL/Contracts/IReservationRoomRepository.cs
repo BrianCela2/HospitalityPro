@@ -10,8 +10,10 @@ namespace DAL.Contracts
 	public interface IReservationRoomRepository : IRepository<ReservationRoom, Guid>
 	{
 		IEnumerable<ReservationRoom> GetReservationRoomsById(Guid roomId);
+		IEnumerable<ReservationRoom> GetRoomsByReservationId(Guid reservationId);
+		IEnumerable<ReservationRoom> GetReservationRoomsByIdExcludingCurrentReservation(Guid roomId, Guid reservationIdToExclude);
 
-        //
+
         public int GetRoomOccupancyWithinDateRange(Guid roomId, DateTime startDate, DateTime endDate);
 
         public IEnumerable<ReservationRoom> GetRoomReservationsWithinDateRange(DateTime startDate, DateTime endDate);

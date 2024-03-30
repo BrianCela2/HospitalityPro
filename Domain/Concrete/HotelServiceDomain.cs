@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿
 using AutoMapper;
 using DAL.Contracts;
 using DAL.UoW;
@@ -18,7 +16,7 @@ namespace Domain.Concrete
         {
         }
         private IHotelServiceRepository hotelServiceRepository => _unitOfWork.GetRepository<IHotelServiceRepository>();
-
+        private IReservationServiceRepository reservationServiceRepository => _unitOfWork.GetRepository<IReservationServiceRepository>();
         public async Task<IEnumerable<HotelServiceDTO>> GetAllHotelServicesAsync()
         {
             var hotelServices =  hotelServiceRepository.GetAll();
@@ -48,6 +46,8 @@ namespace Domain.Concrete
 
         public async Task DeleteHotelServiceAsync(Guid id)
         {
+            var hotelService = reservationServiceRepository.GetReservationServicesByServiceId(id);
+            reservationServiceRepository.RemoveRange(hotelService);
             hotelServiceRepository.Remove(id);
             _unitOfWork.Save();
 

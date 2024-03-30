@@ -16,13 +16,26 @@ namespace DAL.Concrete
         public RoomRepository(HospitalityProContext dbContext) : base(dbContext)
         {
         }
+
         public IEnumerable<Room> GetAllRoomsPhoto()
         {
             var rooms = context.Include(x => x.RoomPhotos).ToList();
             return rooms;
         }
 
-        // 
+        public Room GetRoomReservations(Guid roomId)
+        {
+           var room = context.Where(x => x.RoomId == roomId).Include(x => x.ReservationRooms).FirstOrDefault();
+            return room;
+        }
+
+        public decimal GetPriceOfRoom(Guid roomId)
+        {
+            var price = context.Where(x=>x.RoomId ==roomId).Select(x=> x.Price).FirstOrDefault();
+            return price;
+        }
+
+         
         public int GetAvailableRoomsCount()
         {
             return context.Count();

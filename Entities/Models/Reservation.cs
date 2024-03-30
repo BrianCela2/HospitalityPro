@@ -8,7 +8,7 @@ namespace Entities.Models
         public Reservation()
         {
             ReservationRooms = new HashSet<ReservationRoom>();
-            Services = new HashSet<HotelService>();
+            ReservationServices = new HashSet<ReservationService>();
         }
 
         public Guid ReservationId { get; set; }
@@ -19,7 +19,6 @@ namespace Entities.Models
 
         public virtual User? User { get; set; }
         public virtual ICollection<ReservationRoom> ReservationRooms { get; set; }
-
-        public virtual ICollection<HotelService> Services { get; set; }
+        public virtual ICollection<ReservationService> ReservationServices { get; set; }
     }
 }

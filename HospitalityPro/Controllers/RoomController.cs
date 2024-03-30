@@ -1,9 +1,7 @@
-﻿using AutoMapper.Configuration.Conventions;
-using Domain.Contracts;
+﻿using Domain.Contracts;
 using DTO.RoomDTOs;
-using DTO.RoomPhotoDTOs;
 using DTO.SearchParametersList;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalityPro.Controllers
@@ -20,27 +18,71 @@ namespace HospitalityPro.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> AddRoom([FromForm] CreateRoomDTO createRoomDTO)
         {
-            if (createRoomDTO == null) { return NotFound(); }
-            await _roomDomain.AddRoomAsync(createRoomDTO);
-            return NoContent();
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+                if (createRoomDTO == null)
+                {
+                    return NotFound();
+                }
+                await _roomDomain.AddRoomAsync(createRoomDTO);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }     
         }
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<RoomDTO>))]
         public async Task<IActionResult> GetAll()
         {
-            var rooms = await _roomDomain.GetAllRoomAsync();
-            if (rooms == null) { return NotFound(); }
-            return Ok(rooms);
+            try
+            {
+                if(!ModelState.IsValid) { 
+                    return BadRequest();
+                }
+                var rooms = await _roomDomain.GetAllRoomAsync();
+                if (rooms == null) { 
+                    return NotFound(); 
+                }
+                return Ok(rooms);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+          
         }
         [HttpGet("{id}")]
         [ProducesResponseType(200, Type = typeof(RoomDTO))]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var room = await _roomDomain.GetRoomByIdAsync(id);
-            if (room == null) { return NotFound(); }
-            return Ok(room);
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+                var room = await _roomDomain.GetRoomByIdAsync(id);
+                if (room == null)
+                {
+                    return NotFound();
+                }
+                return Ok(room);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+            
         }
         [HttpGet]
         public IActionResult GetRoomPhotos()
@@ -50,6 +92,7 @@ namespace HospitalityPro.Controllers
             return Ok(rooms);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRoom(Guid id)
         {
             if (ModelState.IsValid)
@@ -66,10 +109,22 @@ namespace HospitalityPro.Controllers
             }
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateRoom(Guid id, [FromForm] UpdateRoomDTO updateRoomDto)
         {
             if (id != updateRoomDto.RoomId) { return NotFound(); }
             await _roomDomain.UpdateRoom(updateRoomDto);
+            return NoContent();
+        }
+
+        [HttpPut("{id}/{status}")]
+        [Authorize(Roles = "Admin")]
+
+        public async Task<IActionResult> UpdateRoom(Guid id,int status)
+        {
+            var room = await _roomDomain.GetRoomByIdAsync(id);
+            if (id != room.RoomId) { return NotFound(); }
+            await _roomDomain.UpdateRoomStatus(status, room);
             return NoContent();
         }
 

@@ -15,8 +15,31 @@ namespace Helpers.StaticFunc
             {
                 receiverId = parsedGuid;
             }
-
             return receiverId;
+        }
+        public static int GetDayDiff(int Datedifference,DateTime checkin, DateTime checkout)
+        {
+           int diffOfDates = (checkout - checkin).Days;
+            if (diffOfDates > Datedifference)
+            {
+                Datedifference = diffOfDates;
+            }
+            return Datedifference;
+        }
+        public static decimal GetTotalPrice(int Datedifferences,decimal price)
+        {
+            if (Datedifferences > 30)
+            {
+                return price * 0.75m; ;
+            }
+            else if (Datedifferences > 5)
+            {
+                return price * 0.80m; ;
+            }
+            else
+            {
+                return price;
+            }
         }
     }
 }
