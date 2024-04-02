@@ -15,10 +15,12 @@ namespace DAL.Concrete
 		{
             
         }
+
         public Reservation GetReservation(Guid reservationId)
         {
             return context.Include(x => x.ReservationServices).Include(x => x.ReservationRooms).Where(x => x.ReservationId == reservationId).FirstOrDefault();
         }
+
         public IEnumerable<Reservation> GetReservationsOfUser(Guid userID)
         {
             return context.Include(x => x.ReservationServices).Include(x => x.ReservationRooms).Where(x => x.UserId == userID).ToList();
@@ -33,5 +35,18 @@ namespace DAL.Concrete
 		{
             return (Guid)context.Where(x => x.ReservationId == reservationId).Select(x => x.UserId).FirstOrDefault();
 		}
-	}
+	 
+        public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return context.Count(r => r.ReservationDate >= startDate && r.ReservationDate <= endDate);
+        }
+
+        public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return context.Where(r => r.ReservationDate >= startDate && r.ReservationDate <= endDate)
+                          .Sum(r => r.TotalPrice);
+        }
+
+
+    }
 }

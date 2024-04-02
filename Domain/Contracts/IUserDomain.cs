@@ -14,5 +14,9 @@ namespace Domain.Contracts
         UserDTO GetUserById(Guid id);
         UserDTO GetUserByEmail(string email);
         Task UpdateUserAsync(UserDTO userDTO);
-	}
+
+        //
+        public int GetActiveUsersCount();
+
+    }
 }

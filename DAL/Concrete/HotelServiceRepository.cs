@@ -13,5 +13,12 @@ namespace DAL.Concrete
         public HotelServiceRepository(HospitalityProContext dbContext) : base(dbContext)
         {
         }
+
+        // 
+        public int GetServiceUsageCount(Guid serviceId)
+        {
+            return context.Count(s => s.ServiceId == serviceId);
+        }
+
     }
 }

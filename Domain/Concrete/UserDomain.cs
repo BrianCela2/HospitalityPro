@@ -57,5 +57,11 @@ namespace Domain.Concrete
 			userRepository.Update(user);
 			_unitOfWork.Save();
 		}
-	}
+
+        //
+        public int GetActiveUsersCount()
+        {
+            return userRepository.GetActiveUsersCount();
+        }
+    }
 }

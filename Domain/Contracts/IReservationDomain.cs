@@ -22,5 +22,9 @@ namespace Domain.Contracts
 		IEnumerable<ReservationDTO> ReservationsWithRoomService();
 		Task UpdateReservation(UpdateReservationDTO updateReservationDTO);
 		Task UpdateReservationStatus(UpdateReservationStatusDTO updateReservationDTO);
-	}
+	
+		public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate);
+		public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate);
+
+    }
 }

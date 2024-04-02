@@ -65,6 +65,7 @@ namespace Domain.Concrete
             reservationRepository.Add(reservation);
 			_unitOfWork.Save();
 		}
+
 		public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
 		{
 			IEnumerable<Reservation> reservations = reservationRepository.GetAll();
@@ -73,6 +74,7 @@ namespace Domain.Concrete
 
 			return mapped;
 		}
+
         public async Task DeleteReservation(Guid reservationId)
         {
             Reservation reservations = reservationRepository.GetReservation(reservationId);
@@ -86,6 +88,7 @@ namespace Domain.Concrete
 			reservationRepository.Remove(reservations);
 			_unitOfWork.Save();
         }
+
 		public async Task AddExtraService(Guid reservationID,Guid serviceID){
 
 			ReservationService createReservationService = new ReservationService { ReservationId=reservationID,ServiceId = serviceID, DateOfPurchase = DateTime.Now };
@@ -97,6 +100,7 @@ namespace Domain.Concrete
             reservationRepository.Update(reservation);
 			_unitOfWork.Save();
 		}
+
         public async Task<ReservationDTO> GetReservationByIdAsync(Guid id)
 		{
 			Reservation reservation = reservationRepository.GetById(id);
@@ -203,5 +207,15 @@ namespace Domain.Concrete
 			reservationRepository.Update(reservations);
 			_unitOfWork.Save();
 		}
-	}
+	
+        public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return reservationRepository.GetStaysCountWithinDateRange(startDate, endDate);
+        }
+
+        public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            return reservationRepository.GetTotalRevenueWithinDateRange(startDate, endDate);
+        }
+    }
 }

@@ -47,6 +47,7 @@ namespace Domain.Concrete
             roomRepository.Add(room);
             _unitOfWork.Save();
         }
+
         public async Task<RoomDTO> GetRoomByIdAsync(Guid id)
         {
             var room = roomRepository.GetById(id);
@@ -67,6 +68,7 @@ namespace Domain.Concrete
             var roomsDTO = _mapper.Map<IEnumerable<RoomDTO>>(rooms);
             return roomsDTO;
         }
+
         public async Task DeleteRoom(RoomDTO roomDTO)
         {
             Room room = _mapper.Map<Room>(roomDTO);
@@ -91,6 +93,7 @@ namespace Domain.Concrete
             roomRepository.Update(room);
             _unitOfWork.Save();
         }
+
         public List<List<RoomDTO>> GetRoomsAvailable(List<SearchParameters> searchParameters)
         {
             List<List<RoomDTO>> availableRoomsList = new List<List<RoomDTO>>();
@@ -108,6 +111,7 @@ namespace Domain.Concrete
             }
             return availableRoomsList;
         }
+
         public async Task UpdateRoomStatus(int status ,RoomDTO roomDTO)
         {
             var room = _mapper.Map<Room>(roomDTO);
@@ -123,5 +127,12 @@ namespace Domain.Concrete
                 throw new Exception();
             }
         }
+
+        public int GetAvailableRoomsCount()
+        {
+            return roomRepository.GetAvailableRoomsCount();
+        }
+
+
     }
 }

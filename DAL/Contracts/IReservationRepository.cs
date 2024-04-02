@@ -13,5 +13,9 @@ namespace DAL.Contracts
         IEnumerable<Reservation> GetReservationsOfUser(Guid userID);
         IEnumerable<Reservation> ReservationsWithRoomServices();
         Guid GetUserIdByReservation(Guid reservationId);
+    
+        public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate);
+        public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate);
+
     }
 }

@@ -11,5 +11,8 @@ namespace Domain.Contracts
         Task<IEnumerable<HotelServiceDTO>> GetAllHotelServicesAsync();
         Task UpdateHotelServiceAsync(UpdateHotelServiceDTO hotelServiceDTO);
         Task DeleteHotelServiceAsync(Guid id);
+
+        //
+        public int GetServiceUsageCount(Guid serviceId);
     }
 }

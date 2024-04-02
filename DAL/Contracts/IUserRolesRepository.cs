@@ -12,5 +12,9 @@ namespace DAL.Contracts
 		List<UserRole> GetUserRolesById(Guid userId);
 		UserRole GetUserRole(Guid userId, int role);
 
-	}
+		//
+		public int GetRoleUsersCount(int role);
+
+
+    }
 }
