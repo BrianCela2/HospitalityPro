@@ -16,7 +16,7 @@ namespace Domain.Notifications
         }
         public async Task SendNotificationAllUsers(string message)
         {
-            await Clients.All.SendAsync("ReceiveNotificationAllUsers", message);
+            await Clients.All.SendAsync("ReceiveNotificationAllUser", message);
         }
     }
 }
