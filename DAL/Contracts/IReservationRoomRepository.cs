@@ -12,8 +12,7 @@ namespace DAL.Contracts
 		IEnumerable<ReservationRoom> GetReservationRoomsById(Guid roomId);
 		IEnumerable<ReservationRoom> GetRoomsByReservationId(Guid reservationId);
 		IEnumerable<ReservationRoom> GetReservationRoomsByIdExcludingCurrentReservation(Guid roomId, Guid reservationIdToExclude);
-
-
+		IEnumerable<ReservationRoom> GetReservationByRoom(Guid roomId);
         public int GetRoomOccupancyWithinDateRange(Guid roomId, DateTime startDate, DateTime endDate);
 
         public IEnumerable<ReservationRoom> GetRoomReservationsWithinDateRange(DateTime startDate, DateTime endDate);

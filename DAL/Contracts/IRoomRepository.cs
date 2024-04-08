@@ -12,7 +12,7 @@ namespace DAL.Contracts
         IEnumerable<Room> GetAllRoomsPhoto();
         Room GetRoomReservations(Guid roomId);
         decimal GetPriceOfRoom(Guid roomId);
-
+        Room GetRoomWithPhotos(Guid roomId);
         public int GetAvailableRoomsCount();
     }
 }

@@ -20,6 +20,7 @@ namespace Domain.Concrete
         }
 
         private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
+        private IReservationRoomRepository roomReservationRepository => _unitOfWork.GetRepository<IReservationRoomRepository>();
         private IRoomPhotoRepository roomPhotoRepository => _unitOfWork.GetRepository<IRoomPhotoRepository>();
 
         public async Task AddRoomAsync(CreateRoomDTO createRoomDTO)
@@ -68,25 +69,50 @@ namespace Domain.Concrete
             var roomsDTO = _mapper.Map<IEnumerable<RoomDTO>>(rooms);
             return roomsDTO;
         }
-
+        public RoomDTO GetRoomWithPhoto(Guid id)
+        {
+            var room = roomRepository.GetRoomWithPhotos(id);
+            if (room == null)
+            {
+                throw new Exception($"Room with ID {id} not found");
+            }
+            return _mapper.Map<RoomDTO>(room);
+        }
         public async Task DeleteRoom(RoomDTO roomDTO)
         {
             Room room = _mapper.Map<Room>(roomDTO);
+
+            if (!roomRepository.IsDetached(room))
+            {
+                roomRepository.Detach(room);
+            }
+
             IEnumerable<RoomPhoto> roomPhotos = roomPhotoRepository.roomPhotos(room.RoomId);
             if (roomPhotos.Any())
             {
                 roomPhotoRepository.RemoveRange(roomPhotos);
+                _unitOfWork.Save();
             }
+
+            IEnumerable<ReservationRoom> roomReservations = roomReservationRepository.GetReservationByRoom(room.RoomId);
+            if (roomReservations.Any())
+            {
+                roomReservationRepository.RemoveRange(roomReservations);
+                _unitOfWork.Save();
+            }
+
             if (room != null)
             {
                 roomRepository.Remove(room);
-                _unitOfWork.Save();
+                _unitOfWork.Save(); 
             }
             else
             {
-                throw new NotImplementedException();
+                throw new ArgumentNullException(nameof(room));
             }
         }
+
+
         public async Task UpdateRoom(UpdateRoomDTO updateroomDTO)
         {
             var room = _mapper.Map<Room>(updateroomDTO);

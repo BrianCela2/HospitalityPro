@@ -1,5 +1,6 @@
 ﻿using DAL.Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace DAL.Concrete
         }
         public IEnumerable<RoomPhoto> roomPhotos(Guid roomid)
         {
-            var roomPhotos = context.Where(x=>x.RoomId==roomid).ToList();
+            var roomPhotos = context.Where(x=>x.RoomId==roomid).AsNoTracking().ToList();
             return roomPhotos;
         }
     }

@@ -18,7 +18,6 @@ namespace HospitalityPro.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> AddRoom([FromForm] CreateRoomDTO createRoomDTO)
         {
 
@@ -84,6 +83,29 @@ namespace HospitalityPro.Controllers
             }
             
         }
+        [HttpGet("{id}")]
+        [ProducesResponseType(200, Type = typeof(RoomDTO))]
+        public IActionResult GetRoom(Guid id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+                var room =  _roomDomain.GetRoomWithPhoto(id);
+                if (room == null)
+                {
+                    return NotFound();
+                }
+                return Ok(room);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+
+        }
         [HttpGet]
         public IActionResult GetRoomPhotos()
         {
@@ -92,7 +114,6 @@ namespace HospitalityPro.Controllers
             return Ok(rooms);
         }
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRoom(Guid id)
         {
             if (ModelState.IsValid)
@@ -109,7 +130,6 @@ namespace HospitalityPro.Controllers
             }
         }
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateRoom(Guid id, [FromForm] UpdateRoomDTO updateRoomDto)
         {
             if (id != updateRoomDto.RoomId) { return NotFound(); }
