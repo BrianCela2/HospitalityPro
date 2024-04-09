@@ -137,10 +137,8 @@ namespace HospitalityPro.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}/{status}")]
-        [Authorize(Roles = "Admin")]
-
-        public async Task<IActionResult> UpdateRoom(Guid id,int status)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStatus(Guid id,[FromQuery]int status)
         {
             var room = await _roomDomain.GetRoomByIdAsync(id);
             if (id != room.RoomId) { return NotFound(); }
