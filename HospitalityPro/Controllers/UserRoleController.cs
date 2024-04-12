@@ -61,7 +61,7 @@ namespace HospitalityPro.Controllers
 
 		[HttpGet]
 		[Route("getUserRoles")]
-		public IActionResult GetAllUsers()
+		public IActionResult GetAllUserRoles()
 		{
 			try
 			{
@@ -86,5 +86,33 @@ namespace HospitalityPro.Controllers
 				return StatusCode(500, ex);
 			}
 		}
+		[HttpGet]
+		[Route("getUserRoleDetails")]
+		public IActionResult GetAllUserRoleDetails()
+		{
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest();
+				}
+
+				var userRoles = _userRolesDomain.GetUserRoleDetailsAsync();
+
+				if (userRoles != null)
+				{
+					return Ok(userRoles);
+				}
+				else
+				{
+					return NotFound();
+				}
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex);
+			}
+		}
+
 	}
 }
