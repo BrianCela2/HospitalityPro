@@ -22,6 +22,7 @@ namespace HospitalityPro.Controllers
             _userDomain = userDomain;
         }
 
+        [Authorize]
 		[HttpGet]
         [Route("getAllUsers")]
         public IActionResult GetAllUsers()
@@ -83,7 +84,7 @@ namespace HospitalityPro.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(500, "Internal server error: " + ex.Message);
+				return StatusCode(500, "Internal server error: " + ex);
 			}
 		}
 

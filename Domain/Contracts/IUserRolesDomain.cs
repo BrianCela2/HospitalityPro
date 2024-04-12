@@ -10,6 +10,7 @@ namespace Domain.Contracts
 {
 	public interface IUserRolesDomain
 	{
+		Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync();
 		Task<List<UserRoleDTO>> GetUserRoleById(Guid userId);
 		Task AddRoleToUser(UserRoleDTO userRoleDto);
 		Task RemoveUserRole(Guid userId, int roleId);

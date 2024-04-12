@@ -54,6 +54,14 @@ namespace Domain.Concrete
             _unitOfWork.Save();
         }
 
+        public async Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync()
+        {
+
+			IEnumerable<UserRole> userRole = userRolesRepository.GetAll();
+			var userRoles = _mapper.Map<IList<UserRoleDTO>>(userRole);
+			return userRoles;
+		}
+
         //
         public int GetRoleUsersCount(int role)
         {
