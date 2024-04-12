@@ -35,7 +35,7 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddReservation([FromBody] CreateReservationDTO reservationDTO)
+		public async Task<IActionResult> AddReservation( CreateReservationDTO reservationDTO)
 		{
 			if (reservationDTO == null) { return NotFound(); }
 			await _reservationDomain.AddReservationAsync(reservationDTO);

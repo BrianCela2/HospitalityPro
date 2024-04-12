@@ -42,7 +42,7 @@ namespace Domain.Concrete
                
                 var notification = _mapper.Map<Notification>(Createnotification);
                 notification.ReceiverId = user.UserId;
-                notification.SenderId = receiverId;
+                notification.SenderId=receiverId;
                 notifications.Add(notification);
             }
 

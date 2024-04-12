@@ -23,16 +23,18 @@ namespace Domain.Concrete
 
         public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
+            var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            Guid userId;
+            if (receiverIdClaim != null)
+            {
+                userId = StaticFunc.ConvertGuid(receiverIdClaim);
+            }
+            else
+            {
+                throw new Exception("User doesn't not exist");
+            }
 
-			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-			Guid userId;
-			if (receiverIdClaim != null){
-				 userId = StaticFunc.ConvertGuid(receiverIdClaim);
-			}else{
-				throw new Exception("User doesn't not exist");
-			}
-			
-			var reservation = _mapper.Map<Reservation>(reservationDto);
+            var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservation.UserId = userId;
 
 			decimal Price = 0;
