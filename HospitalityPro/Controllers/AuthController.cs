@@ -23,17 +23,7 @@ namespace HospitalityPro.Controllers
 		[HttpPost("register")]
 		public async Task<IActionResult> Register([FromBody] RegisterDTO request)
 		{
-			if (String.IsNullOrEmpty(request.FirstName)
-				|| String.IsNullOrEmpty(request.LastName)
-				|| String.IsNullOrEmpty(request.Password)
-				|| String.IsNullOrEmpty(request.Email)
-				|| String.IsNullOrEmpty(request.PhoneNumber)
-				|| String.IsNullOrEmpty(request.City)
-				|| String.IsNullOrEmpty(request.Country))
-			{
-				return BadRequest(new { message = "All fields are required" });
-			}
-
+			
 			try
 			{
 				await _authDomain.Register(request);

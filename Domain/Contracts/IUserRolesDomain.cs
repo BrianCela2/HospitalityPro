@@ -1,4 +1,5 @@
 ﻿using DTO.RoomPhotoDTOs;
+using DTO.UserRoleDTO;
 using DTO.UserRoles;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ namespace Domain.Contracts
 {
 	public interface IUserRolesDomain
 	{
+		Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync();
+		Task<IEnumerable<UserRoleDetailDTO>> GetUserRoleDetailsAsync();
 		Task<List<UserRoleDTO>> GetUserRoleById(Guid userId);
 		Task AddRoleToUser(UserRoleDTO userRoleDto);
 		Task RemoveUserRole(Guid userId, int roleId);

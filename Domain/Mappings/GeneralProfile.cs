@@ -9,6 +9,7 @@ using DTO.UserDTO;
 using DTO.UserRoles;
 using Entities.Models;
 using DTO.ReservationServiceDTOs;
+using DTO.UserRoleDTO;
 
 namespace Domain.Mappings
 {
@@ -21,8 +22,9 @@ namespace Domain.Mappings
             CreateMap<User, RegisterDTO>().ReverseMap();
             CreateMap<User, LoginDTO>().ReverseMap();
             CreateMap<UserRole, UserRoleDTO>().ReverseMap();
+			CreateMap<UserRole, UserRoleDetailDTO>().ReverseMap();
 
-            CreateMap<RoomPhoto, CreateRoomPhotoDTO>().ReverseMap();
+			CreateMap<RoomPhoto, CreateRoomPhotoDTO>().ReverseMap();
             CreateMap<RoomPhoto, RoomPhotoDTO>().ReverseMap();
             CreateMap<RoomPhoto, UpdateRoomPhotoDTO>().ReverseMap();
 

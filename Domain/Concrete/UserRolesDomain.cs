@@ -2,8 +2,10 @@
 using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
+using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
 using DTO.UserDTO;
+using DTO.UserRoleDTO;
 using DTO.UserRoles;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +23,8 @@ namespace Domain.Concrete
         {
         }
 
-        private IUserRolesRepository userRolesRepository => _unitOfWork.GetRepository<IUserRolesRepository>();
+		private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
+		private IUserRolesRepository userRolesRepository => _unitOfWork.GetRepository<IUserRolesRepository>();
 
         public async Task AddRoleToUser(UserRoleDTO userRoleDto)
         {
@@ -54,10 +57,31 @@ namespace Domain.Concrete
             _unitOfWork.Save();
         }
 
+        public async Task<IEnumerable<UserRoleDTO>> GetUserRolesAsync()
+        {
+
+			IEnumerable<UserRole> userRole = userRolesRepository.GetAll();
+			var userRoles = _mapper.Map<IList<UserRoleDTO>>(userRole);
+			return userRoles;
+		}
+
         //
         public int GetRoleUsersCount(int role)
         {
             return userRolesRepository.GetRoleUsersCount(role);
         }
-    }
+
+		public async Task<IEnumerable<UserRoleDetailDTO>> GetUserRoleDetailsAsync()
+		{
+			IEnumerable<UserRole> userRoles = userRolesRepository.GetAll();
+			var mappedUserRoles = _mapper.Map<IEnumerable<UserRoleDetailDTO>>(userRoles);
+			foreach (var userRole in mappedUserRoles)
+            {
+				var user = userRepository.GetById(userRole.UserId);
+                userRole.FirstName = user.FirstName;
+                userRole.LastName = user.LastName;
+			}
+            return mappedUserRoles;
+		}
+	}
 }
