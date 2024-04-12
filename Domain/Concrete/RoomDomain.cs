@@ -141,11 +141,11 @@ namespace Domain.Concrete
         public async Task UpdateRoomStatus(int status ,RoomDTO roomDTO)
         {
             var room = _mapper.Map<Room>(roomDTO);
-            room.RoomStatus = status;
             if (status == room.RoomStatus){
                 throw new Exception("Room is in that status already");
             }
             else if (status >= 1 && status <= 4){
+                room.RoomStatus = status;
                 roomRepository.Update(room);
                 _unitOfWork.Save();
             }
