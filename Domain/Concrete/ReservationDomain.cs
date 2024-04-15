@@ -2,18 +2,24 @@
 using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
+using Domain.Notifications;
+using DTO.NotificationDTOs;
 using DTO.ReservationsDTOS;
 using Entities.Models;
 using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace Domain.Concrete
 {
     internal class ReservationDomain :DomainBase, IReservationDomain
 	{
-		public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
+        private readonly IHubContext<NotificationHub> _notificationHubContext;
+
+        public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,IHubContext<NotificationHub> notificationHubContext) : base(unitOfWork, mapper, httpContextAccessor)
 		{
+			_notificationHubContext = notificationHubContext;
 		}
         private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
         private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
@@ -47,12 +53,13 @@ namespace Domain.Concrete
                 var roomAvailable = reservationRoomRepository.GetReservationRoomsById(roomReservation.RoomId);
 
 				foreach(var roomDates in roomAvailable){
-					if((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate <=roomDates.CheckOutDate)||(roomReservation.CheckOutDate>roomDates.CheckInDate && roomReservation.CheckOutDate<=roomDates.CheckOutDate)){
+					if ((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate <= roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate))
+					{
 						throw new Exception("You Reservation can be done because Room is not available");
 					}
-                     differenceOfDaysRoom = StaticFunc.GetDayDiff(DatedifferencesMax,roomReservation.CheckInDate,roomReservation.CheckOutDate);
-					DatedifferencesMax = differenceOfDaysRoom;
                 }
+                differenceOfDaysRoom = StaticFunc.GetDayDiff(DatedifferencesMax, roomReservation.CheckInDate, roomReservation.CheckOutDate);
+                DatedifferencesMax = differenceOfDaysRoom;
                 Price += room.Price *differenceOfDaysRoom;
             }
             if (reservationDto.ReservationServices != null)
@@ -65,7 +72,12 @@ namespace Domain.Concrete
 			}
 			reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Add(reservation);
-			_unitOfWork.Save();
+            var notification = new CreateNotificationDTO { };
+            notification.ReceiverId = reservation.UserId;
+            notification.MessageContent = " Reservimi u krye me sukses";
+            notification.SendDateTime = DateTime.Now;
+            await _notificationHubContext.Clients.User(notification.ReceiverId.ToString()).SendAsync("ReceiveNotification", userId, notification);
+            _unitOfWork.Save();
 		}
 
 		public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()

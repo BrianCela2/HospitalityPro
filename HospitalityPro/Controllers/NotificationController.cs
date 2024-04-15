@@ -5,6 +5,7 @@ using DTO.RoomDTOs;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.VisualBasic;
 using System.Security.Claims;
 
 namespace HospitalityPro.Controllers
@@ -97,16 +98,19 @@ namespace HospitalityPro.Controllers
             }
             return BadRequest();
         }
-        [HttpPut("NotificationsSeen")]
-        public ActionResult NotificationSeen()
+        [HttpPut("NotificationsSeen/{userId}")]
+        public async Task<IActionResult> ChangeNotificationToSeen(string userId)
         {
-            var unseenNotifications = _notificationDomain.NotificationsUnSeen();
-            foreach (var notification in unseenNotifications)
+            if (userId != null)
             {
-                notification.IsSeen = true;
-                _notificationDomain.UpdateNotificationAsync(notification);
+                await _notificationDomain.UpdateNotificationToSeen(userId);
+                return NoContent();
             }
-            return Ok();
+            else
+            {
+                throw new Exception();
+            }
         }
+
     }
 }
