@@ -10,8 +10,8 @@ namespace DTO.NotificationDTOs
     {
         public Guid? ReceiverId { get; set; }
         public Guid? SenderId { get; set; }
-        public DateTime? SendDateTime { get; set; }
+        public DateTime? SendDateTime { get; set; } = DateTime.Now;
         public string MessageContent { get; set; } = null!;
-        public bool? IsSeen { get; set; }
+        public bool? IsSeen { get; set; } = false;
     }
 }

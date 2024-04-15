@@ -15,7 +15,6 @@ namespace Domain.Concrete
     {
         private  IHubContext<NotificationHub> _notificationHubContext;
 
-
         public NotificationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub> notificationHubContext) : base(unitOfWork, mapper, httpContextAccessor)
         {
             _notificationHubContext = notificationHubContext;
@@ -35,19 +34,25 @@ namespace Domain.Concrete
             List<Notification> notifications = new List<Notification>();
 
             var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-
-            Guid receiverId = StaticFunc.ConvertGuid(receiverIdClaim);
-            foreach (var user in users)
+            Guid userId;
+            if (receiverIdClaim != null)
             {
-               
+                userId = StaticFunc.ConvertGuid(receiverIdClaim);
+            }
+            else
+            {
+                throw new Exception("User doesn't not exist");
+            }
+            foreach (var user in users)
+            {   
                 var notification = _mapper.Map<Notification>(Createnotification);
                 notification.ReceiverId = user.UserId;
-                notification.SenderId=receiverId;
+                notification.SenderId = userId;
                 notifications.Add(notification);
             }
 
             notificationRepository.AddRange(notifications);
-           await _notificationHubContext.Clients.All.SendAsync("ReceiveNotificationAllUser", Createnotification.MessageContent);
+           await _notificationHubContext.Clients.All.SendAsync("ReceiveNotificationAllUser",userId,Createnotification.MessageContent);
              _unitOfWork.Save();
         }
         public async Task DeleteNotificationAsync(NotificationDTO notification)
@@ -83,19 +88,15 @@ namespace Domain.Concrete
             return _mapper.Map<IEnumerable<NotificationDTO>>(notifications);
          
         }
-        public IEnumerable<UpdateNotificationDTO> NotificationsUnSeen()
+        public async Task UpdateNotificationToSeen(string userId)
         {
-            var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var notifications = notificationRepository.GetNotificationsUnSeen(userId);
 
-            Guid receiverId = StaticFunc.ConvertGuid(receiverIdClaim);
-
-            var notifications = notificationRepository.GetNotificationsUnSeen(receiverId);
-
-            if (notifications == null)
-            {
-                throw new Exception($"Notifications for this User {receiverId} not found");
+            foreach (var notification in notifications){
+                notification.IsSeen = true;
             }
-            return _mapper.Map<IEnumerable<UpdateNotificationDTO>>(notifications);
+            notificationRepository.UpdateRange(notifications);
+            _unitOfWork.Save();
 
         }
     }  
