@@ -52,7 +52,7 @@ namespace Domain.Concrete
             }
 
             notificationRepository.AddRange(notifications);
-           await _notificationHubContext.Clients.All.SendAsync("ReceiveNotificationAllUser",userId,Createnotification.MessageContent);
+           await _notificationHubContext.Clients.All.SendAsync("ReceiveNotificationAllUser",Createnotification.MessageContent);
              _unitOfWork.Save();
         }
         public async Task DeleteNotificationAsync(NotificationDTO notification)

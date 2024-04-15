@@ -7,18 +7,22 @@ using DTO.NotificationDTOs;
 using DTO.ReservationsDTOS;
 using Entities.Models;
 using Helpers.StaticFunc;
+using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Domain.Concrete
 {
     internal class ReservationDomain :DomainBase, IReservationDomain
-	{
+    {
+		private readonly NotificationHub _notificationHub;
         private readonly IHubContext<NotificationHub> _notificationHubContext;
 
-        public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,IHubContext<NotificationHub> notificationHubContext) : base(unitOfWork, mapper, httpContextAccessor)
+        public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,IHubContext<NotificationHub> notificationHubContext,NotificationHub notificationHub) : base(unitOfWork, mapper, httpContextAccessor)
 		{
+			_notificationHub = notificationHub;
 			_notificationHubContext = notificationHubContext;
 		}
         private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
@@ -26,6 +30,8 @@ namespace Domain.Concrete
 		private IReservationRoomRepository reservationRoomRepository => _unitOfWork.GetRepository<IReservationRoomRepository>();
         private IReservationServiceRepository reservationServiceRepository => _unitOfWork.GetRepository<IReservationServiceRepository>();
 		private IHotelServiceRepository hotelServiceRepository => _unitOfWork.GetRepository<IHotelServiceRepository>();
+        private INotificationRepository notificationeRepository => _unitOfWork.GetRepository<INotificationRepository>();
+
 
         public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
@@ -53,7 +59,7 @@ namespace Domain.Concrete
                 var roomAvailable = reservationRoomRepository.GetReservationRoomsById(roomReservation.RoomId);
 
 				foreach(var roomDates in roomAvailable){
-					if ((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate <= roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate))
+					if ((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate < roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate))
 					{
 						throw new Exception("You Reservation can be done because Room is not available");
 					}
@@ -72,15 +78,20 @@ namespace Domain.Concrete
 			}
 			reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Add(reservation);
-            var notification = new CreateNotificationDTO { };
-            notification.ReceiverId = reservation.UserId;
+            var notification = new Notification { };
+            notification.ReceiverId = (Guid)reservation.UserId;
             notification.MessageContent = " Reservimi u krye me sukses";
             notification.SendDateTime = DateTime.Now;
-            await _notificationHubContext.Clients.User(notification.ReceiverId.ToString()).SendAsync("ReceiveNotification", userId, notification);
+			notification.IsSeen = false;
+            await _notificationHubContext.Clients.Client(GetConnectionIds()).SendAsync("ReceiveNotification", notification);
+			notificationeRepository.Add(notification);
             _unitOfWork.Save();
 		}
-
-		public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
+        public string GetConnectionIds()
+        {
+            return NotificationHub.connectionID;
+        }
+        public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
 		{
 			IEnumerable<Reservation> reservations = reservationRepository.GetAll();
 
