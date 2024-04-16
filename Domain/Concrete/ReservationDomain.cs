@@ -5,6 +5,7 @@ using Domain.Contracts;
 using Domain.Notifications;
 using DTO.NotificationDTOs;
 using DTO.ReservationsDTOS;
+using DTO.RoomDTOs;
 using Entities.Models;
 using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Connections.Features;
@@ -242,5 +243,31 @@ namespace Domain.Concrete
         {
             return reservationRepository.GetTotalRevenueWithinDateRange(startDate, endDate);
         }
-    }
+
+		public decimal getTotalReservationPrice(ReservationSampleDTO reservationDto)
+		{
+			decimal Price = 0;
+			int DatedifferencesMax = 0;
+			int differenceOfDaysRoom = 0;
+
+
+			foreach (var roomReservation in reservationDto.ReservationRooms)
+			{
+				var room = roomRepository.GetById(roomReservation.RoomId);
+				differenceOfDaysRoom = StaticFunc.GetDayDiff(DatedifferencesMax, roomReservation.CheckInDate, roomReservation.CheckOutDate);
+				DatedifferencesMax = differenceOfDaysRoom;
+				Price += room.Price * differenceOfDaysRoom;
+			}
+			if (reservationDto.ReservationServices != null)
+			{
+				foreach (var reservationService in reservationDto.ReservationServices)
+				{
+					var service = hotelServiceRepository.GetById(reservationService.ServiceId);
+					Price += service.Price;
+				}
+			}
+			return StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
+		}
+
+	}
 }

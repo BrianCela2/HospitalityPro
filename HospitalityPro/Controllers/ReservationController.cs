@@ -4,6 +4,7 @@ using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace HospitalityPro.Controllers
 {
@@ -36,54 +37,54 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddReservation( CreateReservationDTO reservationDTO)
+		public async Task<IActionResult> AddReservation(CreateReservationDTO reservationDTO)
 		{
 			if (reservationDTO == null) { return NotFound(); }
 			await _reservationDomain.AddReservationAsync(reservationDTO);
 			return NoContent();
 		}
 		[HttpPut("{reservationID}/{serviceID}")]
-        public async Task<IActionResult> ExtraService(Guid reservationID,Guid serviceID)
-        {
+		public async Task<IActionResult> ExtraService(Guid reservationID, Guid serviceID)
+		{
 			ReservationDTO reservationDTO = await _reservationDomain.GetReservationByIdAsync(reservationID);
-            if (reservationDTO == null) { return NotFound(); }
+			if (reservationDTO == null) { return NotFound(); }
 			await _reservationDomain.AddExtraService(reservationID, serviceID);
-            return NoContent();
-        }
-        [HttpDelete("{reservationId}")]
-        public async Task<IActionResult> DeleteReservation(Guid reservationId)
-        {
-            if (ModelState.IsValid)
-            {
-                var reservation = await _reservationDomain.GetReservationByIdAsync(reservationId);
-                if (reservation == null) { return NotFound(); }
+			return NoContent();
+		}
+		[HttpDelete("{reservationId}")]
+		public async Task<IActionResult> DeleteReservation(Guid reservationId)
+		{
+			if (ModelState.IsValid)
+			{
+				var reservation = await _reservationDomain.GetReservationByIdAsync(reservationId);
+				if (reservation == null) { return NotFound(); }
 
-                await _reservationDomain.DeleteReservation(reservationId);
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
+				await _reservationDomain.DeleteReservation(reservationId);
+				return NoContent();
+			}
+			else
+			{
+				return BadRequest();
+			}
+		}
 		[HttpGet]
 		[Route("GetReservationForUser")]
 		public IActionResult GetReservationForUser()
 		{
-            var reservations =  _reservationDomain.GetReservationsOfUser();
-            if (reservations == null)
-            { return NotFound(); }
-            return Ok(reservations);
-        }
-        [HttpGet]
-        [Route("GetReservationsWithRooms")]
-        public IActionResult GetReservationWithRooms()
-        {
-            var reservations = _reservationDomain.ReservationsWithRoomService();
-            if (reservations == null)
-            { return NotFound(); }
-            return Ok(reservations);
-        }
+			var reservations = _reservationDomain.GetReservationsOfUser();
+			if (reservations == null)
+			{ return NotFound(); }
+			return Ok(reservations);
+		}
+		[HttpGet]
+		[Route("GetReservationsWithRooms")]
+		public IActionResult GetReservationWithRooms()
+		{
+			var reservations = _reservationDomain.ReservationsWithRoomService();
+			if (reservations == null)
+			{ return NotFound(); }
+			return Ok(reservations);
+		}
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateReservation(Guid id, UpdateReservationDTO updateReservationDto)
@@ -100,6 +101,31 @@ namespace HospitalityPro.Controllers
 			await _reservationDomain.UpdateReservationStatus(updateReservationStatusDto);
 			return NoContent();
 		}
+
+
+		[HttpPost]
+		[Route("GetReservationPrice")]
+		public async Task<IActionResult> GetReservationPrice([FromBody] ReservationSampleDTO reservation)
+		{
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest();
+				}
+
+				var reservationSample = _reservationDomain.getTotalReservationPrice(reservation);
+				if (reservationSample == null)
+				{
+					return NotFound();
+				}
+				return Ok(reservationSample);
+			}
+			catch (Exception ex)
+			{
+				// Log the exception
+				return StatusCode(500, ex);
+			}
+		}
 	}
-	
 }

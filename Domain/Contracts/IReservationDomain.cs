@@ -25,6 +25,7 @@ namespace Domain.Contracts
 	
 		public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate);
 		public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate);
+		public decimal getTotalReservationPrice(ReservationSampleDTO reservation);
 
     }
 }
