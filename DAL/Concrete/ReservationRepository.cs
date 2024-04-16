@@ -28,7 +28,7 @@ namespace DAL.Concrete
 
         public IEnumerable<Reservation> ReservationsWithRoomServices()
         {
-            return context.Include(x => x.ReservationServices).Include(x => x.ReservationRooms).ToList();
+            return context.Include(x => x.ReservationServices).Include(x => x.ReservationRooms).Include(x => x.ReservationServices).Include(x=>x.User).ToList();
         }
     
 		public Guid GetUserIdByReservation(Guid reservationId)
