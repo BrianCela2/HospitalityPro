@@ -50,15 +50,6 @@ namespace Domain.Concrete
             }
             roomRepository.Add(room);
             _unitOfWork.Save();
-
-            var notification = new CreateNotificationDTO { };
-            notification.ReceiverId = new Guid("0bd99a5b-83c2-4ca3-9b20-c1a5ee42f099");
-            notification.SenderId = new Guid("ccb7d4e4-5fa5-4616-a1cd-ecf7c9a730a2");
-            notification.MessageContent = " U shtua nje dhome e Re ";
-            notification.SendDateTime = DateTime.Now;
-            await _notificationHubContext.Clients.All.SendAsync("ReceiveNotificationAllUser", notification.MessageContent);
-            await _notificationDomain.AddNotificationsAllUserAsync(notification);
-            _unitOfWork.Save();
         }
 
         public async Task<RoomDTO> GetRoomByIdAsync(Guid id)

@@ -71,20 +71,20 @@ namespace HospitalityPro.Controllers
 		[Route("GetReservationForUser")]
 		public IActionResult GetReservationForUser()
 		{
-			var reservations = _reservationDomain.GetReservationsOfUser();
-			if (reservations == null)
-			{ return NotFound(); }
-			return Ok(reservations);
-		}
-		[HttpGet]
-		[Route("GetReservationsWithRooms")]
-		public IActionResult GetReservationWithRooms()
-		{
-			var reservations = _reservationDomain.ReservationsWithRoomService();
-			if (reservations == null)
-			{ return NotFound(); }
-			return Ok(reservations);
-		}
+            var reservations =  _reservationDomain.GetReservationsOfUser();
+            if (reservations == null)
+            { return NotFound(); }
+            return Ok(reservations);
+        }
+        [HttpGet]
+        [Route("ReservationsServiceRooms")]
+        public IActionResult GetReservationRoomService()
+        {
+            var reservations = _reservationDomain.ReservationsRoomAndService();
+            if (reservations == null)
+            { return NotFound(); }
+            return Ok(reservations);
+        }
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateReservation(Guid id, UpdateReservationDTO updateReservationDto)
@@ -94,7 +94,7 @@ namespace HospitalityPro.Controllers
 			return NoContent();
 		}
 
-		[HttpPut("{id}/status")] // Changed the route to avoid ambiguity
+		[HttpPut("status/{id}")] 
 		public async Task<IActionResult> UpdateReservationStatus(Guid id, UpdateReservationStatusDTO updateReservationStatusDto)
 		{
 			if (id != updateReservationStatusDto.ReservationId) { return NotFound(); }

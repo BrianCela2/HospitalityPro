@@ -84,13 +84,25 @@ namespace Domain.Concrete
             notification.MessageContent = " Reservimi u krye me sukses";
             notification.SendDateTime = DateTime.Now;
 			notification.IsSeen = false;
-            await _notificationHubContext.Clients.Client(GetConnectionIds()).SendAsync("ReceiveNotification", notification);
-			notificationeRepository.Add(notification);
+            var userConnectionIds = GetConnectionIds();
+            if (userConnectionIds.ContainsKey(userId.ToString()))
+            {
+                var connectionIds = userConnectionIds[userId.ToString()];
+                foreach (var connectionId in connectionIds)
+                {
+                    await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", notification);
+                }
+            }
+            else
+            {
+                throw new Exception("User is not currently connected.");
+            }
+            notificationeRepository.Add(notification);
             _unitOfWork.Save();
 		}
-        public string GetConnectionIds()
+        public Dictionary<string, List<string>> GetConnectionIds()
         {
-            return NotificationHub.connectionID;
+            return NotificationHub.ConnectedUsers;
         }
         public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
 		{
@@ -129,7 +141,7 @@ namespace Domain.Concrete
 
         public async Task<ReservationDTO> GetReservationByIdAsync(Guid id)
 		{
-			Reservation reservation = reservationRepository.GetById(id);
+			Reservation reservation = reservationRepository.GetReservation(id);
 			ReservationDTO mapped = _mapper.Map<ReservationDTO>(reservation);
 
 			return mapped;
@@ -192,7 +204,6 @@ namespace Domain.Concrete
 				var service = hotelServiceRepository.GetById(Reservationservice.ServiceId);
 				Price += service.Price;
 			}
-			reservation.UserId= userId;
 			reservation.ReservationStatus = 1;
             reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Update(reservation);
@@ -218,7 +229,7 @@ namespace Domain.Concrete
             return _mapper.Map<IEnumerable<ReservationDTO>>(reservation);
         }
 
-		public IEnumerable<ReservationDTO> ReservationsWithRoomService()
+		public IEnumerable<ReservationDTO> ReservationsRoomAndService()
 		{
             IEnumerable<Reservation> reservations = reservationRepository.ReservationsWithRoomServices();
 

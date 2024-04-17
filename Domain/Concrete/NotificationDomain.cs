@@ -32,7 +32,7 @@ namespace Domain.Concrete
         {
             IEnumerable<User> users = userRepository.GetAll();
             List<Notification> notifications = new List<Notification>();
-
+           
             var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             Guid userId;
             if (receiverIdClaim != null)
@@ -52,7 +52,7 @@ namespace Domain.Concrete
             }
 
             notificationRepository.AddRange(notifications);
-           await _notificationHubContext.Clients.All.SendAsync("ReceiveNotificationAllUser",Createnotification.MessageContent);
+           await _notificationHubContext.Clients.All.SendAsync("ReceiveNotificationAllUser",Createnotification);
              _unitOfWork.Save();
         }
         public async Task DeleteNotificationAsync(NotificationDTO notification)
