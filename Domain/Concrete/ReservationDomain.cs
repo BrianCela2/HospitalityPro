@@ -237,12 +237,23 @@ namespace Domain.Concrete
 			return reservationDTO;
         }
 
-		public async Task UpdateReservationStatus(UpdateReservationStatusDTO updateReservationDTO)
+		public async Task UpdateReservationStatus(Guid id,int status)
 		{
-			Reservation reservations = reservationRepository.GetReservation(updateReservationDTO.ReservationId);
-			reservations = _mapper.Map<UpdateReservationStatusDTO,Reservation>(updateReservationDTO,reservations);
-			reservationRepository.Update(reservations);
-			_unitOfWork.Save();
+			Reservation reservation = reservationRepository.GetById(id);
+            if (status == reservation.ReservationStatus)
+            {
+                throw new Exception("Reservation is in that status already");
+            }
+            else if (status >= 1 && status <= 2)
+            {
+                reservation.ReservationStatus = status;
+                reservationRepository.Update(reservation);
+                _unitOfWork.Save();
+            }
+            else
+            {
+                throw new Exception();
+            }
 		}
 	
         public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate)

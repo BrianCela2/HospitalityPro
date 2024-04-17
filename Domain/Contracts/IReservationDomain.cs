@@ -21,9 +21,9 @@ namespace Domain.Contracts
         IEnumerable<ReservationDTO> GetReservationsOfUser();
 		IEnumerable<ReservationDTO> ReservationsRoomAndService();
 		Task UpdateReservation(UpdateReservationDTO updateReservationDTO);
-		Task UpdateReservationStatus(UpdateReservationStatusDTO updateReservationDTO);
-	
-		public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate);
+		Task UpdateReservationStatus(Guid id, int status);
+
+        public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate);
 		public decimal GetTotalRevenueWithinDateRange(DateTime startDate, DateTime endDate);
 		public decimal getTotalReservationPrice(ReservationSampleDTO reservation);
 

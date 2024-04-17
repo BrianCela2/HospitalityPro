@@ -18,6 +18,7 @@ namespace DTO.ReservationsDTOS
 		public DateTime? ReservationDate { get; set; }
 		public ReservationStatusEnum ReservationStatus { get; set; }
 		public virtual Guid UserId { get; set; }
+		public virtual UserDTO.UserDTO User { get; set; } = null!;
 		public virtual ICollection<ReservationRoomDTO> ReservationRooms { get; set; } = null!;
 		public virtual ICollection<CreateReservationServiceDTO>? ReservationServices { get; set; }
 	}

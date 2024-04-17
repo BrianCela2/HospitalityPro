@@ -49,6 +49,13 @@ namespace DAL.Concrete
         {
             return context.Where(r => r.CheckInDate >= startDate && r.CheckOutDate <= endDate).ToList();
         }
-
+        public IEnumerable<ReservationRoom> GetRoomReservation(Guid reservationId)
+        {
+            var reservationrooms = context
+                .Include(x => x.Room)
+                .Where(x => x.ReservationId==reservationId)
+                .ToList();
+            return reservationrooms;
+        }
     }
 }

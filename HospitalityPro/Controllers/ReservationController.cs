@@ -95,10 +95,11 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpPut("status/{id}")] 
-		public async Task<IActionResult> UpdateReservationStatus(Guid id, UpdateReservationStatusDTO updateReservationStatusDto)
+		public async Task<IActionResult> UpdateReservationStatus(Guid id,[FromQuery]int status)
 		{
-			if (id != updateReservationStatusDto.ReservationId) { return NotFound(); }
-			await _reservationDomain.UpdateReservationStatus(updateReservationStatusDto);
+            var reservation = await _reservationDomain.GetReservationByIdAsync(id);
+            if (id != reservation.ReservationId) { return NotFound(); }
+			await _reservationDomain.UpdateReservationStatus(id,status);
 			return NoContent();
 		}
 
