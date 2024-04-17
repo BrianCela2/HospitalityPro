@@ -4,7 +4,6 @@ using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace HospitalityPro.Controllers
 {
@@ -89,10 +88,17 @@ namespace HospitalityPro.Controllers
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateReservation(Guid id, UpdateReservationDTO updateReservationDto)
 		{
-			if (id != updateReservationDto.ReservationId) { return NotFound(); }
-			await _reservationDomain.UpdateReservation(updateReservationDto);
-			return NoContent();
-		}
+			try
+			{
+				if (id != updateReservationDto.ReservationId) { return NotFound(); }
+				await _reservationDomain.UpdateReservation(updateReservationDto);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex);
+	}
+}
 
 		[HttpPut("status/{id}")] 
 		public async Task<IActionResult> UpdateReservationStatus(Guid id, UpdateReservationStatusDTO updateReservationStatusDto)
@@ -123,7 +129,6 @@ namespace HospitalityPro.Controllers
 			}
 			catch (Exception ex)
 			{
-				// Log the exception
 				return StatusCode(500, ex);
 			}
 		}

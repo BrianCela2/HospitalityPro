@@ -15,10 +15,10 @@ namespace DTO.ReservationsDTOS
 		[JsonIgnore]
 		public decimal TotalPrice { get; set; }
 		[JsonIgnore]
-		public Guid UserId { get; set; }
-		[JsonIgnore]
+
 		public int ReservationStatus { get; set; }
 		public DateTime? ReservationDate { get; set; }
 		public ICollection<ReservationRoomDTO> ReservationRooms { get; set; }
+		public ICollection<ReservationServiceDTO> ReservationServices { get; set; }
 	}
 }

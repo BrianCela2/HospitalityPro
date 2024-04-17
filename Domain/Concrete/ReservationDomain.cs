@@ -151,21 +151,6 @@ namespace Domain.Concrete
 		{
 			Reservation reservation =  reservationRepository.GetById(updateReservationDTO.ReservationId);
 
-			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-			Guid userId;
-			if (receiverIdClaim != null)
-			{
-				userId = StaticFunc.ConvertGuid(receiverIdClaim);
-			}
-			else
-			{
-				throw new Exception("User doesn't not exist");
-			}
-			if(userId != reservationRepository.GetUserIdByReservation(updateReservationDTO.ReservationId))
-			{
-				throw new Exception("Wrong user");
-			}
-
 			if (reservation == null)
 			{
 				throw new Exception("Reservation not found");
@@ -189,20 +174,24 @@ namespace Domain.Concrete
                Price += roomRepository.GetPriceOfRoom(room.RoomId) * differenceOfDaysRoom;
 
             }
-            reservation = _mapper.Map<Reservation>(updateReservationDTO);
-			foreach(var reservationRoom in reservation.ReservationRooms)
+				reservation = _mapper.Map<UpdateReservationDTO, Reservation>(updateReservationDTO, reservation);
+			foreach (var reservationRoom in reservation.ReservationRooms)
 			{
 				reservationRoom.ReservationId = reservation.ReservationId;
 				var room = roomRepository.GetById(reservationRoom.RoomId);
 				reservation.TotalPrice += Price;
 				reservationRoomRepository.Update(reservationRoom);
+				_unitOfWork.Save();
 			}
-			var Reservationservices = reservationServiceRepository.GetReservationServicesByReservationId(reservation.ReservationId);
+			//var Reservationservices = reservationServiceRepository.GetReservationServicesByReservationId(reservation.ReservationId);
 
-            foreach (var Reservationservice in Reservationservices )
+            foreach (var Reservationservice in reservation.ReservationServices)
 			{
 				var service = hotelServiceRepository.GetById(Reservationservice.ServiceId);
 				Price += service.Price;
+				Reservationservice.ReservationId = reservation.ReservationId;
+				reservationServiceRepository.Add(Reservationservice);
+				_unitOfWork.Save();
 			}
 			reservation.ReservationStatus = 1;
             reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
