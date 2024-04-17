@@ -8,7 +8,7 @@ namespace Helpers.Enumerations
 {
 	public enum Roles
 	{
-		Admin = 1,
+		Admin = 3,
 		Operator = 2,
 	}
 }

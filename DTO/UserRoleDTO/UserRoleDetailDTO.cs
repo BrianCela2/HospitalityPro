@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,6 @@ namespace DTO.UserRoleDTO
 		public Guid UserId { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-		public int Roles { get; set; }
+		public Roles Roles { get; set; }
 	}
 }
