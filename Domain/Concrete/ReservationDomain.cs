@@ -140,7 +140,7 @@ namespace Domain.Concrete
 
         public async Task<ReservationDTO> GetReservationByIdAsync(Guid id)
 		{
-			Reservation reservation = reservationRepository.GetById(id);
+			Reservation reservation = reservationRepository.GetReservation(id);
 			ReservationDTO mapped = _mapper.Map<ReservationDTO>(reservation);
 
 			return mapped;
@@ -203,7 +203,6 @@ namespace Domain.Concrete
 				var service = hotelServiceRepository.GetById(Reservationservice.ServiceId);
 				Price += service.Price;
 			}
-			reservation.UserId= userId;
 			reservation.ReservationStatus = 1;
             reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Update(reservation);

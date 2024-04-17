@@ -93,7 +93,7 @@ namespace HospitalityPro.Controllers
 			return NoContent();
 		}
 
-		[HttpPut("{id}/status")] // Changed the route to avoid ambiguity
+		[HttpPut("status/{id}")] 
 		public async Task<IActionResult> UpdateReservationStatus(Guid id, UpdateReservationStatusDTO updateReservationStatusDto)
 		{
 			if (id != updateReservationStatusDto.ReservationId) { return NotFound(); }
