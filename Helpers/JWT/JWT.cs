@@ -32,7 +32,7 @@ namespace Helpers.JWT
 				IssuedAt = DateTime.UtcNow,
 				Issuer = _configuration["JWT:Issuer"],
 				Audience = _configuration["JWT:Audience"],
-				Expires = DateTime.UtcNow.AddMinutes(30),
+				Expires = DateTime.UtcNow.AddMinutes(1),
 				SigningCredentials = creds
 			};
 
@@ -41,5 +41,48 @@ namespace Helpers.JWT
 			var jwt = tokenHandler.WriteToken(token);
 			return jwt;
 		}
+		public string RefreshToken(string expiredToken)
+		{
+			var tokenValidationParams = new TokenValidationParameters
+			{
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value)),
+				ValidateIssuer = false,
+				ValidateAudience = false,
+				ValidateLifetime = false // Don't validate token expiration here
+			};
+
+			var tokenHandler = new JwtSecurityTokenHandler();
+			SecurityToken securityToken;
+
+			// Validate the expired token without checking expiration
+			var principal = tokenHandler.ValidateToken(expiredToken, tokenValidationParams, out securityToken);
+
+			if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase))
+				throw new SecurityTokenException("Invalid token");
+
+			// Retrieve claims from the expired token
+			var emailClaim = principal.FindFirst(ClaimTypes.Email);
+			var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
+			var roles = principal.FindAll(ClaimTypes.Role).Select(c => c.Value);
+
+
+			// Create new claims for the refreshed token
+			var newAuthClaims = new List<Claim>
+		{
+			new Claim(ClaimTypes.Email, emailClaim.Value),
+			new Claim(ClaimTypes.NameIdentifier, userIdClaim.Value),
+            // Add other claims as needed
+        };
+			foreach (var role in roles)
+			{
+				newAuthClaims.Add(new Claim(ClaimTypes.Role, role)); // Assuming each role is a string
+			}
+
+			// Create a new token with refreshed expiration
+			var newToken = CreateToken(newAuthClaims);
+
+			return newToken;
+		}	
 	}
 }

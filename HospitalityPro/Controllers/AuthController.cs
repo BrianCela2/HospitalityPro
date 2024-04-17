@@ -1,9 +1,12 @@
 ﻿using DAL.Contracts;
 using Domain.Contracts;
 using DTO.UserDTO;
+using Helpers.JWT;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HospitalityPro.Controllers
 {
@@ -12,10 +15,12 @@ namespace HospitalityPro.Controllers
 	public class AuthController : ControllerBase
 	{
 		private readonly  IAuthDomain _authDomain;
+		private readonly JWT _jwt;
 
-		public AuthController(IAuthDomain authDomain)
+		public AuthController(IAuthDomain authDomain, IConfiguration configuration)
 		{
 			_authDomain = authDomain;
+			_jwt = new JWT(configuration);
 		}
 
 
@@ -59,5 +64,25 @@ namespace HospitalityPro.Controllers
 			return BadRequest(new { message = "User login unsuccessful" });
 		}
 
-	}
+		[HttpPost("refresh-token")]
+		public async Task<IActionResult> RefreshToken([FromBody] string expiredToken)
+		{
+			try
+			{
+				var newToken = _jwt.RefreshToken(expiredToken);
+				return Ok(newToken);
+			}
+			catch (SecurityTokenException ex)
+			{
+				// Handle token validation errors
+				return BadRequest("Token validation failed.");
+			}
+			catch (Exception ex)
+			{
+				// Handle other errors
+				return StatusCode(500, "Internal server error.");
+			}
+		}
+
+		}
 }
