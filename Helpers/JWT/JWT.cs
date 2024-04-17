@@ -32,7 +32,7 @@ namespace Helpers.JWT
 				IssuedAt = DateTime.UtcNow,
 				Issuer = _configuration["JWT:Issuer"],
 				Audience = _configuration["JWT:Audience"],
-				Expires = DateTime.UtcNow.AddMinutes(1),
+				Expires = DateTime.UtcNow.AddDays(1),
 				SigningCredentials = creds
 			};
 
