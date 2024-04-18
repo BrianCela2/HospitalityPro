@@ -38,6 +38,8 @@ namespace Domain.Mappings
 			CreateMap<Reservation, ReservationSampleDTO>().ReverseMap();
 
 			CreateMap<ReservationRoom, ReservationRoomDTO>().ReverseMap();
+            CreateMap<ReservationRoom, ReservationRoomDetailsDTO>().ReverseMap();
+
 
             CreateMap<HotelService, HotelServiceDTO>().ReverseMap();
             CreateMap<CreateHotelServiceDTO, HotelService>();

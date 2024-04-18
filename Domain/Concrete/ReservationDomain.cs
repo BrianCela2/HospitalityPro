@@ -57,10 +57,10 @@ namespace Domain.Concrete
 
             foreach (var roomReservation in reservationDto.ReservationRooms){
 				var room = roomRepository.GetById(roomReservation.RoomId);
-                var roomAvailable = reservationRoomRepository.GetReservationRoomsById(roomReservation.RoomId);
+                var roomAvailable = reservationRoomRepository.GetRoomIncludeReservation(roomReservation.RoomId);
 
 				foreach(var roomDates in roomAvailable){
-					if ((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate < roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate))
+					if (((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate < roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate))&&roomDates.Reservation.ReservationStatus==1)
 					{
 						throw new Exception("You Reservation can be done because Room is not available");
 					}
@@ -226,12 +226,52 @@ namespace Domain.Concrete
 			return reservationDTO;
         }
 
-		public async Task UpdateReservationStatus(UpdateReservationStatusDTO updateReservationDTO)
+		public async Task UpdateReservationStatus(Guid id,int status)
 		{
-			Reservation reservations = reservationRepository.GetReservation(updateReservationDTO.ReservationId);
-			reservations = _mapper.Map<UpdateReservationStatusDTO,Reservation>(updateReservationDTO,reservations);
-			reservationRepository.Update(reservations);
-			_unitOfWork.Save();
+			Reservation reservation = reservationRepository.GetReservation(id);
+            if (status == reservation.ReservationStatus)
+            {
+                throw new Exception("Reservation is in that status already");
+            }
+            else if (status >= 1 && status <= 2)
+            {
+				if (status == 1)
+				{
+
+					foreach (var roomReservation in reservation.ReservationRooms)
+					{
+						var room = roomRepository.GetById(roomReservation.RoomId);
+						var roomAvailable = reservationRoomRepository.GetRoomIncludeReservation(roomReservation.RoomId);
+
+						foreach (var roomDates in roomAvailable)
+						{
+							if (((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate < roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate)) && roomDates.Reservation.ReservationStatus == 1)
+							{
+                                var notification = new Notification { };
+                                notification.ReceiverId = (Guid)reservation.UserId;
+                                notification.MessageContent = "Reservation Status didnt get changed";
+                                var userConnectionIds = GetConnectionIds();
+                                
+                                    var connectionIds = userConnectionIds[notification.ReceiverId.ToString()];
+                                    foreach (var connectionId in connectionIds)
+                                    {
+                                        await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", notification);
+                                    }
+                                
+                                throw new Exception("Your Reservation can be done because Room is not available anymore");
+							}
+						}
+					}
+				}
+                reservation.ReservationStatus = status;
+                reservationRepository.Update(reservation);
+                _unitOfWork.Save();
+
+            }
+            else
+            {
+                throw new Exception();
+            }
 		}
 	
         public int GetStaysCountWithinDateRange(DateTime startDate, DateTime endDate)

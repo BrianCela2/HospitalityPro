@@ -9,6 +9,8 @@ using DTO.SearchParametersList;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using DTO.NotificationDTOs;
+using System.Linq;
+using Helpers.Enumerations;
 
 namespace Domain.Concrete
 {
@@ -126,34 +128,23 @@ namespace Domain.Concrete
         public List<List<RoomDTO>> GetRoomsAvailable(List<SearchParameters> searchParameters)
         {
             List<List<RoomDTO>> availableRoomsList = new List<List<RoomDTO>>();
+            List<Guid> reservedRoomIds = new List<Guid>();
 
             foreach (var criteria in searchParameters)
             {
-                List<Room> availableRooms = new List<Room>();
+                List<Room?> availableRooms = roomRepository.GetAllRoomsPhoto()
+                    .Where(room => room.Capacity >= criteria.Capacity && !reservedRoomIds.Contains(room.RoomId))
+                    .GroupBy(room => room.Category)
+                    .Select(x => x.FirstOrDefault(room =>
+                        roomReservationRepository.GetRoomIncludeReservation(room.RoomId)
+                            .All(reservation =>
+                                criteria.CheckOutDate <= reservation.CheckInDate ||
+                                criteria.CheckInDate >= reservation.CheckOutDate ||
+                                reservation.Reservation.ReservationStatus == 2)))
+                    .Where(room => room != null)
+                    .ToList();
 
-                var allRooms = roomRepository.GetAllRoomsPhoto();
-
-                foreach (var room in allRooms)
-                {
-                    if (room.Capacity >= criteria.Capacity && room.RoomStatus == 1)
-                    {
-                        bool isRoomAvailable = true;
-
-                        foreach (var reservation in roomReservationRepository.GetReservationByRoom(room.RoomId))
-                        {
-                            if (!(criteria.CheckOutDate <= reservation.CheckInDate || criteria.CheckInDate >= reservation.CheckOutDate))
-                            {
-                                isRoomAvailable = false;
-                                break;
-                            }
-                        }
-
-                        if (isRoomAvailable)
-                        {
-                            availableRooms.Add(room);
-                        }
-                    }
-                }
+                reservedRoomIds.AddRange(availableRooms.Select(room => room.RoomId));
 
                 var availableRoomsDTO = _mapper.Map<List<RoomDTO>>(availableRooms);
                 availableRoomsList.Add(availableRoomsDTO);
@@ -162,7 +153,8 @@ namespace Domain.Concrete
             return availableRoomsList;
         }
 
-            public async Task UpdateRoomStatus(int status ,RoomDTO roomDTO)
+
+        public async Task UpdateRoomStatus(int status ,RoomDTO roomDTO)
         {
             var room = _mapper.Map<Room>(roomDTO);
             if (status == room.RoomStatus){
@@ -177,12 +169,9 @@ namespace Domain.Concrete
                 throw new Exception();
             }
         }
-
         public int GetAvailableRoomsCount()
         {
             return roomRepository.GetAvailableRoomsCount();
         }
-
-
     }
 }

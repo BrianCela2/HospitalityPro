@@ -62,12 +62,12 @@ namespace Controllers
 
                 await _hotelServiceDomain.AddHotelServiceAsync(hotelServiceDTO);
                 return StatusCode(201); // Created
-            } 
-            catch (Exception ex) 
-            { 
+            }
+            catch (Exception ex)
+            {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-            
+
         }
 
         [HttpPut("{id}")]
@@ -113,5 +113,19 @@ namespace Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("ServicesOfReservation/{id}")]
+        public ActionResult<IEnumerable<HotelServiceDTO>> GetServicesReservations(Guid id)
+        {
+            try
+            {
+                var hotelServices = _hotelServiceDomain.GetServiceReservation(id);
+                return Ok(hotelServices);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }

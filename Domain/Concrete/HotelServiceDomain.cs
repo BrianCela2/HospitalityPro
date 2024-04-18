@@ -52,7 +52,12 @@ namespace Domain.Concrete
             _unitOfWork.Save();
 
         }
-
+        public IEnumerable<HotelServiceDTO> GetServiceReservation(Guid reservationId)
+        {
+            var hotelServices = hotelServiceRepository.GetServicesOfReservation(reservationId);
+            var hotelServicesDTO = _mapper.Map<IEnumerable<HotelServiceDTO>>(hotelServices);
+            return hotelServicesDTO;
+        }
         //
         public int GetServiceUsageCount(Guid serviceId)
         {

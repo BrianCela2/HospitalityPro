@@ -32,5 +32,28 @@ namespace HospitalityPro.Controllers
 			if (reservationRoom == null) { return NotFound(); }
 			return Ok(reservationRoom);
 		}
-	}
+        [HttpGet("GetRoomsReservation/{id}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ReservationRoomDTO>))]
+        public async Task<IActionResult> GetRoomsReservation(Guid id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+                var reservationRooms = _reservationRoomDomain.GetRoomsReservation(id);
+                if (reservationRooms == null)
+                {
+                    return NotFound();
+                }
+                return Ok(reservationRooms);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+
+        }
+    }
 }

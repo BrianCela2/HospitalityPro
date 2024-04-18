@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTO.ReservationServiceDTOs;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace DTO.HotelServiceDTOs
@@ -13,5 +14,6 @@ namespace DTO.HotelServiceDTOs
         public decimal Price { get; set; }
         public int? Category { get; set; }
         public string? OpenTime { get; set; }
+        public virtual ICollection<ReservationServiceDTO>? ReservationServices { get; set; }
     }
 }
