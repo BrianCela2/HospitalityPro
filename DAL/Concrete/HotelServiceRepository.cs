@@ -15,6 +15,10 @@ namespace DAL.Concrete
         }
 
         // 
+        public IEnumerable<HotelService> GetServicesOfReservation(Guid reservationId)
+        {
+            return context.Include(x => x.ReservationServices).Where(x => x.ReservationServices.Any(p => p.ReservationId == reservationId)).ToList();
+        }
         public int GetServiceUsageCount(Guid serviceId)
         {
             return context.Count(s => s.ServiceId == serviceId);

@@ -25,7 +25,10 @@ namespace DAL.Concrete
         {
             return context.Where(r => r.RoomId == roomId).ToList();
         }
-
+        public IEnumerable<ReservationRoom> GetRoomIncludeReservation(Guid roomId)
+        {
+            return context.Include(x=>x.Reservation).Where(r => r.RoomId == roomId).ToList();
+        }
         public IEnumerable<ReservationRoom> GetRoomsByReservationId(Guid reservationId)
         {
             var reservationRoom = context.Include(x => x.Room).Where(x => x.ReservationId == reservationId).ToList();
