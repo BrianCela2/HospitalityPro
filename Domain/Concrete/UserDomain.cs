@@ -10,25 +10,32 @@ using Helpers.JWT;
 using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
 
 namespace Domain.Concrete
 {
     internal class UserDomain : DomainBase, IUserDomain
     {
-        public UserDomain(IUnitOfWork unitOfWork,IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
+		private readonly PaginationHelper<User> _paginationHelper;
+		public UserDomain(IUnitOfWork unitOfWork,IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
         {
+			_paginationHelper = new PaginationHelper<User>();
 		}
 
         private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
-        public IList<UserDTO> GetAllUsers()
-        {
-            IEnumerable<User> user = userRepository.GetAll();
-            var test = _mapper.Map<IList<UserDTO>>(user);
-            return test;
-        }
 
-        public UserDTO GetUserById(Guid id)
+		public IEnumerable<UserDTO> GetAllUsers(int page, int pageSize, string sortField, string sortOrder, string searchString)
+		{
+			searchString = searchString?.ToLower();
+			IEnumerable<User> users = userRepository.GetAll();
+			Func<User, bool> filterFunc = u => string.IsNullOrEmpty(searchString) || u.FirstName.ToLower().Contains(searchString) || u.Email.Contains(searchString);
+			IEnumerable<User> paginatedUsers = _paginationHelper.GetPaginatedData(users, page, pageSize, sortField, sortOrder,searchString, filterFunc: filterFunc);
+			return _mapper.Map<IEnumerable<UserDTO>>(paginatedUsers);
+		}
+
+
+		public UserDTO GetUserById(Guid id)
         {
             User user = userRepository.GetById(id);
 			return _mapper.Map<UserDTO>(user);

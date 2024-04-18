@@ -94,7 +94,7 @@ namespace HospitalityPro.Controllers
 		}
 		[HttpGet]
 		[Route("getUserRoleDetails")]
-		public IActionResult GetAllUserRoleDetails()
+		public async Task<IActionResult>  GetAllUserRoleDetails([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "FirstName", [FromQuery] string sortOrder = "asc", [FromQuery] string searchString = null)
 		{
 			try
 			{
@@ -103,7 +103,7 @@ namespace HospitalityPro.Controllers
 					return BadRequest();
 				}
 
-				var userRoles = _userRolesDomain.GetUserRoleDetailsAsync();
+				var userRoles = await _userRolesDomain.GetUserRoleDetailsAsync(page, pageSize, sortField, sortOrder, searchString);
 
 				if (userRoles != null)
 				{

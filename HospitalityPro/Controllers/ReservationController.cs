@@ -18,9 +18,9 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetAllReservations()
+		public async Task<IActionResult> GetAllReservations([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "", [FromQuery] string sortOrder = "asc")
 		{
-			var reservations = await _reservationDomain.GetAllReservationsAsync();
+			var reservations = await _reservationDomain.GetAllReservationsAsync(page, pageSize, sortField, sortOrder);
 			if (reservations == null)
 			{ return NotFound(); }
 			return Ok(reservations);

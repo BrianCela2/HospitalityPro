@@ -6,6 +6,8 @@ using LamarCodeGeneration.Frames;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace HospitalityPro.Controllers
@@ -25,19 +27,17 @@ namespace HospitalityPro.Controllers
         [Authorize]
 		[HttpGet]
         [Route("getAllUsers")]
-        public IActionResult GetAllUsers()
+        public IActionResult GetAllUsers([FromQuery] int page=1, [FromQuery] int pageSize=10, [FromQuery] string sortField = "FirstName", [FromQuery] string sortOrder="asc", [FromQuery] string searchString=null )
         {
             try
             {
                 if (!ModelState.IsValid)
-                {
-                    return BadRequest();
-                }
-
-                var users = _userDomain.GetAllUsers();
-
-                if (users != null)
-                {
+				{
+					return BadRequest();
+				}
+				var users = _userDomain.GetAllUsers(page,pageSize,sortField,sortOrder,searchString);
+				if (users != null)
+				{
                     return Ok(users);
                 }
                 else

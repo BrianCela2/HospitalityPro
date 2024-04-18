@@ -11,6 +11,7 @@ using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Data.SqlClient;
 using System.Security.Claims;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -20,11 +21,12 @@ namespace Domain.Concrete
     {
 		private readonly NotificationHub _notificationHub;
         private readonly IHubContext<NotificationHub> _notificationHubContext;
-
-        public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,IHubContext<NotificationHub> notificationHubContext,NotificationHub notificationHub) : base(unitOfWork, mapper, httpContextAccessor)
+		private readonly PaginationHelper<Reservation> _paginationHelper;
+		public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,IHubContext<NotificationHub> notificationHubContext,NotificationHub notificationHub) : base(unitOfWork, mapper, httpContextAccessor)
 		{
 			_notificationHub = notificationHub;
 			_notificationHubContext = notificationHubContext;
+			_paginationHelper = new PaginationHelper<Reservation>();
 		}
         private IReservationRepository reservationRepository => _unitOfWork.GetRepository<IReservationRepository>();
         private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
@@ -104,16 +106,15 @@ namespace Domain.Concrete
         {
             return NotificationHub.ConnectedUsers;
         }
-        public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
+        public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync(int page, int pageSize, string sortField, string sortOrder)
 		{
 			IEnumerable<Reservation> reservations = reservationRepository.GetAll();
+			IEnumerable<Reservation> paginatedReservations = _paginationHelper.GetPaginatedData(reservations, page, pageSize, sortField, sortOrder);
+			return _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
 
-			var mapped = _mapper.Map<IEnumerable<ReservationDTO>>(reservations);
-
-			return mapped;
 		}
 
-        public async Task DeleteReservation(Guid reservationId)
+		public async Task DeleteReservation(Guid reservationId)
         {
             Reservation reservations = reservationRepository.GetReservation(reservationId);
 			reservationRoomRepository.RemoveRange(reservations.ReservationRooms);

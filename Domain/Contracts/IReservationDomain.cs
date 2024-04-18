@@ -14,7 +14,7 @@ namespace Domain.Contracts
 	public interface IReservationDomain
 	{
 		Task AddReservationAsync(CreateReservationDTO reservationDto);
-		Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync();
+		Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync(int page, int pageSize, string sortField, string sortOrder);
 		Task<ReservationDTO> GetReservationByIdAsync(Guid id);
 		Task DeleteReservation(Guid reservationId);
 		Task AddExtraService(Guid ReservationID,Guid serviceId);

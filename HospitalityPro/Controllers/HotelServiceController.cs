@@ -19,11 +19,11 @@ namespace Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HotelServiceDTO>>> GetAllHotelServicesAsync()
-        {
+        public async Task<ActionResult<IEnumerable<HotelServiceDTO>>> GetAllHotelServicesAsync([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Price", [FromQuery] string sortOrder = "asc", [FromQuery] string searchString = null)
+		{
             try
             {
-                var hotelServices = await _hotelServiceDomain.GetAllHotelServicesAsync();
+                var hotelServices = await _hotelServiceDomain.GetAllHotelServicesAsync(page, pageSize, sortField, sortOrder, searchString);
                 return Ok(hotelServices);
             }
             catch (Exception ex)

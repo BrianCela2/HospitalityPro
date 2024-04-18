@@ -18,11 +18,13 @@ namespace Domain.Concrete
     {
         private readonly IHubContext<NotificationHub> _notificationHubContext;
         private readonly INotificationDomain _notificationDomain;
-        public RoomDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub> notificationHubContext, INotificationDomain notificationDomain) : base(unitOfWork, mapper, httpContextAccessor)
+		private readonly PaginationHelper<Room> _paginationHelper;
+		public RoomDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub> notificationHubContext, INotificationDomain notificationDomain) : base(unitOfWork, mapper, httpContextAccessor)
         {
             _notificationHubContext = notificationHubContext;
             _notificationDomain = notificationDomain;
-        }
+			_paginationHelper = new PaginationHelper<Room>();
+		}
         private INotificationRepository notificationRepository => _unitOfWork.GetRepository<INotificationRepository>();
         private IRoomRepository roomRepository => _unitOfWork.GetRepository<IRoomRepository>();
         private IReservationRoomRepository roomReservationRepository => _unitOfWork.GetRepository<IReservationRoomRepository>();
@@ -62,12 +64,13 @@ namespace Domain.Concrete
             }
             return  _mapper.Map<RoomDTO>(room);
         }
-        public async Task<IEnumerable<RoomDTO>> GetAllRoomAsync()
+        public async Task<IEnumerable<RoomDTO>> GetAllRoomAsync(int page, int pageSize, string sortField, string sortOrder)
         {
-            IEnumerable<Room> rooms = roomRepository.GetAll();
-            var roomsDTO = _mapper.Map<IEnumerable<RoomDTO>>(rooms);
-            return roomsDTO;
-        }
+				IEnumerable<Room> rooms = roomRepository.GetAll();
+				IEnumerable<Room> paginatedRooms = _paginationHelper.GetPaginatedData(rooms, page, pageSize, sortField, sortOrder);
+				return _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
+		}
+
         public IEnumerable<RoomDTO> GetRoomPhotos()
         {
             var rooms = roomRepository.GetAllRoomsPhoto();

@@ -10,8 +10,9 @@ namespace Domain.Contracts
 {
     public interface IUserDomain
     {
-        IList<UserDTO> GetAllUsers();
-        UserDTO GetUserById(Guid id);
+        IEnumerable<UserDTO> GetAllUsers(int page, int pageSize, string sortField, string sortOrder, string searchString);
+
+		UserDTO GetUserById(Guid id);
         UserDTO GetUserByEmail(string email);
         Task UpdateUserAsync(UserDTO userDTO);
 

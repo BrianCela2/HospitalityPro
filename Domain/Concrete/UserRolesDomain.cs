@@ -9,6 +9,7 @@ using DTO.UserRoleDTO;
 using DTO.UserRoles;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +20,14 @@ namespace Domain.Concrete
 {
     internal class UserRolesDomain : DomainBase, IUserRolesDomain
     {
-        public UserRolesDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
+		private readonly PaginationHelper<UserRoleDetailDTO> _paginationHelper;
+
+
+		public UserRolesDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(unitOfWork, mapper, httpContextAccessor)
         {
-        }
+			_paginationHelper = new PaginationHelper<UserRoleDetailDTO>();
+
+		}
 
 		private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
 		private IUserRolesRepository userRolesRepository => _unitOfWork.GetRepository<IUserRolesRepository>();
@@ -66,8 +72,9 @@ namespace Domain.Concrete
             return userRolesRepository.GetRoleUsersCount(role);
         }
 
-		public async Task<IEnumerable<UserRoleDetailDTO>> GetUserRoleDetailsAsync()
+		public async Task<IEnumerable<UserRoleDetailDTO>> GetUserRoleDetailsAsync(int page, int pageSize, string sortField, string sortOrder, string searchString)
 		{
+			searchString = searchString?.ToLower();
 			IEnumerable<UserRole> userRoles = userRolesRepository.GetAll();
 			var mappedUserRoles = _mapper.Map<IEnumerable<UserRoleDetailDTO>>(userRoles);
 			foreach (var userRole in mappedUserRoles)
@@ -76,7 +83,9 @@ namespace Domain.Concrete
                 userRole.FirstName = user.FirstName;
                 userRole.LastName = user.LastName;
 			}
-            return mappedUserRoles;
+			Func<UserRoleDetailDTO, bool> filterFunc = u => string.IsNullOrEmpty(searchString) || u.FirstName.ToLower().Contains(searchString) || u.LastName.Contains(searchString);
+			IEnumerable<UserRoleDetailDTO> paginatedUserRole = _paginationHelper.GetPaginatedData(mappedUserRoles, page, pageSize, sortField, sortOrder, searchString, filterFunc: filterFunc);
+			return paginatedUserRole;
 		}
 	}
 }
