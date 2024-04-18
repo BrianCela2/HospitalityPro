@@ -45,15 +45,10 @@ namespace Domain.Concrete
             return roles;
         }
 
-        public async Task RemoveUserRole(Guid userId, int roleId)
+        public async Task RemoveUserRole(UserRoleDTO userRole)
         {
-            UserRole userRoleToRemove = userRolesRepository.GetUserRole(userId, roleId);
-            if (userRoleToRemove == null)
-            {
-                throw new Exception($"User {userId} with role {roleId} not found");
-            }
-
-            userRolesRepository.Remove(userRoleToRemove);
+			var role = _mapper.Map<UserRole>(userRole);
+            userRolesRepository.Remove(role);
             _unitOfWork.Save();
         }
 

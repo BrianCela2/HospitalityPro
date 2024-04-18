@@ -3,6 +3,8 @@ using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
 using DTO.UserDTO;
 using DTO.UserRoles;
+using Entities.Models;
+using Helpers.Enumerations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -45,17 +47,21 @@ namespace HospitalityPro.Controllers
 		}
 
 		[Authorize(Roles = "Admin")]
-		[HttpDelete("{userId}/{role}")]
-		public async Task	<IActionResult> DeleteUserRole(Guid userId, int role)
+		[HttpDelete("delete")]
+		public async Task <IActionResult> DeleteUserRole([FromQuery] Guid userId, [FromQuery] Roles roles)
 		{
-			if (ModelState.IsValid)
-			{
-				await _userRolesDomain.RemoveUserRole(userId,role);
+			try { 
+				var userRole = new UserRoleDTO
+				{
+					UserId = userId,
+					Roles = roles
+				};
+				await _userRolesDomain.RemoveUserRole(userRole);
 				return NoContent();
 			}
-			else
+			catch(Exception ex)
 			{
-				return BadRequest();
+				return BadRequest(ex);
 			}
 		}
 
