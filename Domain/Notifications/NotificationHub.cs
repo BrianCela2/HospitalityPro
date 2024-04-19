@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Domain.Notifications
 {
-    public class NotificationHub : Hub
+    public class NotificationHub : Hub<INotificationHub>
     {
 
         public static Dictionary<string, List<string>> ConnectedUsers = new();
         public async Task SendNotification(Notification notification, string connectionId)
         {
             
-            await Clients.Client(connectionId).SendAsync("ReceiveNotification", notification);
+            await Clients.Client(connectionId).SendNotification(notification,connectionId);
         }
         public string GetConnectionId(string userId) {
             lock (ConnectedUsers)
@@ -28,7 +28,7 @@ namespace Domain.Notifications
         }
         public async Task SendNotificationAll(Notification notification)
         {
-            await Clients.All.SendAsync("ReceiveNotificationAllUser",notification);
+            await Clients.All.SendNotificationAll(notification);
         }
         
     }
