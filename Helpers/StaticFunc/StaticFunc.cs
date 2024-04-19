@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +41,20 @@ namespace Helpers.StaticFunc
             else
             {
                 return price;
+            }
+          
+        }
+        public static Guid GetUserId(IHttpContextAccessor httpContextAccessor)
+        {
+            var receiverIdClaim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            Guid userId;
+            if (receiverIdClaim != null)
+            {
+                return userId = ConvertGuid(receiverIdClaim);
+            }
+            else
+            {
+                throw new Exception("User doesn't not exist");
             }
         }
     }

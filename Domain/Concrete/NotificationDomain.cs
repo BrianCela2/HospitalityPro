@@ -13,9 +13,9 @@ namespace Domain.Concrete
 {
     internal class NotificationDomain : DomainBase, INotificationDomain
     {
-        private  IHubContext<NotificationHub> _notificationHubContext;
+        private  IHubContext<NotificationHub,INotificationHub> _notificationHubContext;
 
-        public NotificationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub> notificationHubContext) : base(unitOfWork, mapper, httpContextAccessor)
+        public NotificationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub, INotificationHub> notificationHubContext) : base(unitOfWork, mapper, httpContextAccessor)
         {
             _notificationHubContext = notificationHubContext;
         }
@@ -23,7 +23,6 @@ namespace Domain.Concrete
         private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
         public async Task AddNotificationAsync(CreateNotificationDTO Createnotification)
         {
-            await _notificationHubContext.Clients.User(Createnotification.ReceiverId.ToString()).SendAsync("ReceiveNotification", Createnotification);
             var notification = _mapper.Map<Notification>(Createnotification);
             notificationRepository.Add(notification);
             _unitOfWork.Save();
@@ -32,7 +31,7 @@ namespace Domain.Concrete
         {
             IEnumerable<User> users = userRepository.GetAll();
             List<Notification> notifications = new List<Notification>();
-           
+            var notificationMessage =new Notification { };
             var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             Guid userId;
             if (receiverIdClaim != null)
@@ -44,15 +43,16 @@ namespace Domain.Concrete
                 throw new Exception("User doesn't not exist");
             }
             foreach (var user in users)
-            {   
+            {
                 var notification = _mapper.Map<Notification>(Createnotification);
+                notificationMessage = notification;
                 notification.ReceiverId = user.UserId;
                 notification.SenderId = userId;
                 notifications.Add(notification);
             }
 
             notificationRepository.AddRange(notifications);
-           await _notificationHubContext.Clients.All.SendAsync("ReceiveNotificationAllUser",Createnotification);
+            await _notificationHubContext.Clients.All.SendNotificationAll(notificationMessage);
              _unitOfWork.Save();
         }
         public async Task DeleteNotificationAsync(NotificationDTO notification)

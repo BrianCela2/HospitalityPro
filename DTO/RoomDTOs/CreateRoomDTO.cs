@@ -10,15 +10,15 @@ namespace DTO.RoomDTOs
     {
         [Required]
         public int RoomNumber { get; set; }
-        public int? Capacity { get; set; }
+        public int Capacity { get; set; }
         [Required]
         public decimal Price { get; set; }
-        public RoomStatus? RoomStatus { get; set; }
-        public RoomCategory? Category { get; set; }
+        public RoomStatus RoomStatus { get; set; }
+        public RoomCategory Category { get; set; }
         [DataType(DataType.Upload)]
         [Display(Name = "Upload Image")]
-        public List<IFormFile>? Photos { get; set; }
+        public List<IFormFile> Photos { get; set; } = null!;
         [JsonIgnore]
-        public ICollection<CreateRoomPhotoDTO>? RoomPhotos { get; set; }
+        public ICollection<CreateRoomPhotoDTO> RoomPhotos { get; set; }=null!;
     }
 }

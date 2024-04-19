@@ -3,29 +3,22 @@ using DAL.Contracts;
 using DAL.UoW;
 using Domain.Contracts;
 using Domain.Notifications;
-using DTO.NotificationDTOs;
 using DTO.ReservationsDTOS;
-using DTO.RoomDTOs;
-using DTO.UserDTO;
 using Entities.Models;
 using Helpers.StaticFunc;
-using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
 using System.Security.Claims;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Domain.Concrete
 {
     internal class ReservationDomain :DomainBase, IReservationDomain
     {
-		private readonly NotificationHub _notificationHub;
-        private readonly IHubContext<NotificationHub> _notificationHubContext;
+        private readonly IHubContext<NotificationHub,INotificationHub> _notificationHubContext;
 		private readonly PaginationHelper<Reservation> _paginationHelper;
-		public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,IHubContext<NotificationHub> notificationHubContext,NotificationHub notificationHub) : base(unitOfWork, mapper, httpContextAccessor)
+		public ReservationDomain(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor,IHubContext<NotificationHub,INotificationHub> notificationHubContext) : base(unitOfWork, mapper, httpContextAccessor)
 		{
-			_notificationHub = notificationHub;
 			_notificationHubContext = notificationHubContext;
 			_paginationHelper = new PaginationHelper<Reservation>();
 		}
@@ -34,28 +27,17 @@ namespace Domain.Concrete
 		private IReservationRoomRepository reservationRoomRepository => _unitOfWork.GetRepository<IReservationRoomRepository>();
         private IReservationServiceRepository reservationServiceRepository => _unitOfWork.GetRepository<IReservationServiceRepository>();
 		private IHotelServiceRepository hotelServiceRepository => _unitOfWork.GetRepository<IHotelServiceRepository>();
-        private INotificationRepository notificationeRepository => _unitOfWork.GetRepository<INotificationRepository>();
+        private INotificationRepository notificationRepository => _unitOfWork.GetRepository<INotificationRepository>();
 
 
         public async Task AddReservationAsync(CreateReservationDTO reservationDto)
 		{
-            var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            Guid userId;
-            if (receiverIdClaim != null)
-            {
-                userId = StaticFunc.ConvertGuid(receiverIdClaim);
-            }
-            else
-            {
-                throw new Exception("User doesn't not exist");
-            }
-
+            Guid userId=StaticFunc.GetUserId(_httpContextAccessor);
             var reservation = _mapper.Map<Reservation>(reservationDto);
 			reservation.UserId = userId;
 
 			decimal Price = 0;
-			int DatedifferencesMax = 0;
-			int differenceOfDaysRoom = 0;
+			int DatedifferencesMax = 0,differenceOfDaysRoom = 0;
 
 
             foreach (var roomReservation in reservationDto.ReservationRooms){
@@ -82,31 +64,14 @@ namespace Domain.Concrete
 			}
 			reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Add(reservation);
-            var notification = new Notification { };
-            notification.ReceiverId = (Guid)reservation.UserId;
-            notification.MessageContent = " Reservimi u krye me sukses";
-            notification.SendDateTime = DateTime.Now;
-			notification.IsSeen = false;
-            var userConnectionIds = GetConnectionIds();
-            if (userConnectionIds.ContainsKey(userId.ToString()))
-            {
-                var connectionIds = userConnectionIds[userId.ToString()];
-                foreach (var connectionId in connectionIds)
-                {
-                    await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", notification);
-                }
-            }
-            else
-            {
-                throw new Exception("User is not currently connected.");
-            }
-            notificationeRepository.Add(notification);
+
+            var notification = new Notification { ReceiverId = (Guid)reservation.UserId,MessageContent = "Reservation successfully completed",
+            SendDateTime = DateTime.Now,IsSeen = false};
+            await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, userId);
+            notificationRepository.Add(notification);
             _unitOfWork.Save();
 		}
-        public Dictionary<string, List<string>> GetConnectionIds()
-        {
-            return NotificationHub.ConnectedUsers;
-        }
+        
         public async Task<PaginatedReservationDTO> GetAllReservationsAsync(int page, int pageSize, string sortField, string sortOrder)
 		{
 			IEnumerable<Reservation> reservations = reservationRepository.GetAll();
@@ -125,26 +90,27 @@ namespace Domain.Concrete
         {
             Reservation reservations = reservationRepository.GetReservation(reservationId);
 			reservationRoomRepository.RemoveRange(reservations.ReservationRooms);
-			_unitOfWork.Save();
-
 			reservationServiceRepository.RemoveRange(reservations.ReservationServices);
-            _unitOfWork.Save();
 
             if (reservations == null) throw new Exception();
 			reservationRepository.Remove(reservations);
-			_unitOfWork.Save();
+            var notification = new Notification {ReceiverId = (Guid)reservations.UserId,MessageContent = "Reservation was deleted",};
+            await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, (Guid)reservations.UserId);
+            _unitOfWork.Save();
         }
 
 		public async Task AddExtraService(Guid reservationID,Guid serviceID){
 
 			ReservationService createReservationService = new ReservationService { ReservationId=reservationID,ServiceId = serviceID, DateOfPurchase = DateTime.Now };
 			Reservation reservation = reservationRepository.GetReservation(reservationID);
+
 			reservation.ReservationServices.Add(createReservationService);
-			 HotelService service = hotelServiceRepository.GetById(createReservationService.ServiceId);
+			HotelService service = hotelServiceRepository.GetById(createReservationService.ServiceId);
+
 			 reservation.TotalPrice +=  service.Price;
             reservationServiceRepository.Add(createReservationService);
             reservationRepository.Update(reservation);
-			_unitOfWork.Save();
+			_unitOfWork.Save(); 
 		}
 
         public async Task<ReservationDTO> GetReservationByIdAsync(Guid id)
@@ -211,17 +177,7 @@ namespace Domain.Concrete
 
         public IEnumerable<ReservationDTO> GetReservationsOfUser()
         {
-
-            var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            Guid userId;
-            if (receiverIdClaim != null)
-            {
-                userId = StaticFunc.ConvertGuid(receiverIdClaim);
-            }
-            else
-            {
-                throw new Exception("User doesn't not exist");
-            }
+            Guid userId = StaticFunc.GetUserId(_httpContextAccessor);
             IEnumerable<Reservation> reservation = reservationRepository.GetReservationsOfUser(userId);
             return _mapper.Map<IEnumerable<ReservationDTO>>(reservation);
         }
@@ -263,17 +219,10 @@ namespace Domain.Concrete
 						{
 							if (((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate < roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate)) && roomDates.Reservation.ReservationStatus == 1)
 							{
-                                var notification = new Notification { };
-                                notification.ReceiverId = (Guid)reservation.UserId;
-                                notification.MessageContent = "Reservation Status didnt get changed";
-                                var userConnectionIds = GetConnectionIds();
-                                
-                                    var connectionIds = userConnectionIds[notification.ReceiverId.ToString()];
-                                    foreach (var connectionId in connectionIds)
-                                    {
-                                        await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", notification);
-                                    }
-                                
+                                var notification = new Notification {ReceiverId = (Guid)reservation.UserId,MessageContent = "Reservation Status didnt get changed"};
+
+                                await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, (Guid)reservation.UserId);
+
                                 throw new Exception("Your Reservation can be done because Room is not available anymore");
 							}
 						}
