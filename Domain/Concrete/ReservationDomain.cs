@@ -65,25 +65,11 @@ namespace Domain.Concrete
 
             var notification = new Notification { ReceiverId = (Guid)reservation.UserId,MessageContent = "Reservation successfully completed",
             SendDateTime = DateTime.Now,IsSeen = false};
-			await SendNotificationToUser(notification,userId);
+            await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, userId);
             notificationRepository.Add(notification);
             _unitOfWork.Save();
 		}
-        private async Task SendNotificationToUser(Notification notification, Guid userId)
-        {
-            var userConnectionIds = NotificationHub.ConnectedUsers;
-            if (userConnectionIds.TryGetValue(userId.ToString(), out var connectionIds))
-            {
-                foreach (var connectionId in connectionIds)
-                {
-                    await _notificationHubContext.Clients.Client(connectionId).SendNotification(notification, connectionId);
-                }
-            }
-            else
-            {
-                throw new Exception("User is not currently connected.");
-            }
-        }
+       
         public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync()
 		{
 			IEnumerable<Reservation> reservations = reservationRepository.GetAll();
@@ -105,7 +91,7 @@ namespace Domain.Concrete
             if (reservations == null) throw new Exception();
 			reservationRepository.Remove(reservations);
             var notification = new Notification {ReceiverId = (Guid)reservations.UserId,MessageContent = "Reservation was deleted",};
-            await SendNotificationToUser(notification,notification.ReceiverId);
+            await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, (Guid)reservations.UserId);
             _unitOfWork.Save();
         }
 
@@ -222,8 +208,8 @@ namespace Domain.Concrete
 							if (((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate < roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate)) && roomDates.Reservation.ReservationStatus == 1)
 							{
                                 var notification = new Notification {ReceiverId = (Guid)reservation.UserId,MessageContent = "Reservation Status didnt get changed"};
-                                
-                                await SendNotificationToUser(notification, notification.ReceiverId);
+
+                                await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, (Guid)reservation.UserId);
 
                                 throw new Exception("Your Reservation can be done because Room is not available anymore");
 							}
