@@ -25,13 +25,20 @@ namespace Domain.Concrete
 
         private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
 
-		public IEnumerable<UserDTO> GetAllUsers(int page, int pageSize, string sortField, string sortOrder, string searchString)
+		public async Task<PaginatedUserDto> GetAllUsers(int page, int pageSize, string sortField, string sortOrder, string searchString)
 		{
 			searchString = searchString?.ToLower();
 			IEnumerable<User> users = userRepository.GetAll();
 			Func<User, bool> filterFunc = u => string.IsNullOrEmpty(searchString) || u.FirstName.ToLower().Contains(searchString) || u.Email.Contains(searchString);
 			IEnumerable<User> paginatedUsers = _paginationHelper.GetPaginatedData(users, page, pageSize, sortField, sortOrder,searchString, filterFunc: filterFunc);
-			return _mapper.Map<IEnumerable<UserDTO>>(paginatedUsers);
+			var allUsers = _mapper.Map<IEnumerable<UserDTO>>(paginatedUsers);
+			var totalUsersCount = users.Count();
+			var totalPages = (int)Math.Ceiling((double)totalUsersCount / pageSize);
+			return new PaginatedUserDto
+			{
+				Users = allUsers,
+				TotalPages = totalPages
+			};
 		}
 
 

@@ -107,11 +107,18 @@ namespace Domain.Concrete
         {
             return NotificationHub.ConnectedUsers;
         }
-        public async Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync(int page, int pageSize, string sortField, string sortOrder)
+        public async Task<PaginatedReservationDTO> GetAllReservationsAsync(int page, int pageSize, string sortField, string sortOrder)
 		{
 			IEnumerable<Reservation> reservations = reservationRepository.GetAll();
 			IEnumerable<Reservation> paginatedReservations = _paginationHelper.GetPaginatedData(reservations, page, pageSize, sortField, sortOrder);
-			return _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
+			var allReservations= _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
+			var totalReservationsCount = reservations.Count(); 
+			var totalPages = (int)Math.Ceiling((double)totalReservationsCount / pageSize);
+			return new PaginatedReservationDTO
+			{
+				Reservations = allReservations,
+				TotalPages = totalPages
+			};
 		}
 
 		public async Task DeleteReservation(Guid reservationId)
@@ -219,13 +226,20 @@ namespace Domain.Concrete
             return _mapper.Map<IEnumerable<ReservationDTO>>(reservation);
         }
 
-		public IEnumerable<ReservationDTO> ReservationsRoomAndService(int page, int pageSize, string sortField, string sortOrder, string searchString)
+		public async Task<PaginatedReservationDTO> ReservationsRoomAndService(int page, int pageSize, string sortField, string sortOrder, string searchString)
 		{
 			searchString = searchString?.ToLower();
 			IEnumerable<Reservation> reservations = reservationRepository.ReservationsWithRoomServices();
 			Func<Reservation, bool> filterFunc = u => string.IsNullOrEmpty(searchString) || u.User.FirstName.ToLower().Contains(searchString) || u.User.LastName.Contains(searchString) || u.User.Email.Contains(searchString);
 			IEnumerable<Reservation> paginatedReservations = _paginationHelper.GetPaginatedData(reservations, page, pageSize, sortField, sortOrder, searchString, filterFunc: filterFunc);
-			return _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
+			var allReservations =  _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
+			var totalReservationsCount = reservations.Count();
+			var totalPages = (int)Math.Ceiling((double)totalReservationsCount / pageSize);
+			return new PaginatedReservationDTO
+			{
+				Reservations = allReservations,
+				TotalPages = totalPages
+			};
 		}
 
 		public async Task UpdateReservationStatus(Guid id,int status)

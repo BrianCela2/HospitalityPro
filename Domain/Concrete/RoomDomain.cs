@@ -12,6 +12,8 @@ using DTO.NotificationDTOs;
 using System.Linq;
 using Helpers.Enumerations;
 using Microsoft.Data.SqlClient;
+using DTO.ReservationsDTOS;
+using DTO.UserDTO;
 
 namespace Domain.Concrete
 {
@@ -72,11 +74,18 @@ namespace Domain.Concrete
 				return _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
 		}
 
-        public IEnumerable<RoomDTO> GetRoomPhotos(int page, int pageSize, string sortField, string sortOrder)
+        public async Task<PaginatedRoomDTO> GetRoomPhotos(int page, int pageSize, string sortField, string sortOrder)
         {
 			IEnumerable<Room> rooms = roomRepository.GetAllRoomsPhoto();
 			IEnumerable<Room> paginatedRooms = _paginationHelper.GetPaginatedData(rooms, page, pageSize, sortField, sortOrder);
-			return _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
+			var allRooms = _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
+			var totalRoomsCount = rooms.Count();
+			var totalPages = (int)Math.Ceiling((double)totalRoomsCount / pageSize);
+			return new PaginatedRoomDTO
+			{
+				Rooms = allRooms,
+				TotalPages = totalPages
+			};
 		}
         public RoomDTO GetRoomWithPhoto(Guid id)
         {

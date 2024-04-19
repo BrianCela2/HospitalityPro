@@ -27,7 +27,7 @@ namespace HospitalityPro.Controllers
         [Authorize]
 		[HttpGet]
         [Route("getAllUsers")]
-        public IActionResult GetAllUsers([FromQuery] int page=1, [FromQuery] int pageSize=10, [FromQuery] string sortField = "FirstName", [FromQuery] string sortOrder="asc", [FromQuery] string searchString=null )
+        public async Task<IActionResult> GetAllUsers([FromQuery] int page=1, [FromQuery] int pageSize=10, [FromQuery] string sortField = "FirstName", [FromQuery] string sortOrder="asc", [FromQuery] string searchString=null )
         {
             try
             {
@@ -35,7 +35,7 @@ namespace HospitalityPro.Controllers
 				{
 					return BadRequest();
 				}
-				var users = _userDomain.GetAllUsers(page,pageSize,sortField,sortOrder,searchString);
+				var users = await _userDomain.GetAllUsers(page,pageSize,sortField,sortOrder,searchString);
 				if (users != null)
 				{
                     return Ok(users);

@@ -10,7 +10,7 @@ namespace Domain.Contracts
 {
     public interface IUserDomain
     {
-        IEnumerable<UserDTO> GetAllUsers(int page, int pageSize, string sortField, string sortOrder, string searchString);
+		Task<PaginatedUserDto> GetAllUsers(int page, int pageSize, string sortField, string sortOrder, string searchString);
 
 		UserDTO GetUserById(Guid id);
         UserDTO GetUserByEmail(string email);

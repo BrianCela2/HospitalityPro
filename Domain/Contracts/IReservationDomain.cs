@@ -14,12 +14,12 @@ namespace Domain.Contracts
 	public interface IReservationDomain
 	{
 		Task AddReservationAsync(CreateReservationDTO reservationDto);
-		Task<IEnumerable<ReservationDTO>> GetAllReservationsAsync(int page, int pageSize, string sortField, string sortOrder);
+	    Task<PaginatedReservationDTO> GetAllReservationsAsync(int page, int pageSize, string sortField, string sortOrder);
 		Task<ReservationDTO> GetReservationByIdAsync(Guid id);
 		Task DeleteReservation(Guid reservationId);
 		Task AddExtraService(Guid ReservationID,Guid serviceId);
         IEnumerable<ReservationDTO> GetReservationsOfUser();
-		IEnumerable<ReservationDTO> ReservationsRoomAndService(int page, int pageSize, string sortField, string sortOrder, string searchString);
+		Task<PaginatedReservationDTO> ReservationsRoomAndService(int page, int pageSize, string sortField, string sortOrder, string searchString);
 		Task UpdateReservation(UpdateReservationDTO updateReservationDTO);
 		Task UpdateReservationStatus(Guid id, int status);
 
