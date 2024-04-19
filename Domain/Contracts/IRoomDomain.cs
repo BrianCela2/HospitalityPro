@@ -14,7 +14,7 @@ namespace Domain.Contracts
         Task AddRoomAsync(CreateRoomDTO createRoomDTO);
         Task<IEnumerable<RoomDTO>> GetAllRoomAsync(int page, int pageSize, string sortField, string sortOrder);
         Task<RoomDTO> GetRoomByIdAsync(Guid id);
-        IEnumerable<RoomDTO> GetRoomPhotos();
+        IEnumerable<RoomDTO> GetRoomPhotos(int page, int pageSize, string sortField, string sortOrder);
         Task DeleteRoom(RoomDTO roomDTO); 
         Task UpdateRoom(UpdateRoomDTO updateRoomDTO);
         Task UpdateRoomStatus(int status ,RoomDTO roomDTO);

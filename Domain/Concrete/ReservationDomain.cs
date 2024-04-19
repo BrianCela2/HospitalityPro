@@ -6,6 +6,7 @@ using Domain.Notifications;
 using DTO.NotificationDTOs;
 using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
+using DTO.UserDTO;
 using Entities.Models;
 using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Connections.Features;
@@ -111,7 +112,6 @@ namespace Domain.Concrete
 			IEnumerable<Reservation> reservations = reservationRepository.GetAll();
 			IEnumerable<Reservation> paginatedReservations = _paginationHelper.GetPaginatedData(reservations, page, pageSize, sortField, sortOrder);
 			return _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
-
 		}
 
 		public async Task DeleteReservation(Guid reservationId)
@@ -219,13 +219,14 @@ namespace Domain.Concrete
             return _mapper.Map<IEnumerable<ReservationDTO>>(reservation);
         }
 
-		public IEnumerable<ReservationDTO> ReservationsRoomAndService()
+		public IEnumerable<ReservationDTO> ReservationsRoomAndService(int page, int pageSize, string sortField, string sortOrder, string searchString)
 		{
-            IEnumerable<Reservation> reservations = reservationRepository.ReservationsWithRoomServices();
-
-            var reservationDTO = _mapper.Map<IEnumerable<ReservationDTO>>(reservations);
-			return reservationDTO;
-        }
+			searchString = searchString?.ToLower();
+			IEnumerable<Reservation> reservations = reservationRepository.ReservationsWithRoomServices();
+			Func<Reservation, bool> filterFunc = u => string.IsNullOrEmpty(searchString) || u.User.FirstName.ToLower().Contains(searchString) || u.User.LastName.Contains(searchString) || u.User.Email.Contains(searchString);
+			IEnumerable<Reservation> paginatedReservations = _paginationHelper.GetPaginatedData(reservations, page, pageSize, sortField, sortOrder, searchString, filterFunc: filterFunc);
+			return _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
+		}
 
 		public async Task UpdateReservationStatus(Guid id,int status)
 		{

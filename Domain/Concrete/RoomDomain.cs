@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.SignalR;
 using DTO.NotificationDTOs;
 using System.Linq;
 using Helpers.Enumerations;
+using Microsoft.Data.SqlClient;
 
 namespace Domain.Concrete
 {
@@ -71,12 +72,12 @@ namespace Domain.Concrete
 				return _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
 		}
 
-        public IEnumerable<RoomDTO> GetRoomPhotos()
+        public IEnumerable<RoomDTO> GetRoomPhotos(int page, int pageSize, string sortField, string sortOrder)
         {
-            var rooms = roomRepository.GetAllRoomsPhoto();
-            var roomsDTO = _mapper.Map<IEnumerable<RoomDTO>>(rooms);
-            return roomsDTO;
-        }
+			IEnumerable<Room> rooms = roomRepository.GetAllRoomsPhoto();
+			IEnumerable<Room> paginatedRooms = _paginationHelper.GetPaginatedData(rooms, page, pageSize, sortField, sortOrder);
+			return _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
+		}
         public RoomDTO GetRoomWithPhoto(Guid id)
         {
             var room = roomRepository.GetRoomWithPhotos(id);

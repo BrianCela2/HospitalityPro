@@ -19,7 +19,7 @@ namespace Domain.Contracts
 		Task DeleteReservation(Guid reservationId);
 		Task AddExtraService(Guid ReservationID,Guid serviceId);
         IEnumerable<ReservationDTO> GetReservationsOfUser();
-		IEnumerable<ReservationDTO> ReservationsRoomAndService();
+		IEnumerable<ReservationDTO> ReservationsRoomAndService(int page, int pageSize, string sortField, string sortOrder, string searchString);
 		Task UpdateReservation(UpdateReservationDTO updateReservationDTO);
 		Task UpdateReservationStatus(Guid id, int status);
 

@@ -18,7 +18,7 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetAllReservations([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "", [FromQuery] string sortOrder = "asc")
+		public async Task<IActionResult> GetAllReservations([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "ReservationDate", [FromQuery] string sortOrder = "dsc")
 		{
 			var reservations = await _reservationDomain.GetAllReservationsAsync(page, pageSize, sortField, sortOrder);
 			if (reservations == null)
@@ -77,9 +77,9 @@ namespace HospitalityPro.Controllers
         }
         [HttpGet]
         [Route("ReservationsServiceRooms")]
-        public IActionResult GetReservationRoomService()
+        public IActionResult GetReservationRoomService([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "ReservationDate", [FromQuery] string sortOrder = "dsc",string searchString="")
         {
-            var reservations = _reservationDomain.ReservationsRoomAndService();
+            var reservations = _reservationDomain.ReservationsRoomAndService(page, pageSize, sortField, sortOrder,searchString );
             if (reservations == null)
             { return NotFound(); }
             return Ok(reservations);

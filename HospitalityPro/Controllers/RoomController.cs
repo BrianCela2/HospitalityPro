@@ -107,9 +107,9 @@ namespace HospitalityPro.Controllers
 
         }
         [HttpGet]
-        public IActionResult GetRoomPhotos()
+        public IActionResult GetRoomPhotos([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "RoomNumber", [FromQuery] string sortOrder = "asc")
         {
-            var rooms = _roomDomain.GetRoomPhotos();
+            var rooms = _roomDomain.GetRoomPhotos(page, pageSize, sortField, sortOrder);
             if (rooms == null) { return NotFound(); }
             return Ok(rooms);
         }
