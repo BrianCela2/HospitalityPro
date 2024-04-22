@@ -54,7 +54,7 @@ namespace HospitalityPro.Controllers
 
 		[HttpGet]
         [Route("{userId}")]
-        public IActionResult GetUserById([FromRoute] Guid userId)
+        public IActionResult GetUserById( Guid userId)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace HospitalityPro.Controllers
 			try
 			{
 				await _userDomain.UpdateUserAsync(userDTO);
-				return Ok("User updated successfully");
+				return Ok();
 			}
 			catch (Exception ex)
 			{

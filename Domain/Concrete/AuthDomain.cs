@@ -36,7 +36,7 @@ namespace Domain.Concrete
 
 			if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
 			{
-				throw new ArgumentException("Wrong email or password");
+				throw new Exception("Wrong email or password");
 			}
 			var userRoles = userRolesRepository.GetUserRolesById(user.UserId);
 
