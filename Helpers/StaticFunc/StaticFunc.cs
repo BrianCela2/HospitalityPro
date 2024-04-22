@@ -11,7 +11,8 @@ namespace Helpers.StaticFunc
 {
     public class StaticFunc
     {
-        public static Guid ConvertGuid(Claim receiverIdClaim) {
+        public static Guid ConvertGuid(Claim receiverIdClaim)
+        {
             Guid receiverId = Guid.Empty;
             if (receiverIdClaim != null && Guid.TryParse(receiverIdClaim.Value, out var parsedGuid))
             {
@@ -19,16 +20,16 @@ namespace Helpers.StaticFunc
             }
             return receiverId;
         }
-        public static int GetDayDiff(int Datedifference,DateTime checkin, DateTime checkout)
+        public static int GetDayDiff(int Datedifference, DateTime checkin, DateTime checkout)
         {
-           int diffOfDates = (checkout - checkin).Days;
+            int diffOfDates = (checkout - checkin).Days;
             if (diffOfDates > Datedifference)
             {
                 Datedifference = diffOfDates;
             }
             return Datedifference;
         }
-        public static decimal GetTotalPrice(int Datedifferences,decimal price)
+        public static decimal GetTotalPrice(int Datedifferences, decimal price)
         {
             if (Datedifferences > 30)
             {
@@ -42,19 +43,18 @@ namespace Helpers.StaticFunc
             {
                 return price;
             }
-          
+
         }
         public static Guid GetUserId(IHttpContextAccessor httpContextAccessor)
         {
             var receiverIdClaim = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            Guid userId;
             if (receiverIdClaim != null)
             {
-                return userId = ConvertGuid(receiverIdClaim);
+                return  ConvertGuid(receiverIdClaim);
             }
             else
             {
-                throw new Exception("User doesn't not exist");
+                return Guid.Empty;
             }
         }
     }

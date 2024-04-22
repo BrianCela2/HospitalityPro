@@ -17,8 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<HospitalityProContext>(options => { options.UseSqlServer(connString); options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); });
 
-// Add services to the container.
-
 builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true).AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddJsonOptions(p => p.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddSignalR(options =>
@@ -125,6 +123,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+app.UseMiddleware<RequestResponseLoggerMiddleware>();
 
 app.MapControllers();
 

@@ -26,6 +26,7 @@ namespace Domain.DI
             For<IHotelServiceDomain>().Use<HotelServiceDomain>();		
             For<INotificationDomain>().Use<NotificationDomain>();
             For<IReservationServiceDomain>().Use<ReservationServiceDomain>();
+            For<IUserHistoryDomain>().Use<UserHistoryDomain>();
             For<NotificationHub>();
             AddRepositoryRegistries();
             AddHttpContextRegistries();

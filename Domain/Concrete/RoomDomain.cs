@@ -8,12 +8,7 @@ using Entities.Models;
 using DTO.SearchParametersList;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using DTO.NotificationDTOs;
-using System.Linq;
-using Helpers.Enumerations;
-using Microsoft.Data.SqlClient;
-using DTO.ReservationsDTOS;
-using DTO.UserDTO;
+
 
 namespace Domain.Concrete
 {
