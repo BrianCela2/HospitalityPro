@@ -159,7 +159,7 @@ namespace Domain.Concrete
 			}
 			//var Reservationservices = reservationServiceRepository.GetReservationServicesByReservationId(reservation.ReservationId);
 
-            foreach (var Reservationservice in reservation.ReservationServices)
+				foreach (var Reservationservice in reservation.ReservationServices)
 			{
 				var service = hotelServiceRepository.GetById(Reservationservice.ServiceId);
 				Price += service.Price;
@@ -175,12 +175,20 @@ namespace Domain.Concrete
 		}
 
 
-        public IEnumerable<ReservationDTO> GetReservationsOfUser()
+        public async Task<PaginatedReservationDTO> GetReservationsOfUser(int page, int pageSize, string sortField, string sortOrder)
         {
             Guid userId = StaticFunc.GetUserId(_httpContextAccessor);
-            IEnumerable<Reservation> reservation = reservationRepository.GetReservationsOfUser(userId);
-            return _mapper.Map<IEnumerable<ReservationDTO>>(reservation);
-        }
+            IEnumerable<Reservation> reservations = reservationRepository.GetReservationsOfUser(userId);
+			IEnumerable<Reservation> paginatedReservations = _paginationHelper.GetPaginatedData(reservations, page, pageSize, sortField, sortOrder);
+			var allReservations = _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
+			var totalReservationsCount = reservations.Count();
+			var totalPages = (int)Math.Ceiling((double)totalReservationsCount / pageSize);
+			return new PaginatedReservationDTO
+			{
+				Reservations = allReservations,
+				TotalPages = totalPages
+			};
+		}
 
 		public async Task<PaginatedReservationDTO> ReservationsRoomAndService(int page, int pageSize, string sortField, string sortOrder, string searchString)
 		{

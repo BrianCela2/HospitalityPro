@@ -67,11 +67,18 @@ namespace Domain.Concrete
             }
             return  _mapper.Map<RoomDTO>(room);
         }
-        public async Task<IEnumerable<RoomDTO>> GetAllRoomAsync(int page, int pageSize, string sortField, string sortOrder)
+        public async Task<PaginatedRoomDTO> GetAllRoomAsync(int page, int pageSize, string sortField, string sortOrder)
         {
 				IEnumerable<Room> rooms = roomRepository.GetAll();
 				IEnumerable<Room> paginatedRooms = _paginationHelper.GetPaginatedData(rooms, page, pageSize, sortField, sortOrder);
-				return _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
+			    var allRooms = _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
+			    var totalRoomsCount = rooms.Count();
+			    var totalPages = (int)Math.Ceiling((double)totalRoomsCount / pageSize);
+                return new PaginatedRoomDTO
+                {
+                    Rooms = allRooms,
+                    TotalPages = totalPages
+                };
 		}
 
         public async Task<PaginatedRoomDTO> GetRoomPhotos(int page, int pageSize, string sortField, string sortOrder)

@@ -4,6 +4,8 @@ using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 
 namespace HospitalityPro.Controllers
 {
@@ -68,9 +70,9 @@ namespace HospitalityPro.Controllers
 		}
 		[HttpGet]
 		[Route("GetReservationForUser")]
-		public IActionResult GetReservationForUser()
+		public async Task<IActionResult> GetReservationForUser([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "ReservationDate", [FromQuery] string sortOrder = "asc")
 		{
-            var reservations =  _reservationDomain.GetReservationsOfUser();
+			var reservations = await  _reservationDomain.GetReservationsOfUser(page, pageSize, sortField, sortOrder);
             if (reservations == null)
             { return NotFound(); }
             return Ok(reservations);
