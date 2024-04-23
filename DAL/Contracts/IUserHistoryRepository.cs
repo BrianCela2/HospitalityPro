@@ -9,5 +9,6 @@ namespace DAL.Contracts
 {
     public interface IUserHistoryRepository : IRepository<UserHistory, Guid>
     {
+         DateTime? GetLastLoginDate(string userId);
     }
 }

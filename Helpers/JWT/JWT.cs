@@ -83,6 +83,28 @@ namespace Helpers.JWT
 			var newToken = CreateToken(newAuthClaims);
 
 			return newToken;
-		}	
-	}
+		}
+        public static string GetUserIdFromToken(string jwtToken)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = tokenHandler.ReadJwtToken(jwtToken);
+
+                var userIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "nameid");
+
+                if (userIdClaim != null)
+                {
+                    return userIdClaim.Value;
+                }
+
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error extracting user ID from JWT token: {ex.Message}");
+                return string.Empty;
+            }
+        }
+    }
 }

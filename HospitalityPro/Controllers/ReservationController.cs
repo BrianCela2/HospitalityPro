@@ -38,14 +38,15 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddReservation(CreateReservationDTO reservationDTO)
+
+        public async Task<IActionResult> AddReservation(CreateReservationDTO reservationDTO)
 		{
 			if (reservationDTO == null) { return NotFound(); }
 			await _reservationDomain.AddReservationAsync(reservationDTO);
 			return NoContent();
 		}
 		[HttpPut("{reservationID}/{serviceID}")]
-		public async Task<IActionResult> ExtraService(Guid reservationID, Guid serviceID)
+        public async Task<IActionResult> ExtraService(Guid reservationID, Guid serviceID)
 		{
 			ReservationDTO reservationDTO = await _reservationDomain.GetReservationByIdAsync(reservationID);
 			if (reservationDTO == null) { return NotFound(); }

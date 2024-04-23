@@ -7,6 +7,16 @@ namespace DAL.Concrete
     {
         public UserHistoryRepository(HospitalityProContext dbContext) : base(dbContext)
         {
+
+        }
+
+        public DateTime? GetLastLoginDate(string userId)
+        {
+            return context
+                 .Where(u => u.Title.StartsWith(userId) && u.UserAction == 2)
+                 .OrderByDescending(u => u.LoginDate)
+                 .Select(u => u.LoginDate)
+                 .FirstOrDefault();
         }
     }
 }

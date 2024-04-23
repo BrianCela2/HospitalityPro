@@ -111,14 +111,12 @@ namespace Domain.Concrete
             if (roomPhotos.Any())
             {
                 roomPhotoRepository.RemoveRange(roomPhotos);
-                _unitOfWork.Save();
             }
 
             IEnumerable<ReservationRoom> roomReservations = roomReservationRepository.GetReservationByRoom(room.RoomId);
             if (roomReservations.Any())
             {
                 roomReservationRepository.RemoveRange(roomReservations);
-                _unitOfWork.Save();
             }
 
             if (room != null)
