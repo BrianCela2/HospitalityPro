@@ -155,9 +155,7 @@ namespace Domain.Concrete
 				var room = roomRepository.GetById(reservationRoom.RoomId);
 				reservation.TotalPrice += Price;
 				reservationRoomRepository.Update(reservationRoom);
-				_unitOfWork.Save();
 			}
-			//var Reservationservices = reservationServiceRepository.GetReservationServicesByReservationId(reservation.ReservationId);
 
 				foreach (var Reservationservice in reservation.ReservationServices)
 			{
@@ -165,7 +163,6 @@ namespace Domain.Concrete
 				Price += service.Price;
 				Reservationservice.ReservationId = reservation.ReservationId;
 				reservationServiceRepository.Add(Reservationservice);
-				_unitOfWork.Save();
 			}
 			reservation.ReservationStatus = 1;
             reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);

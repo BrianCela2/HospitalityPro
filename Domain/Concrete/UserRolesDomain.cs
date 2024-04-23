@@ -32,15 +32,23 @@ namespace Domain.Concrete
 		private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
 		private IUserRolesRepository userRolesRepository => _unitOfWork.GetRepository<IUserRolesRepository>();
 
-        public async Task AddRoleToUser(UserRoleDTO userRoleDto)
-        {
-            UserRole userRole = _mapper.Map<UserRole>(userRoleDto);
-            userRolesRepository.Add(userRole);
-            _unitOfWork.Save();
-        }
+		public async Task<UserRole> AddRoleToUser(UserRoleDTO userRoleDto)
+		{
+			var existingUserRole =  userRolesRepository.GetUserRole(userRoleDto.UserId, (int)userRoleDto.Roles);
 
+			if (existingUserRole == null)
+			{
+				throw new Exception($"User already exists");
+			}
 
-        public async Task<List<UserRoleDTO>> GetUserRoleById(Guid userId)
+			UserRole userRole = _mapper.Map<UserRole>(userRoleDto);
+
+			userRolesRepository.Add(userRole);
+			_unitOfWork.Save();
+			return null; 
+		}
+
+		public async Task<List<UserRoleDTO>> GetUserRoleById(Guid userId)
         {
             List<UserRole> userRoles = userRolesRepository.GetUserRolesById(userId);
             if (userRoles == null)
