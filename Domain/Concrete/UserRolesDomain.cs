@@ -36,9 +36,9 @@ namespace Domain.Concrete
 		{
 			var existingUserRole =  userRolesRepository.GetUserRole(userRoleDto.UserId, (int)userRoleDto.Roles);
 
-			if (existingUserRole == null)
+			if (existingUserRole != null)
 			{
-				throw new Exception($"User already exists");
+				throw new Exception($"Role already exists");
 			}
 
 			UserRole userRole = _mapper.Map<UserRole>(userRoleDto);
