@@ -71,6 +71,7 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		[Route("getUserRoles")]
 		public IActionResult GetAllUserRoles()
 		{
@@ -98,6 +99,7 @@ namespace HospitalityPro.Controllers
 			}
 		}
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		[Route("getUserRoleDetails")]
 		public async Task<IActionResult>  GetAllUserRoleDetails([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "FirstName", [FromQuery] string sortOrder = "asc", [FromQuery] string searchString = null)
 		{

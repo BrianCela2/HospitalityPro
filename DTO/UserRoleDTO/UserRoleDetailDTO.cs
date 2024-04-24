@@ -1,4 +1,5 @@
-﻿using Helpers.Enumerations;
+﻿using DTO.UserDTO;
+using Helpers.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace DTO.UserRoleDTO
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public Roles Roles { get; set; }
+		public UserDTO.UserDTO User { get; set; }
 	}
 }

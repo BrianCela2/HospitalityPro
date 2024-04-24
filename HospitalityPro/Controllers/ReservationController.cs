@@ -2,6 +2,7 @@
 using Domain.Notifications;
 using DTO.ReservationsDTOS;
 using DTO.RoomDTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,6 +21,7 @@ namespace HospitalityPro.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> GetAllReservations([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "ReservationDate", [FromQuery] string sortOrder = "dsc")
 		{
 			var reservations = await _reservationDomain.GetAllReservationsAsync(page, pageSize, sortField, sortOrder);
@@ -53,6 +55,7 @@ namespace HospitalityPro.Controllers
 			await _reservationDomain.AddExtraService(reservationID, serviceID);
 			return NoContent();
 		}
+		[Authorize(Roles = "Admin")]
 		[HttpDelete("{reservationId}")]
 		public async Task<IActionResult> DeleteReservation(Guid reservationId)
 		{
@@ -80,7 +83,8 @@ namespace HospitalityPro.Controllers
         }
         [HttpGet]
         [Route("ReservationsServiceRooms")]
-        public async Task <IActionResult> GetReservationRoomService([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "ReservationDate", [FromQuery] string sortOrder = "dsc",string searchString="")
+		[Authorize(Roles = "Admin,Operator")]
+		public async Task <IActionResult> GetReservationRoomService([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "ReservationDate", [FromQuery] string sortOrder = "dsc",string searchString="")
         {
             var reservations = await _reservationDomain.ReservationsRoomAndService(page, pageSize, sortField, sortOrder,searchString );
             if (reservations == null)

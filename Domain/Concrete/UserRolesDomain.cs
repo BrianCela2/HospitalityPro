@@ -83,14 +83,8 @@ namespace Domain.Concrete
 		public async Task<IEnumerable<UserRoleDetailDTO>> GetUserRoleDetailsAsync(int page, int pageSize, string sortField, string sortOrder, string searchString)
 		{
 			searchString = searchString?.ToLower();
-			IEnumerable<UserRole> userRoles = userRolesRepository.GetAll();
+			IEnumerable<UserRole> userRoles = userRolesRepository.GetAllUserRoles();
 			var mappedUserRoles = _mapper.Map<IEnumerable<UserRoleDetailDTO>>(userRoles);
-			foreach (var userRole in mappedUserRoles)
-            {
-				var user = userRepository.GetById(userRole.UserId);
-                userRole.FirstName = user.FirstName;
-                userRole.LastName = user.LastName;
-			}
 			Func<UserRoleDetailDTO, bool> filterFunc = u => string.IsNullOrEmpty(searchString) || u.FirstName.ToLower().Contains(searchString) || u.LastName.Contains(searchString);
 			IEnumerable<UserRoleDetailDTO> paginatedUserRole = _paginationHelper.GetPaginatedData(mappedUserRoles, page, pageSize, sortField, sortOrder, searchString, filterFunc: filterFunc);
 			return paginatedUserRole;
