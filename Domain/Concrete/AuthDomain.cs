@@ -84,6 +84,8 @@ namespace Domain.Concrete
 			var userMap = _mapper.Map<User>(request);
 
 			userMap.Password = passwordHash;
+			userMap.IsActive = true;
+			userMap.CreatedDate= DateTime.Now;
 
 			var result = userRepository.Add(userMap);
 

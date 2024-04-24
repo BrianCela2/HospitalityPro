@@ -24,6 +24,7 @@ namespace Domain.Mappings
             CreateMap<User, LoginDTO>().ReverseMap();
             CreateMap<UserRole, UserRoleDTO>().ReverseMap();
 			CreateMap<UserRole, UserRoleDetailDTO>().ReverseMap();
+            CreateMap<User, UpdateUserDTO>().ReverseMap();
 
 			CreateMap<RoomPhoto, CreateRoomPhotoDTO>().ReverseMap();
             CreateMap<RoomPhoto, RoomPhotoDTO>().ReverseMap();

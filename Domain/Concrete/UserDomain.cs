@@ -54,7 +54,7 @@ namespace Domain.Concrete
 			return _mapper.Map<UserDTO>(user);
 		}
 
-		public async Task UpdateUserAsync(UserDTO userDTO)
+		public async Task UpdateUserAsync(UpdateUserDTO userDTO)
 		{
 			var receiverIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
 			Guid userId;
@@ -67,7 +67,7 @@ namespace Domain.Concrete
 				throw new Exception("User doesn't not exist");
 			}
 			User user = userRepository.GetById(userId);
-			user = _mapper.Map<UserDTO, User>(userDTO, user);
+			user = _mapper.Map<UpdateUserDTO, User>(userDTO, user);
 			userRepository.Update(user);
 			_unitOfWork.Save();
 		}

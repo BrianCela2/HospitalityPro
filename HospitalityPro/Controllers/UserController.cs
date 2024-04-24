@@ -24,7 +24,7 @@ namespace HospitalityPro.Controllers
             _userDomain = userDomain;
         }
 
-        [Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
         [Route("getAllUsers")]
         public async Task<IActionResult> GetAllUsers([FromQuery] int page=1, [FromQuery] int pageSize=10, [FromQuery] string sortField = "FirstName", [FromQuery] string sortOrder="asc", [FromQuery] string searchString=null )
@@ -75,7 +75,7 @@ namespace HospitalityPro.Controllers
         }
 
 		[HttpPut]
-		public async Task<IActionResult> UpdateUser([FromBody] UserDTO userDTO)
+		public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO userDTO)
 		{
 			try
 			{

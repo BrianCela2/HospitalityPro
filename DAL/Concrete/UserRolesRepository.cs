@@ -32,5 +32,10 @@ namespace DAL.Concrete
         {
             return context.Count(ur => ur.Roles == role);
         }
+        public List<UserRole> GetAllUserRoles()
+        {
+			var userRoles = context.Include(x => x.User).ToList();
+			return userRoles;
+		}
     }
 }
