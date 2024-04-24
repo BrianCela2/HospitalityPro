@@ -167,7 +167,9 @@ namespace Domain.Concrete
 			reservation.ReservationStatus = 1;
             reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Update(reservation);
-			_unitOfWork.Save();
+            var notification = new Notification { ReceiverId = (Guid)reservation.UserId, MessageContent = "Reservation was updated successfully", };
+            await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, (Guid)reservation.UserId);
+            _unitOfWork.Save();
 
 		}
 
@@ -224,10 +226,6 @@ namespace Domain.Concrete
 						{
 							if (((roomReservation.CheckInDate >= roomDates.CheckInDate && roomReservation.CheckInDate < roomDates.CheckOutDate) || (roomReservation.CheckOutDate > roomDates.CheckInDate && roomReservation.CheckOutDate <= roomDates.CheckOutDate)) && roomDates.Reservation.ReservationStatus == 1)
 							{
-                                var notification = new Notification {ReceiverId = (Guid)reservation.UserId,MessageContent = "Reservation Status didnt get changed"};
-
-                                await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, (Guid)reservation.UserId);
-
                                 throw new Exception("Your Reservation can be done because Room is not available anymore");
 							}
 						}
@@ -235,6 +233,8 @@ namespace Domain.Concrete
 				}
                 reservation.ReservationStatus = status;
                 reservationRepository.Update(reservation);
+                var notification = new Notification { ReceiverId = (Guid)reservation.UserId, MessageContent = "Reservation was updated successfully", };
+                await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, (Guid)reservation.UserId);
                 _unitOfWork.Save();
 
             }
