@@ -8,6 +8,7 @@ using DTO.UserDTO;
 using DTO.UserRoleDTO;
 using DTO.UserRoles;
 using Entities.Models;
+using LamarCodeGeneration.Frames;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using System;
@@ -80,14 +81,20 @@ namespace Domain.Concrete
             return userRolesRepository.GetRoleUsersCount(role);
         }
 
-		public async Task<IEnumerable<UserRoleDetailDTO>> GetUserRoleDetailsAsync(int page, int pageSize, string sortField, string sortOrder, string searchString)
+		public async Task<PaginatedUserRoleDTO> GetUserRoleDetailsAsync(int page, int pageSize, string sortField, string sortOrder, string searchString)
 		{
 			searchString = searchString?.ToLower();
 			IEnumerable<UserRole> userRoles = userRolesRepository.GetAllUserRoles();
-			var mappedUserRoles = _mapper.Map<IEnumerable<UserRoleDetailDTO>>(userRoles);
 			Func<UserRoleDetailDTO, bool> filterFunc = u => string.IsNullOrEmpty(searchString) || u.FirstName.ToLower().Contains(searchString) || u.LastName.Contains(searchString);
-			IEnumerable<UserRoleDetailDTO> paginatedUserRole = _paginationHelper.GetPaginatedData(mappedUserRoles, page, pageSize, sortField, sortOrder, searchString, filterFunc: filterFunc);
-			return paginatedUserRole;
+			var allUsers = _mapper.Map<IEnumerable<UserRoleDetailDTO>>(userRoles);
+			IEnumerable<UserRoleDetailDTO> paginatedUserRole = _paginationHelper.GetPaginatedData(allUsers, page, pageSize, sortField, sortOrder, searchString, filterFunc: filterFunc);
+			var totalUsersCount = userRoles.Count();
+			var totalPages = (int)Math.Ceiling((double)totalUsersCount / pageSize);
+			return new PaginatedUserRoleDTO
+			{
+				Users = allUsers,
+				TotalPages = totalPages
+			};
 		}
 	}
 }
