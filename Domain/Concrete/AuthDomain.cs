@@ -34,26 +34,27 @@ namespace Domain.Concrete
 		{
 			var user = userRepository.GetByEmail(request.Email);
 
-			if ((bool)user.IsActive)
-			{
-				DateTime? lastLoginDate = userHistoryRepository.GetLastLoginDate(user.UserId.ToString());
-				if (lastLoginDate.HasValue && (DateTime.Now - lastLoginDate.Value).Days >= 60)
-				{
-					user.IsActive = false;
-					userRepository.Update(user);
-					_unitOfWork.Save();
-					throw new Exception("This account is not Active");
-				}
-			}
-			else
-			{
-                throw new Exception("This account is not Active");
-            }
+			
 			if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
 			{
 				throw new Exception("Wrong email or password");
 			}
-			var userRoles = userRolesRepository.GetUserRolesById(user.UserId);
+            if ((bool)user.IsActive)
+            {
+                DateTime? lastLoginDate = userHistoryRepository.GetLastLoginDate(user.UserId.ToString());
+                if (lastLoginDate.HasValue && (DateTime.Now - lastLoginDate.Value).Days >= 60)
+                {
+                    user.IsActive = false;
+                    userRepository.Update(user);
+                    _unitOfWork.Save();
+                    throw new Exception("This account is not Active");
+                }
+            }
+            else
+            {
+                throw new Exception("This account is not Active");
+            }
+            var userRoles = userRolesRepository.GetUserRolesById(user.UserId);
 
 			var authClaims = new List<Claim>
 			{

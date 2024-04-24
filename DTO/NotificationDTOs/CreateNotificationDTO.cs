@@ -12,6 +12,7 @@ namespace DTO.NotificationDTOs
         public Guid? SenderId { get; set; }
         public DateTime? SendDateTime { get; set; } = DateTime.Now;
         public string MessageContent { get; set; } = null!;
-        public bool? IsSeen { get; set; } = false;
+        public bool IsSeen { get; set; } = false;
+        public string? ContentID {get; set; }
     }
 }
