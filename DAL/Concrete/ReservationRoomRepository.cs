@@ -37,7 +37,7 @@ namespace DAL.Concrete
 
 		public IEnumerable<ReservationRoom> GetReservationRoomsByIdExcludingCurrentReservation(Guid roomId, Guid reservationIdToExclude)
 		{
-			return context
+			return context .Include(x=>x.Reservation)
 				.Where(rr => rr.RoomId == roomId && rr.ReservationId != reservationIdToExclude)
 				.ToList();
 		}

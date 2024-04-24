@@ -5,6 +5,7 @@ using Domain.Contracts;
 using Domain.Notifications;
 using DTO.ReservationsDTOS;
 using Entities.Models;
+using Helpers.Enumerations;
 using Helpers.StaticFunc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
@@ -137,8 +138,9 @@ namespace Domain.Concrete
 				var roomReservations = reservationRoomRepository.GetReservationRoomsByIdExcludingCurrentReservation(room.RoomId,updateReservationDTO.ReservationId);
 				foreach(var roomReservation in roomReservations)
 				{
-					if ((room.CheckInDate < roomReservation.CheckOutDate && room.CheckInDate >= roomReservation.CheckInDate) ||
+					if (((room.CheckInDate < roomReservation.CheckOutDate && room.CheckInDate >= roomReservation.CheckInDate) ||
 						(room.CheckOutDate > roomReservation.CheckInDate && room.CheckOutDate <= roomReservation.CheckOutDate))
+						&& roomReservation.Reservation.ReservationStatus!= (int)ReservationStatusEnum.Canceled)
 					{
 						throw new Exception($"Room {room.RoomId} is already reserved for the specified dates.");
 					}
