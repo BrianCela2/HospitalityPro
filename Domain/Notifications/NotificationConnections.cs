@@ -20,11 +20,6 @@ namespace Domain.Notifications
                     await notificationHubContext.Clients.Client(connectionId).SendNotification(notification, connectionId);
                 }
             }
-            else
-            {
-                throw new Exception("User is not currently connected.");
-            }
         }
     }
-
 }
