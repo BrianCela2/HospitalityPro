@@ -114,7 +114,7 @@ namespace Domain.Concrete
             reservationServiceRepository.Add(createReservationService);
             reservationRepository.Update(reservation);
 
-            var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "New Service was added in Reservation",ContentID=reservationID.ToString() };
+            var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "New Service was added in Reservation",ContentID=reservationID};
             var notification = _mapper.Map<Notification>(notificationDTO);
             await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification,reservation.UserId);
             notificationRepository.Add(notification);
@@ -175,7 +175,7 @@ namespace Domain.Concrete
 			reservation.ReservationStatus = 1;
             reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Update(reservation);
-            var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "Reservation was updated successfully",ContentID=reservation.ReservationId.ToString() };
+            var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "Reservation was updated successfully",ContentID=reservation.ReservationId};
             var notification = _mapper.Map<Notification>(notificationDTO);
             await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, reservation.UserId);
             notificationRepository.Add(notification);
@@ -243,7 +243,7 @@ namespace Domain.Concrete
 				}
                 reservation.ReservationStatus = status;
                 reservationRepository.Update(reservation);
-                var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "The reservation status was changed",ContentID=reservation.ReservationId.ToString()};
+                var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "The reservation status was changed",ContentID=reservation.ReservationId};
                 var notification = _mapper.Map<Notification>(notificationDTO);
                 await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, notification.ReceiverId);
                 notificationRepository.Add(notification);
