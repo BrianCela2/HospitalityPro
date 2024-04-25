@@ -18,9 +18,9 @@ namespace Controllers
             _hotelServiceDomain = hotelServiceDomain;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<HotelServiceDTO>>> GetAllHotelServicesAsync([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Price", [FromQuery] string sortOrder = "asc", [FromQuery] string searchString = null)
-		{
+        {
             try
             {
                 var hotelServices = await _hotelServiceDomain.GetAllHotelServicesAsync(page, pageSize, sortField, sortOrder, searchString);
@@ -32,7 +32,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetHotelServiceById")]
         public async Task<ActionResult<HotelServiceDTO>> GetHotelServiceByIdAsync(Guid id)
         {
             try
@@ -50,11 +50,17 @@ namespace Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<ActionResult> AddHotelServiceAsync([FromBody] CreateHotelServiceDTO hotelServiceDTO)
         {
             try
             {
+                if (hotelServiceDTO?.Price < 0)
+                {
+                    ModelState.AddModelError("Price", "Price must be a positive number");
+                    return BadRequest(ModelState);
+                }
+
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
@@ -70,19 +76,30 @@ namespace Controllers
 
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "UpdateHotelService")]
         public async Task<ActionResult> UpdateHotelServiceAsync(Guid id, [FromBody] UpdateHotelServiceDTO hotelServiceDTO)
         {
             try
             {
-                if (!ModelState.IsValid)
+                if (hotelServiceDTO == null)
                 {
-                    return BadRequest(ModelState);
+                    return BadRequest("Hotel service data is required");
                 }
 
                 if (id != hotelServiceDTO.ServiceID)
                 {
                     return BadRequest("Service ID mismatch");
+                }
+
+                if (hotelServiceDTO.Price < 0)
+                {
+                    ModelState.AddModelError("Price", "Price must be a positive number");
+                    return BadRequest(ModelState);
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
                 }
 
                 await _hotelServiceDomain.UpdateHotelServiceAsync(hotelServiceDTO);
@@ -94,7 +111,7 @@ namespace Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeleteHotelService")]
         public async Task<ActionResult> DeleteHotelServiceAsync(Guid id)
         {
             try
@@ -113,7 +130,8 @@ namespace Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet("ServicesOfReservation/{id}")]
+
+        [HttpGet("services/reservations/{id}", Name = "GetServicesReservations")]
         public ActionResult<IEnumerable<HotelServiceDTO>> GetServicesReservations(Guid id)
         {
             try
