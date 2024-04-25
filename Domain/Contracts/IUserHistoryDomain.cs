@@ -4,6 +4,7 @@ namespace Domain.Contracts
 {
     public interface IUserHistoryDomain
     {
-        IEnumerable<UserHistoryDTO> GetHistory();
-    }
+		Task<PaginatedUserHistoryDTO> GetHistory(int page, int pageSize, string sortField, string sortOrder);
+
+	}
 }

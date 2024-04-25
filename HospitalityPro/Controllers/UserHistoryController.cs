@@ -15,9 +15,9 @@ namespace HospitalityPro.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 10, string sortField = "LoginDate", string sortOrder = "dsc")
         {
-            var historyList = _userHistoryDomain.GetHistory();
+            var historyList = await _userHistoryDomain.GetHistory(page, pageSize, sortField, sortOrder);
             return Ok(historyList);
         }
     }
