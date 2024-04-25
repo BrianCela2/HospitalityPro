@@ -130,7 +130,7 @@ namespace HospitalityPro.Controllers
             }
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRoom(Guid id, [FromForm] UpdateRoomDTO updateRoomDto)
+        public async Task<IActionResult> UpdateRoom(Guid id, [FromBody] UpdateRoomDTO updateRoomDto)
         {
             if (id != updateRoomDto.RoomId) { return NotFound(); }
             await _roomDomain.UpdateRoom(updateRoomDto);
