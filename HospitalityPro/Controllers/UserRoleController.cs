@@ -1,4 +1,5 @@
-﻿using Domain.Contracts;
+﻿using DAL.Contracts;
+using Domain.Contracts;
 using DTO.RoomDTOs;
 using DTO.RoomPhotoDTOs;
 using DTO.UserDTO;
@@ -37,7 +38,11 @@ namespace HospitalityPro.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				await _userRolesDomain.AddRoleToUser(userRoleDto);
+				var existingUser =await _userRolesDomain.AddRoleToUser(userRoleDto);
+				if (existingUser != null)
+				{
+					return BadRequest(new { message = "User already has this role." });
+				}
 				return NoContent();
 			}
 			else

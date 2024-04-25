@@ -29,11 +29,26 @@ namespace Domain.Concrete
 
 		private IUserRepository userRepository => _unitOfWork.GetRepository<IUserRepository>();
 		private IUserRolesRepository userRolesRepository => _unitOfWork.GetRepository<IUserRolesRepository>();
-
+		private IUserHistoryRepository userHistoryRepository =>_unitOfWork.GetRepository<IUserHistoryRepository>();
 		public async Task<string> Login(LoginDTO request)
 		{
 			var user = userRepository.GetByEmail(request.Email);
 
+			if ((bool)user.IsActive)
+			{
+				DateTime? lastLoginDate = userHistoryRepository.GetLastLoginDate(user.UserId.ToString());
+				if (lastLoginDate.HasValue && (DateTime.Now - lastLoginDate.Value).Days >= 60)
+				{
+					user.IsActive = false;
+					userRepository.Update(user);
+					_unitOfWork.Save();
+					throw new Exception("This account is not Active");
+				}
+			}
+			else
+			{
+                throw new Exception("This account is not Active");
+            }
 			if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
 			{
 				throw new Exception("Wrong email or password");

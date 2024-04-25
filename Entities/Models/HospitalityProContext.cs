@@ -233,20 +233,20 @@ namespace Entities.Models
 
             modelBuilder.Entity<UserHistory>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("User_History");
 
-                entity.Property(e => e.Browser)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Browser)
+                    .HasMaxLength(150)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.LoginDate).HasColumnType("date");
 
                 entity.Property(e => e.Title)
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
             });
 

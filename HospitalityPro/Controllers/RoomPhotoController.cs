@@ -57,12 +57,5 @@ namespace HospitalityPro.Controllers
                 return BadRequest();
             }
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRoomPhoto(Guid id, [FromForm] UpdateRoomPhotoDTO updateRoomPhotoDto)
-        {
-            if (id != updateRoomPhotoDto.PhotoId) { return NotFound(); }
-            await _roomPhotoDomain.UpdatePhoto(updateRoomPhotoDto);
-            return NoContent();
-        }
     }
 }

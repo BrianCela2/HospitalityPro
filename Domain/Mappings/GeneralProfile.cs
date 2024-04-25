@@ -10,6 +10,7 @@ using DTO.UserRoles;
 using Entities.Models;
 using DTO.ReservationServiceDTOs;
 using DTO.UserRoleDTO;
+using DTO.UserHistoryDTOs;
 
 namespace Domain.Mappings
 {
@@ -53,6 +54,9 @@ namespace Domain.Mappings
             CreateMap<ReservationService,ReservationServiceDTO>().ReverseMap();
             CreateMap<ReservationDTO, UpdateReservationDTO>().ReverseMap();
             CreateMap<Reservation, UpdateReservationStatusDTO>().ReverseMap();
+
+            CreateMap<UserHistory, UserHistoryDTO>().ReverseMap();
+
         }
         #endregion
     }
