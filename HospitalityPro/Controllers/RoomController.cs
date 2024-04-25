@@ -41,14 +41,14 @@ namespace HospitalityPro.Controllers
         }
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<RoomDTO>))]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "RoomNumber", [FromQuery] string sortOrder = "asc")
+        public async Task<IActionResult> GetAll()
         {
             try
             {
                 if(!ModelState.IsValid) { 
                     return BadRequest();
                 }
-                var rooms = await _roomDomain.GetAllRoomAsync(page, pageSize, sortField, sortOrder);
+                var rooms = await _roomDomain.GetAllRoomAsync();
                 if (rooms == null) { 
                     return NotFound(); 
                 }
@@ -107,7 +107,7 @@ namespace HospitalityPro.Controllers
 
         }
         [HttpGet]
-        public async Task<IActionResult> GetRoomPhotos([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "RoomNumber", [FromQuery] string sortOrder = "asc")
+        public async Task<IActionResult> GetRoomPhotos([FromQuery] int page = 1, [FromQuery] int pageSize = 9, [FromQuery] string sortField = "RoomNumber", [FromQuery] string sortOrder = "asc")
         {
             var rooms = await _roomDomain.GetRoomPhotos(page, pageSize, sortField, sortOrder);
             if (rooms == null) { return NotFound(); }

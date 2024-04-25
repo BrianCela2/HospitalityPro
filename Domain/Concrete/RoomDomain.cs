@@ -8,6 +8,7 @@ using Entities.Models;
 using DTO.SearchParametersList;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using DTO.RoomPhotoDTOs;
 
 
 namespace Domain.Concrete
@@ -62,18 +63,16 @@ namespace Domain.Concrete
             }
             return  _mapper.Map<RoomDTO>(room);
         }
-        public async Task<PaginatedRoomDTO> GetAllRoomAsync(int page, int pageSize, string sortField, string sortOrder)
+        public async Task<IEnumerable<RoomDTO>> GetAllRoomAsync()
         {
-				IEnumerable<Room> rooms = roomRepository.GetAll();
-				IEnumerable<Room> paginatedRooms = _paginationHelper.GetPaginatedData(rooms, page, pageSize, sortField, sortOrder);
-			    var allRooms = _mapper.Map<IEnumerable<RoomDTO>>(paginatedRooms);
-			    var totalRoomsCount = rooms.Count();
-			    var totalPages = (int)Math.Ceiling((double)totalRoomsCount / pageSize);
-                return new PaginatedRoomDTO
-                {
-                    Rooms = allRooms,
-                    TotalPages = totalPages
-                };
+            IEnumerable<Room> rooms = roomRepository.GetAllRoomsPhoto();
+			IEnumerable<Room> roomsWithLowestPrice = rooms
+		   .GroupBy(room => room.Category)
+		   .Select(group => group.OrderBy(room => room.Price).FirstOrDefault())
+		   .ToList();
+			    var allRooms = _mapper.Map<IEnumerable<RoomDTO>>(roomsWithLowestPrice);
+            return allRooms;
+	
 		}
 
         public async Task<PaginatedRoomDTO> GetRoomPhotos(int page, int pageSize, string sortField, string sortOrder)

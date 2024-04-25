@@ -12,7 +12,7 @@ namespace Domain.Contracts
     public interface IRoomDomain
     {
         Task AddRoomAsync(CreateRoomDTO createRoomDTO);
-		Task<PaginatedRoomDTO> GetAllRoomAsync(int page, int pageSize, string sortField, string sortOrder);
+		Task<IEnumerable<RoomDTO>> GetAllRoomAsync();
         Task<RoomDTO> GetRoomByIdAsync(Guid id);
 		Task<PaginatedRoomDTO> GetRoomPhotos(int page, int pageSize, string sortField, string sortOrder);
         Task DeleteRoom(RoomDTO roomDTO); 
