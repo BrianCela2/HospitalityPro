@@ -146,6 +146,7 @@ namespace Domain.Concrete
             {
                 List<Room?> availableRooms = roomRepository.GetAllRoomsPhoto()
                     .Where(room => room.Capacity >= criteria.Capacity && !reservedRoomIds.Contains(room.RoomId))
+                    .OrderBy(room=>room.Price)
                     .GroupBy(room => room.Category)
                     .Select(x => x.FirstOrDefault(room =>
                         roomReservationRepository.GetRoomIncludeReservation(room.RoomId)
