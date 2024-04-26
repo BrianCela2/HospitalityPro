@@ -12,7 +12,6 @@ public class PaginationHelper<T>
             data = data.Where(filterFunc);
         }
 
-        // Apply sorting
         if (!string.IsNullOrEmpty(sortField))
         {
             data = ApplySorting(data, sortField, sortOrder);
