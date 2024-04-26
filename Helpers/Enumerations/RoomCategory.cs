@@ -10,6 +10,7 @@ namespace Helpers.Enumerations
     {
         Suit = 1,
         Presidential = 2,
-        Mini = 3
+        Mini = 3,
+        Standard=4
     }
 }

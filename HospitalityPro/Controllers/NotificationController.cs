@@ -52,51 +52,18 @@ namespace HospitalityPro.Controllers
                 throw new Exception();
             }
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNotification(Guid id, UpdateNotificationDTO updatenotification)
-        {
-            if (ModelState.IsValid)
-            {
-                if (updatenotification == null && updatenotification.NotificationId != id) { return NotFound(); }
-                await _notificationDomain.UpdateNotificationAsync(updatenotification);
-
-                return NoContent();
-            }
-            else
-            {
-                throw new Exception();
-            }
-        }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNotification(Guid id)
-        {
-            if (ModelState.IsValid)
-            {
-                var notification = await _notificationDomain.GetNotificationByIdAsync(id);
-                if (notification == null) { return NotFound(); }
-                await _notificationDomain.DeleteNotificationAsync(notification);
-
-                return NoContent();
-            }
-            else
-            {
-                throw new Exception();
-            }
-        }
+       
         [HttpGet("{receiverId}")]
 
         public IActionResult GetNotificationsReceiver(Guid receiverId)
         {
-            if (ModelState.IsValid)
-            {
+            
                 var notifications =  _notificationDomain.GetNotificationsForUser(receiverId);
                 if (notifications == null)
                 {
                     return NotFound();
                 }
                 return Ok(notifications);
-            }
-            return BadRequest();
         }
         [HttpPut("NotificationsSeen/{userId}")]
         public async Task<IActionResult> ChangeNotificationToSeen(string userId)

@@ -18,7 +18,5 @@ namespace DTO.RoomDTOs
         [DataType(DataType.Upload)]
         [Display(Name = "Upload Image")]
         public List<IFormFile> Photos { get; set; } = null!;
-        [JsonIgnore]
-        public ICollection<CreateRoomPhotoDTO> RoomPhotos { get; set; }=null!;
     }
 }

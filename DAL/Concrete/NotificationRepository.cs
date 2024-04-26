@@ -16,7 +16,7 @@ namespace DAL.Concrete
 
         public  IEnumerable<Notification> GetNotificationsUser(Guid receiverId)
         {
-            var notifications =  context.Where(x => x.ReceiverId == receiverId).ToList();
+            var notifications =  context.Where(x => x.ReceiverId == receiverId).OrderByDescending(x=>x.SendDateTime).ToList();
             return notifications;
         }
         public IEnumerable<Notification> GetNotificationsUnSeen(string receiverId)

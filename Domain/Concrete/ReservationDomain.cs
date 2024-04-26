@@ -67,8 +67,7 @@ namespace Domain.Concrete
 			reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Add(reservation);
 
-            var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId,MessageContent = "Reservation successfully completed"};
-			var notification = _mapper.Map<Notification>(notificationDTO);
+            var notification = new Notification { ReceiverId = (Guid)reservation.UserId,MessageContent = "Reservation successfully completed",SendDateTime=DateTime.Now,IsSeen=false};
             await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, userId);
             notificationRepository.Add(notification);
             _unitOfWork.Save();
@@ -96,8 +95,7 @@ namespace Domain.Concrete
 
             if (reservations == null) throw new Exception();
 			reservationRepository.Remove(reservations);
-            var notificationDTO = new CreateNotificationDTO { ReceiverId = reservations.UserId, MessageContent = "Reservation is deleted" };
-            var notification = _mapper.Map<Notification>(notificationDTO);
+            var notification = new Notification { ReceiverId = (Guid)reservations.UserId, MessageContent = "Reservation is deleted", SendDateTime = DateTime.Now, IsSeen = false };
             await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification,reservations.UserId);
             notificationRepository.Add(notification);
             _unitOfWork.Save();
@@ -115,8 +113,7 @@ namespace Domain.Concrete
             reservationServiceRepository.Add(createReservationService);
             reservationRepository.Update(reservation);
 
-            var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "New Service was added in Reservation",ContentID=reservationID};
-            var notification = _mapper.Map<Notification>(notificationDTO);
+            var notification = new Notification { ReceiverId = (Guid)reservation.UserId, MessageContent = "New Service was added in Reservation",ContentId=reservationID,SendDateTime = DateTime.Now, IsSeen = false };
             await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification,reservation.UserId);
             notificationRepository.Add(notification);
             _unitOfWork.Save(); 
@@ -177,8 +174,8 @@ namespace Domain.Concrete
 			reservation.ReservationStatus = 1;
             reservation.TotalPrice = StaticFunc.GetTotalPrice(DatedifferencesMax, Price);
             reservationRepository.Update(reservation);
-            var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "Reservation was updated successfully",ContentID=reservation.ReservationId};
-            var notification = _mapper.Map<Notification>(notificationDTO);
+
+            var notification = new Notification { ReceiverId = (Guid)reservation.UserId, MessageContent = "Reservation was updated successfully",ContentId=reservation.ReservationId,SendDateTime = DateTime.Now, IsSeen = false };
             await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, reservation.UserId);
             notificationRepository.Add(notification);
             _unitOfWork.Save();
@@ -189,6 +186,7 @@ namespace Domain.Concrete
         public async Task<PaginatedReservationDTO> GetReservationsOfUser(int page, int pageSize, string sortField, string sortOrder)
         {
             Guid userId = StaticFunc.GetUserId(_httpContextAccessor);
+
             IEnumerable<Reservation> reservations = reservationRepository.GetReservationsOfUser(userId);
 			IEnumerable<Reservation> paginatedReservations = _paginationHelper.GetPaginatedData(reservations, page, pageSize, sortField, sortOrder);
 			var allReservations = _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
@@ -204,10 +202,15 @@ namespace Domain.Concrete
 		public async Task<PaginatedReservationDTO> ReservationsRoomAndService(int page, int pageSize, string sortField, string sortOrder, string searchString)
 		{
 			searchString = searchString?.ToLower();
+
 			IEnumerable<Reservation> reservations = reservationRepository.ReservationsWithRoomServices();
+
 			Func<Reservation, bool> filterFunc = u => string.IsNullOrEmpty(searchString) || u.User.FirstName.ToLower().Contains(searchString) || u.User.LastName.Contains(searchString) || u.User.Email.Contains(searchString);
+
 			IEnumerable<Reservation> paginatedReservations = _paginationHelper.GetPaginatedData(reservations, page, pageSize, sortField, sortOrder, searchString, filterFunc: filterFunc);
+
 			var allReservations =  _mapper.Map<IEnumerable<ReservationDTO>>(paginatedReservations);
+
 			var totalReservationsCount = reservations.Count();
 			var totalPages = (int)Math.Ceiling((double)totalReservationsCount / pageSize);
 			return new PaginatedReservationDTO
@@ -226,7 +229,7 @@ namespace Domain.Concrete
             }
             else if (status >= 1 && status <= 2)
             {
-				if (status == 1)
+				if (status == (int)ReservationStatusEnum.Confirmed)
 				{
 
 					foreach (var roomReservation in reservation.ReservationRooms)
@@ -245,8 +248,9 @@ namespace Domain.Concrete
 				}
                 reservation.ReservationStatus = status;
                 reservationRepository.Update(reservation);
-                var notificationDTO = new CreateNotificationDTO { ReceiverId = reservation.UserId, MessageContent = "The reservation status was changed",ContentID=reservation.ReservationId};
-                var notification = _mapper.Map<Notification>(notificationDTO);
+
+                var notification = new Notification { ReceiverId = (Guid)reservation.UserId, MessageContent = "The reservation status was changed",ContentId=reservation.ReservationId, SendDateTime = DateTime.Now, IsSeen = false };
+
                 await NotificationConnections.SendNotificationToUserAsync(_notificationHubContext, notification, notification.ReceiverId);
                 notificationRepository.Add(notification);
                 _unitOfWork.Save();
