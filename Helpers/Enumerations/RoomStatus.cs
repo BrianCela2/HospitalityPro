@@ -10,7 +10,6 @@ namespace Helpers.Enumerations
     {
         Available = 1,
         Busy = 2,
-        Working = 3,
-        Cleaning = 4
+        Cleaning = 3
     }
 }

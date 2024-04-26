@@ -66,7 +66,7 @@ namespace Domain.Concrete
         public async Task<IEnumerable<RoomDTO>> GetAllRoomAsync()
         {
             IEnumerable<Room> rooms = roomRepository.GetAllRoomsPhoto();
-			IEnumerable<Room> roomsWithLowestPrice = rooms
+			IEnumerable<Room?> roomsWithLowestPrice = rooms
 		   .GroupBy(room => room.Category)
 		   .Select(group => group.OrderBy(room => room.Price).FirstOrDefault())
 		   .ToList();
@@ -173,7 +173,7 @@ namespace Domain.Concrete
             if (status == room.RoomStatus){
                 throw new Exception("Room is in that status already");
             }
-            else if (status >= 1 && status <= 4){
+            else if (status >= 1 && status <= 3){
                 room.RoomStatus = status;
                 roomRepository.Update(room);
                 _unitOfWork.Save();

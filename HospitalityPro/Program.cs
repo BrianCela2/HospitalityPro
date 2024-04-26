@@ -119,7 +119,7 @@ app.MapHub<NotificationHub>("/Notify", options =>
 }
 );
 app.UseHttpsRedirection();
-app.UseMiddleware<RequestResponseLoggerMiddleware>();
+app.UseMiddleware<LoggerMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -55,18 +55,6 @@ namespace Domain.Concrete
             await _notificationHubContext.Clients.All.SendNotificationAll(notificationMessage);
              _unitOfWork.Save();
         }
-        public async Task DeleteNotificationAsync(NotificationDTO notification)
-        {
-            var Deletenotification = _mapper.Map<Notification>(notification);
-            notificationRepository.Remove(Deletenotification);
-            _unitOfWork.Save();
-        }
-        public async Task UpdateNotificationAsync(UpdateNotificationDTO Updatenotification)
-        {
-            var notification = _mapper.Map<Notification>(Updatenotification);
-            notificationRepository.Update(notification);
-            _unitOfWork.Save();
-        }
         public async Task<NotificationDTO> GetNotificationByIdAsync(Guid id)
         {
             var notification = notificationRepository.GetById(id);
